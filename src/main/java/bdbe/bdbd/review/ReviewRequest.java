@@ -13,26 +13,25 @@ public class ReviewRequest {
     @Setter
     public static class CreateReviewDTO {
 
-        @NotEmpty
+
         private int id;
 
-        @NotEmpty
         private int u_id;
 
-        @NotEmpty
+
         private int w_id;
 
-        @NotEmpty
+
         private int id2; //예약 아이디
 
         @NotEmpty
         @Size(min = 0, max = 30, message = " 30글자 제한")
         private String singlecomment;
 
-        @NotEmpty
+
         private Integer rate;
 
-        @NotEmpty
+
         private Integer keyword;
 
     }

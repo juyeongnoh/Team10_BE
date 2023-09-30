@@ -5,11 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e8ab77cf-efd8-4053-b76c-d658e29917da" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/bdbe/bdbd/review/ReviewJPARepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/bdbe/bdbd/review/ReviewRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/bdbe/bdbd/review/ReviewResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/bdbe/bdbd/review/ReviewRestController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/bdbe/bdbd/review/ReviewService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -59,16 +54,16 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
+                    <option name="branchName" value="weekly" />
+                    <option name="lastUsedInstant" value="1696088000" />
+                  </RecentBranch>
+                  <RecentBranch>
                     <option name="branchName" value="review" />
                     <option name="lastUsedInstant" value="1695994882" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="feature/review" />
                     <option name="lastUsedInstant" value="1695994626" />
-                  </RecentBranch>
-                  <RecentBranch>
-                    <option name="branchName" value="weekly" />
-                    <option name="lastUsedInstant" value="1695955901" />
                   </RecentBranch>
                 </list>
               </option>
@@ -108,7 +103,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "review",
+    "git-widget-placeholder": "weekly",
     "last_opened_file_path": "C:/Users/SAMSUNG/Desktop/review",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -153,7 +148,7 @@
       <workItem from="1695916427601" duration="1016000" />
       <workItem from="1695918649948" duration="2102000" />
       <workItem from="1695955651072" duration="352000" />
-      <workItem from="1695994395155" duration="9728000" />
+      <workItem from="1695994395155" duration="10800000" />
     </task>
     <servers />
   </component>
