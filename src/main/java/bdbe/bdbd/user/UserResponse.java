@@ -7,7 +7,7 @@ public class UserResponse {
 
     @Getter @Setter
     public static class FindById{
-        private int id;
+        private long id;
         private String username;
         private String email;
 
