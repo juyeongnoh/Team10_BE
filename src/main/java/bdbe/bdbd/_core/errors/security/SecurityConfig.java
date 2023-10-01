@@ -35,6 +35,8 @@ public class SecurityConfig {
         }
     }
 
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // 1. CSRF 해제
@@ -70,11 +72,13 @@ public class SecurityConfig {
 
         // 11. 인증, 권한 필터 설정
         http.authorizeRequests(
-                authorize -> authorize.antMatchers("/carts/**", "/options/**", "/orders/**", "/users/**").authenticated()
-                        .antMatchers("/admin/**")
-                        .access("hasRole('ADMIN')")
+                authorize -> authorize
+                        .antMatchers("/owner/**").hasRole("OWNER")
+                        .antMatchers("/user/**").hasRole("USER")
+                        .antMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
         );
+        //오너와 사용자 어드민 세가지로 url 접근 수정
 
         return http.build();
     }
@@ -90,4 +94,6 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+
 }

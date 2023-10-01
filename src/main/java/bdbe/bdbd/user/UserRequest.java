@@ -26,12 +26,16 @@ public class UserRequest {
         @NotEmpty
         private String username;
 
+        @NotEmpty(message = "역할은 필수 입니다.")
+        @Pattern(regexp = "ROLE_USER|ROLE_OWNER", message = "유효하지 않은 역할입니다.")
+        private String roles;
+
         public User toEntity() {
             return User.builder()
                     .email(email)
                     .password(password)
                     .username(username)
-                    .roles("ROLE_USER")
+                    .roles(roles)
                     .build();
         }
     }
@@ -65,4 +69,6 @@ public class UserRequest {
         @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#$%^&+=!~`<>,./?;:'\"\\[\\]{}\\\\()|_-])\\S*$", message = "영문, 숫자, 특수문자가 포함되어야하고 공백이 포함될 수 없습니다.")
         private String password;
     }
+
+
 }
