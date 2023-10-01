@@ -1,28 +1,45 @@
 package bdbe.bdbd.review;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import bdbe.bdbd.carwash.Carwash;
+import bdbe.bdbd.carwash.CarwashJPARepository;
+import bdbe.bdbd.rkeyword.Rkeyword;
+import bdbe.bdbd.rkeyword.RkeywordJPARepository;
+import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeyword;
+import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeywordJPARepository;
+import bdbe.bdbd.user.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 @Service
 public class ReviewService {
     private final ReviewJPARepository reviewJPARepository;
+    private final CarwashJPARepository carwashJPARepository;
+    private final RkeywordJPARepository rkeywordJPARepository;
+    private final ReviewKeywordJPARepository reviewKeywordJPARepository;
 
-    @Autowired
-    public ReviewService(ReviewJPARepository reviewJPARepository) {
-        this.reviewJPARepository = reviewJPARepository;
+
+
+    public void createReview(ReviewRequest.SaveDTO dto, User user) {
+        Carwash carwash = carwashJPARepository.findById(dto.getCarwashId())
+                .orElseThrow(() -> new IllegalArgumentException("Carwash not found"));
+        Review review = dto.toReviewEntity(user, carwash);
+        Review savedReview = reviewJPARepository.save(review);
+        //키워드-리뷰 다대다 매핑 (없는 키워드일 경우 무시)
+        List<Rkeyword> rkeywordList = rkeywordJPARepository.findAllByIdIn(dto.getRKeywordIdList());
+        List<ReviewKeyword> reviewKeywords = rkeywordList.stream()
+                .map(keyword -> ReviewKeyword.builder().review(savedReview).keyword(keyword).build())
+                .collect(Collectors.toList());
+        reviewKeywordJPARepository.saveAll(reviewKeywords);
     }
 
-    //@Autowired
-    //private CarWashJPARepository CarWashJPARepository;
 
-    public Review createReview(Review review) {
-        return reviewJPARepository.save(review);
-    }
-
-
-    public Review getReviewById(int id) {
+    public Review getReviewById(Long id) {
         return (Review) reviewJPARepository.findById(id).orElse(null);
     }
 
