@@ -1,11 +1,12 @@
 package bdbe.bdbd.review;
 
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import bdbe.bdbd.carwash.Carwash;
+import bdbe.bdbd.reservation.Reservation;
+import bdbe.bdbd.user.User;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,37 +15,51 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Data
+@ToString
+@EntityListeners(AuditingEntityListener.class)
 public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private int u_id;
-    private int w_id;
-    private int id2;
-    private String singlecomment;
-    private Integer rate;
-    private Integer keyword;
+    @Column(columnDefinition = "BIGINT")
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY) //외래키
+    @JoinColumn(name="u_id",  nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY) //외래키
+    @JoinColumn(name="c_id",  nullable = false)
+    private Carwash carwash;
+
+    @Column(length = 100, nullable = true)
+    private String comment;
+
+    @Column(nullable = true)
+    private int rate;
+
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
-    @Builder
-    public Review(int id,String singlecomment, Integer rate, Integer keyword) {
-        this.id = id;
-        this.singlecomment = singlecomment;
-        this.rate = rate;
-        this.keyword = keyword;
+    @PrePersist
+    public void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
     }
 
+    @OneToOne(mappedBy = "review") //참조를 위한 값(DB 반영 X)
+    private Reservation reservation;
 
-
-    //@OneToOne
-    //@JoinColumn(name = "reservation_id")
-    //private Reservation reservation;
-
-    //@ManyToOne
-    //@JoinColumn(name = "carwash_id")
-    //private CarWash carWash;
+    @Builder
+    public Review(Long id, User user, Carwash carwash, Reservation reservation, String comment, int rate) {
+        this.id = id;
+        this.user = user;
+        this.carwash = carwash;
+        this.reservation = reservation;
+        this.comment = comment;
+        this.rate = rate;
+    }
 
 }
 

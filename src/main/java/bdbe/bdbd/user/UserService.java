@@ -48,7 +48,7 @@ public class UserService {
         }
     }
     public void userRoleCheck(User user) {
-        if (user.getRoles() == null || !user.getRoles().contains("ROLE_OWNER")) {
+        if (user.getRole() == null || !user.getRole().contains("ROLE_OWNER")) {
             throw new Exception400("이 기능은 OWNER 역할을 가진 사용자만 접근 가능합니다.");
         }
     }
