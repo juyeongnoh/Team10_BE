@@ -70,7 +70,7 @@ public class OwnerRestControllerTest {
         requestDTO.setUsername("tempuser");
         requestDTO.setEmail("bdbd@naver.com");
         requestDTO.setPassword("asdf1234!");
-        requestDTO.setRoles("OWNER");
+        requestDTO.setRole("OWNER");
         String requestBody = om.writeValueAsString(requestDTO);
         //when
         ResultActions resultActions = mvc.perform(

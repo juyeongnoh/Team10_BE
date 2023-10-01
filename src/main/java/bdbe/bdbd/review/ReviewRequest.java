@@ -1,38 +1,31 @@
 package bdbe.bdbd.review;
 
+import bdbe.bdbd.carwash.Carwash;
+import bdbe.bdbd.user.User;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
-import javax.websocket.OnMessage;
+import java.util.List;
 
 public class ReviewRequest {
-
     @Getter
     @Setter
-    public static class CreateReviewDTO {
+    @ToString
+    public static class SaveDTO {
+        private Long carwashId;
+        private List<Long> rKeywordIdList;
+        private int rate;
+        private String comment;
 
-
-        private int id;
-
-        private int u_id;
-
-
-        private int w_id;
-
-
-        private int id2; //예약 아이디
-
-        @NotEmpty
-        @Size(min = 0, max = 30, message = " 30글자 제한")
-        private String singlecomment;
-
-
-        private Integer rate;
-
-
-        private Integer keyword;
+        public Review toReviewEntity(User user, Carwash carwash) {
+            return Review.builder()
+                    .user(user)
+                    .carwash(carwash)
+                    .comment(comment)
+                    .rate(rate)
+                    .build();
+        }
 
     }
 }
