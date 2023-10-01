@@ -5,11 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -26,7 +25,9 @@ public class Review {
     private String singlecomment;
     private Integer rate;
     private Integer keyword;
-
+    @CreatedDate
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime createdAt;
     @Builder
     public Review(int id,String singlecomment, Integer rate, Integer keyword) {
         this.id = id;
@@ -34,6 +35,16 @@ public class Review {
         this.rate = rate;
         this.keyword = keyword;
     }
+
+
+
+    //@OneToOne
+    //@JoinColumn(name = "reservation_id")
+    //private Reservation reservation;
+
+    //@ManyToOne
+    //@JoinColumn(name = "carwash_id")
+    //private CarWash carWash;
 
 }
 
