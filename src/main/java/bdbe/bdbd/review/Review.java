@@ -4,10 +4,7 @@ package bdbe.bdbd.review;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.user.User;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -18,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Data
+@ToString
 @EntityListeners(AuditingEntityListener.class)
 public class Review {
 
@@ -43,6 +41,12 @@ public class Review {
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
+    @PrePersist
+    public void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+    }
 
     @OneToOne(mappedBy = "review") //참조를 위한 값(DB 반영 X)
     private Reservation reservation;

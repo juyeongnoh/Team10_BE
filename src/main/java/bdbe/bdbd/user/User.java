@@ -17,7 +17,7 @@ public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT")
-    private long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY) //외래키
     @JoinColumn(name="r_id",  nullable = false)
@@ -32,13 +32,13 @@ public class User{
 
     @Column(length = 30, nullable = false)
     private String role;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int credit;
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = true)
     private String tel;
 
     @Builder
-    public User(long id, Region region, String email, String password, String username, String role, int credit, String tel) {
+    public User(Long id, Region region, String email, String password, String username, String role, int credit, String tel) {
         this.id = id;
         this.region = region;
         this.email = email;

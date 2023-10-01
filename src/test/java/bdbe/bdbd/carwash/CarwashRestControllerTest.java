@@ -2,12 +2,13 @@ package bdbe.bdbd.carwash;
 
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
+import bdbe.bdbd.region.Region;
 import bdbe.bdbd.region.RegionJPARepository;
+import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,7 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //@ActiveProfiles("test") //test profile 사용
 @Transactional
 @AutoConfigureMockMvc //MockMvc 사용
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK) //통합테스트(SF-F-DS(Handler, ExHandler)-C-S-R-PC-DB) 다 뜬다.
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+//통합테스트(SF-F-DS(Handler, ExHandler)-C-S-R-PC-DB) 다 뜬다.
 public class CarwashRestControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -48,38 +50,10 @@ public class CarwashRestControllerTest {
     @Autowired
     private ObjectMapper om;
 
-    @BeforeEach
-    public void setup() {
-//        Region region = Region.builder().build();
-//        regionJPARepository.save(region);
-//
-//        User user = User.builder().email("hi@nate.com")
-//                .password("user1234!")
-//                .username("useruser")
-//                .build();
-//        userJPARepository.save(user);
-//
-//        Carwash carwash = Carwash.builder()
-//                .name("세차장")
-//                .des("좋은 세차장입니다.")
-//                .tel("010-2222-3333")
-//                .region(region)
-//                .user(user)
-//                .build();
-//        carwashJPARepository.save(carwash);
+    private User user;
 
-//        List<Keyword> keywordList = new ArrayList<>();
-//        Keyword keyword = Keyword.builder()
-//                .keywordName("하부세차")
-//                .build();
-//        keywordList.add(keyword);
-//        keyword = Keyword.builder()
-//                .keywordName("야간조명")
-//                .build();
-//        keywordList.add(keyword);
-//
-//        keywordJPARepository.saveAll(keywordList);
-    }
+
+
     @Test
     @DisplayName("전체 세차장 목록 조회")
     public void findAll_test() throws Exception {
@@ -92,7 +66,7 @@ public class CarwashRestControllerTest {
 
         // eye
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        System.out.println("응답 Body : "+responseBody);
+        System.out.println("응답 Body : " + responseBody);
 
         // verify
         resultActions.andExpect(jsonPath("$.success").value("true"));
@@ -146,7 +120,7 @@ public class CarwashRestControllerTest {
 
         // eye
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        System.out.println("응답 Body : "+responseBody);
+        System.out.println("응답 Body : " + responseBody);
 
         // verify
         resultActions.andExpect(jsonPath("$.success").value("true"));
