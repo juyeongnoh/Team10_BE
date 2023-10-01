@@ -27,6 +27,8 @@ public class ReviewResponse {
             this.keyword = review.getKeyword();
 
         }
+
+
     }
 }
 
