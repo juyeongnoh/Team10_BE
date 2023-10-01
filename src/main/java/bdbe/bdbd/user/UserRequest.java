@@ -28,14 +28,14 @@ public class UserRequest {
 
         @NotEmpty(message = "역할은 필수 입니다.")
         @Pattern(regexp = "ROLE_USER|ROLE_OWNER", message = "유효하지 않은 역할입니다.")
-        private String roles;
+        private String role;
 
         public User toEntity() {
             return User.builder()
                     .email(email)
                     .password(password)
                     .username(username)
-                    .roles(roles)
+                    .role(role)
                     .build();
         }
     }

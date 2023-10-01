@@ -13,7 +13,7 @@ public class CarwashResponse {
         private int rate;
         private String tel;
         private Long rId;
-        private int userId;
+        private Long userId;
 
         public FindAllDTO(Carwash carwash) {
             this.id = carwash.getId();

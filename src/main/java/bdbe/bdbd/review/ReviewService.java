@@ -29,13 +29,14 @@ public class ReviewService {
         Carwash carwash = carwashJPARepository.findById(dto.getCarwashId())
                 .orElseThrow(() -> new IllegalArgumentException("Carwash not found"));
         Review review = dto.toReviewEntity(user, carwash);
+        System.out.println(review);
         Review savedReview = reviewJPARepository.save(review);
         //키워드-리뷰 다대다 매핑 (없는 키워드일 경우 무시)
-        List<Rkeyword> rkeywordList = rkeywordJPARepository.findAllByIdIn(dto.getRKeywordIdList());
-        List<ReviewKeyword> reviewKeywords = rkeywordList.stream()
-                .map(keyword -> ReviewKeyword.builder().review(savedReview).keyword(keyword).build())
-                .collect(Collectors.toList());
-        reviewKeywordJPARepository.saveAll(reviewKeywords);
+//        List<Rkeyword> rkeywordList = rkeywordJPARepository.findAllByIdIn(dto.getRKeywordIdList());
+//        List<ReviewKeyword> reviewKeywords = rkeywordList.stream()
+//                .map(keyword -> ReviewKeyword.builder().review(savedReview).keyword(keyword).build())
+//                .collect(Collectors.toList());
+//        reviewKeywordJPARepository.saveAll(reviewKeywords);
     }
 
 

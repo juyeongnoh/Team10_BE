@@ -10,7 +10,7 @@ public class ReviewResponse {
     @Setter
     public static class getReviewById{
         private Long id;
-        private int uId;
+        private Long uId;
         private Long cId;
         private Reservation reservation; //1:1, 참조용(read-only)
         private String comment;
