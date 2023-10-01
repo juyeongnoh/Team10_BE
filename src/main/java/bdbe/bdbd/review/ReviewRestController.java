@@ -30,5 +30,13 @@ public class ReviewRestController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+/*
+
+    @GetMapping
+    public ResponseEntity<List<Review>> getReviews(@PathVariable Long carWashId) {
+        List<Review> reviews = reviewService.getReviewsByCarWashId(carWashId);
+        return ResponseEntity.ok(reviews);
+    }
+*/
 
 }
