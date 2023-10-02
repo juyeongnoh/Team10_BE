@@ -53,7 +53,6 @@ public class CarwashRestControllerTest {
     private User user;
 
 
-
     @Test
     @DisplayName("전체 세차장 목록 조회")
     public void findAll_test() throws Exception {

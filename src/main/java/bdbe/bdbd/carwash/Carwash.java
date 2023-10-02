@@ -28,7 +28,7 @@ public class Carwash{
     private String name; //세차장 이름
 
     @Column(nullable = true)
-    private int rate; //별점
+    private double rate; //별점
 
     @Column(length = 50, nullable = true)
     private String tel; //전화번호
@@ -54,7 +54,7 @@ public class Carwash{
     private List<File> fileList = new ArrayList<>();
 
     @Builder
-    public Carwash(Long id, String name, int rate, String tel, String des, int price, Region region, User user, List<CarwashKeyword> carwashKeywords, List<File> fileList) {
+    public Carwash(Long id, String name, double rate, String tel, String des, int price, Region region, User user, List<CarwashKeyword> carwashKeywords, List<File> fileList) {
         this.id = id;
         this.name = name;
         this.rate = rate;
@@ -65,5 +65,9 @@ public class Carwash{
         this.user = user;
         this.carwashKeywords = carwashKeywords;
         this.fileList = fileList;
+    }
+
+    public void updateRate(double rate) {
+        this.rate = rate;
     }
 }
