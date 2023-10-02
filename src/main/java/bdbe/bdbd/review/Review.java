@@ -36,7 +36,7 @@ public class Review {
     private String comment;
 
     @Column(nullable = true)
-    private int rate;
+    private double rate;
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
@@ -52,7 +52,7 @@ public class Review {
     private Reservation reservation;
 
     @Builder
-    public Review(Long id, User user, Carwash carwash, Reservation reservation, String comment, int rate) {
+    public Review(Long id, User user, Carwash carwash, Reservation reservation, String comment, double rate) {
         this.id = id;
         this.user = user;
         this.carwash = carwash;
