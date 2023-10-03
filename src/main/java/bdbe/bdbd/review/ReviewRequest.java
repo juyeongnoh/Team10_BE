@@ -1,6 +1,7 @@
 package bdbe.bdbd.review;
 
 import bdbe.bdbd.carwash.Carwash;
+import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,8 +16,9 @@ public class ReviewRequest {
     public static class SaveDTO {
         private Long carwashId;
         private List<Long> rKeywordIdList;
-        private int rate;
+        private double rate;
         private String comment;
+
 
         public Review toReviewEntity(User user, Carwash carwash) {
             return Review.builder()
