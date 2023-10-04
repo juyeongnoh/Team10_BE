@@ -32,4 +32,16 @@ public class ReservationRestController {
 
     }
 
+    // 예약 내역 보여주기
+    @GetMapping("/carwashes/{carwash_id}/bays")
+    public ResponseEntity<?> findAllByCarwash(
+            @PathVariable("carwash_id") Long carwashId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    )
+    {
+        ReservationResponse.findAllResponseDTO dto = reservationService.findAllByCarwash(carwashId, userDetails.getUser());
+        return ResponseEntity.ok(ApiUtils.success(dto));
+
+    }
+
 }

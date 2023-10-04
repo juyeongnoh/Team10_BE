@@ -46,4 +46,14 @@ public class ReservationService {
         Reservation reservation = dto.toReservationEntity(carwash, bay, sessionUser);
         reservationJPARepository.save(reservation);
     } //변경감지, 더티체킹, flush, 트랜잭션 종료
+
+    public ReservationResponse.findAllResponseDTO findAllByCarwash(Long carwashId, User sessionUser) {
+        //베이에서 해당 세차장 id와 관련된 베이 객체 모두 찾기
+        List<Bay> bayList = bayJPARepository.findByCarwashId(carwashId);
+        // id만 추출하기
+        List<Long> bayIdList = bayJPARepository.findIdsByCarwashId(carwashId);
+        //예약에서 베이 id 리스트로 모두 찾기
+        List<Reservation> reservationList = reservationJPARepository.findByBayIdIn(bayIdList);
+        return new ReservationResponse.findAllResponseDTO(bayList, reservationList);
+    }
 }
