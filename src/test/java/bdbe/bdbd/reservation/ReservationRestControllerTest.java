@@ -165,4 +165,55 @@ public class ReservationRestControllerTest {
 
     }
 
+    @WithUserDetails(value = "user@nate.com")
+    @Test
+    @DisplayName("세차장별 예약 조회 내역 기능")
+    public void findAllByCarwash_test() throws Exception {
+        //given
+        Carwash carwash = carwashJPARepository.findFirstBy();
+        Bay bay = Bay.builder()
+                .id(1L)
+                .bayNum(10)
+                .bayType(2)
+                .carwash(carwash)
+                .status(1)
+                .build();
+        Bay savedBay = bayJPARepository.save(bay);
+
+        User user = userJPARepository.findByEmail("user@nate.com").orElseThrow(()->new IllegalArgumentException("user not found"));
+        // 예약 1
+        Reservation reservation = Reservation.builder()
+                .price(5000)
+                .date(LocalDate.now())
+                .startTime(LocalTime.of(10, 0)) // 10:00 AM
+                .endTime(LocalTime.of(11, 0))  // 11:00 AM
+                .bay(savedBay)
+                .user(user)
+                .build();
+        reservationJPARepository.save(reservation);
+        // 예약 2
+        Reservation reservation2 = Reservation.builder()
+                .price(5000)
+                .date(LocalDate.now())
+                .startTime(LocalTime.of(14, 0)) // 10:00 AM
+                .endTime(LocalTime.of(16, 0))  // 11:00 AM
+                .bay(savedBay)
+                .user(user)
+                .build();
+        reservationJPARepository.save(reservation2);
+
+        //when
+        ResultActions resultActions = mvc.perform(
+                get(String.format("/carwashes/%d/bays", carwash.getId()))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+        //then
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+
+
+    }
+
+
 }
