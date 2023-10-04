@@ -32,16 +32,12 @@ public class Reservation {
     @JoinColumn(name="u_id",  nullable = false)
     private User user;
 
-    @OneToOne
-    @JoinColumn(name = "r_id", nullable = false) //외래키 가짐
-    private Review review;
 
     @Builder
-    public Reservation(int id, int price, Bay bay, User user, Review review) {
+    public Reservation(int id, int price, Bay bay, User user) {
         this.id = id;
         this.price = price;
         this.bay = bay;
         this.user = user;
-        this.review = review;
     }
 }
