@@ -39,12 +39,11 @@ public class Bay {
     private List<Reservation> reservationList = new ArrayList<>();
 
     @Builder
-    public Bay(Long id, int bayNum, int bayType, Carwash carwash, int status, List<Reservation> reservationList) {
+    public Bay(Long id, int bayNum, int bayType, Carwash carwash, int status) {
         this.id = id;
         this.bayNum = bayNum;
         this.bayType = bayType;
         this.carwash = carwash;
         this.status = status;
-        this.reservationList = reservationList;
     }
 }

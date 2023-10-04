@@ -2,23 +2,14 @@ package bdbe.bdbd.reservation;
 
 import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.carwash.Carwash;
-import bdbe.bdbd.file.File;
-import bdbe.bdbd.optime.Optime;
-import bdbe.bdbd.region.Region;
-import bdbe.bdbd.review.Review;
 import bdbe.bdbd.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.cglib.core.Local;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ReservationRequest {
 
@@ -27,9 +18,9 @@ public class ReservationRequest {
     @ToString
     public static class SaveDTO {
 
-        private Long bay_id;
+        private Long bayId;
 
-        private LocalDate selected_date; //날짜만 포함함
+        private LocalDate selectedDate; //날짜만 포함함
 
         private TimeDTO time; //시간만 포함
 

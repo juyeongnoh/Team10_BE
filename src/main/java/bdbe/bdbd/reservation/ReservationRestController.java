@@ -19,7 +19,7 @@ public class ReservationRestController {
     private final ReservationService reservationService;
 
     // 예약하기
-    @GetMapping("/carwashes/{carwash_id}/bays/{bay_id}/reservations")
+    @PostMapping("/carwashes/{carwash_id}/bays/{bay_id}/reservations")
     public ResponseEntity<?> save(
             @PathVariable("carwash_id") Long carwashId,
             @PathVariable("bay_id") Long bayId,
