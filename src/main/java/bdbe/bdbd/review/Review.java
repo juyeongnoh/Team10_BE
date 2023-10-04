@@ -38,6 +38,10 @@ public class Review {
     @Column(nullable = true)
     private double rate;
 
+    @OneToOne
+    @JoinColumn(name = "r_id", nullable = false) //외래키 가짐
+    private Reservation reservation;
+
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
@@ -48,19 +52,17 @@ public class Review {
         }
     }
 
-    @OneToOne(mappedBy = "review") //참조를 위한 값(DB 반영 X)
-    private Reservation reservation;
 
     @Builder
-    public Review(Long id, User user, Carwash carwash, Reservation reservation, String comment, double rate) {
+    public Review(Long id, User user, Carwash carwash, String comment, double rate, Reservation reservation, LocalDateTime createdAt) {
         this.id = id;
         this.user = user;
         this.carwash = carwash;
-        this.reservation = reservation;
         this.comment = comment;
         this.rate = rate;
+        this.reservation = reservation;
+        this.createdAt = createdAt;
     }
-
 }
 
 
