@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 
 @Getter
@@ -24,6 +26,15 @@ public class Reservation {
     @Column(nullable = true)
     private int price;
 
+    @Column(name="date", length = 50, nullable = true)
+    private LocalDate date; // 요일명 (평일 or 주말)
+
+    @Column(name="start_time", nullable = true)
+    private LocalTime startTime; // ex)10:00
+
+    @Column(name="end_time", nullable = true)
+    private LocalTime endTime;
+
     @ManyToOne(fetch = FetchType.LAZY) //외래키
     @JoinColumn(name="b_id",  nullable = false)
     private Bay bay;
@@ -34,9 +45,12 @@ public class Reservation {
 
 
     @Builder
-    public Reservation(int id, int price, Bay bay, User user) {
+    public Reservation(int id, int price, LocalDate date, LocalTime startTime, LocalTime endTime, Bay bay, User user) {
         this.id = id;
         this.price = price;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.bay = bay;
         this.user = user;
     }

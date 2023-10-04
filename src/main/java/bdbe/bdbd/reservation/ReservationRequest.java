@@ -34,6 +34,9 @@ public class ReservationRequest {
             int price = perPrice * blocksOf30Minutes;
 
             return Reservation.builder()
+                    .date(selectedDate)
+                    .startTime(startTime)
+                    .endTime(endTime)
                     .price(price)
                     .bay(bay)
                     .user(user)
@@ -47,4 +50,6 @@ public class ReservationRequest {
             private LocalTime end; // 끝 시간
         }
     }
+
+
 }
