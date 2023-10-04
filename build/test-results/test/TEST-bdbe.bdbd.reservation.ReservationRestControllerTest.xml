@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="bdbe.bdbd.reservation.ReservationRestControllerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-10-04T15:46:45" hostname="MacBook-Pro.local" time="0.525">
+<testsuite name="bdbe.bdbd.reservation.ReservationRestControllerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-10-04T16:44:48" hostname="MacBook-Pro.local" time="0.506">
   <properties/>
-  <testcase name="예약 기능" classname="bdbe.bdbd.reservation.ReservationRestControllerTest" time="0.525"/>
-  <system-out><![CDATA[00:46:40.616 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
-00:46:40.625 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
-00:46:40.659 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [bdbe.bdbd.reservation.ReservationRestControllerTest] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
-00:46:40.666 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Neither @ContextConfiguration nor @ContextHierarchy found for test class [bdbe.bdbd.reservation.ReservationRestControllerTest], using SpringBootContextLoader
-00:46:40.669 [Test worker] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [bdbe.bdbd.reservation.ReservationRestControllerTest]: class path resource [bdbe/bdbd/reservation/ReservationRestControllerTest-context.xml] does not exist
-00:46:40.669 [Test worker] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [bdbe.bdbd.reservation.ReservationRestControllerTest]: class path resource [bdbe/bdbd/reservation/ReservationRestControllerTestContext.groovy] does not exist
-00:46:40.669 [Test worker] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [bdbe.bdbd.reservation.ReservationRestControllerTest]: no resource found for suffixes {-context.xml, Context.groovy}.
-00:46:40.670 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [bdbe.bdbd.reservation.ReservationRestControllerTest]: ReservationRestControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-00:46:40.709 [Test worker] DEBUG org.springframework.test.context.support.ActiveProfilesUtils - Could not find an 'annotation declaring class' for annotation type [org.springframework.test.context.ActiveProfiles] and class [bdbe.bdbd.reservation.ReservationRestControllerTest]
-00:46:40.760 [Test worker] DEBUG org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [/Users/mae/Desktop/KTC/3단계/Team10_BE/build/classes/java/main/bdbe/bdbd/BdbdApplication.class]
-00:46:40.760 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration bdbe.bdbd.BdbdApplication for test class bdbe.bdbd.reservation.ReservationRestControllerTest
-00:46:40.814 [Test worker] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [bdbe.bdbd.reservation.ReservationRestControllerTest]: using defaults.
-00:46:40.815 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener, org.springframework.security.test.context.support.ReactorContextTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
-00:46:40.836 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@7726e185, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@aa5455e, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@282308c3, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@5dda14d0, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@1db0ec27, org.springframework.test.context.support.DirtiesContextTestExecutionListener@3d9fc57a, org.springframework.test.context.transaction.TransactionalTestExecutionListener@d4ab71a, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@3b4ef7, org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener@1af05b03, org.springframework.test.context.event.EventPublishingTestExecutionListener@5987e932, org.springframework.security.test.context.support.ReactorContextTestExecutionListener@1ad777f, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@5bbbdd4b, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@438bad7c, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@25230246, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@4fdf8f12, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@4a8b5227, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@54f5f647]
-00:46:40.840 [Test worker] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener - Before test class: context [DefaultTestContext@6105f8a3 testClass = ReservationRestControllerTest, testInstance = [null], testMethod = [null], testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@2237bada testClass = ReservationRestControllerTest, locations = '{}', classes = '{class bdbe.bdbd.BdbdApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@27953a83, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@4b3fa0b3, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@388ba540, [ImportsContextCustomizer@77e2a6e2 key = [org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebClientAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebDriverAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityConfiguration, org.springframework.boot.test.autoconfigure.web.reactive.WebTestClientAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@7bc10d84, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@7e38a7fe, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@56f6d40b, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@589da3f3], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -> true]], class annotated with @DirtiesContext [false] with mode [null].
+  <testcase name="세차장별 예약 조회 내역 기능" classname="bdbe.bdbd.reservation.ReservationRestControllerTest" time="0.506"/>
+  <system-out><![CDATA[01:44:43.549 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
+01:44:43.556 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
+01:44:43.581 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [bdbe.bdbd.reservation.ReservationRestControllerTest] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
+01:44:43.595 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Neither @ContextConfiguration nor @ContextHierarchy found for test class [bdbe.bdbd.reservation.ReservationRestControllerTest], using SpringBootContextLoader
+01:44:43.600 [Test worker] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [bdbe.bdbd.reservation.ReservationRestControllerTest]: class path resource [bdbe/bdbd/reservation/ReservationRestControllerTest-context.xml] does not exist
+01:44:43.601 [Test worker] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [bdbe.bdbd.reservation.ReservationRestControllerTest]: class path resource [bdbe/bdbd/reservation/ReservationRestControllerTestContext.groovy] does not exist
+01:44:43.601 [Test worker] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [bdbe.bdbd.reservation.ReservationRestControllerTest]: no resource found for suffixes {-context.xml, Context.groovy}.
+01:44:43.602 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [bdbe.bdbd.reservation.ReservationRestControllerTest]: ReservationRestControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+01:44:43.643 [Test worker] DEBUG org.springframework.test.context.support.ActiveProfilesUtils - Could not find an 'annotation declaring class' for annotation type [org.springframework.test.context.ActiveProfiles] and class [bdbe.bdbd.reservation.ReservationRestControllerTest]
+01:44:43.690 [Test worker] DEBUG org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [/Users/mae/Desktop/KTC/3단계/Team10_BE/build/classes/java/main/bdbe/bdbd/BdbdApplication.class]
+01:44:43.691 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration bdbe.bdbd.BdbdApplication for test class bdbe.bdbd.reservation.ReservationRestControllerTest
+01:44:43.751 [Test worker] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [bdbe.bdbd.reservation.ReservationRestControllerTest]: using defaults.
+01:44:43.751 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener, org.springframework.security.test.context.support.ReactorContextTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+01:44:43.774 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@4a67318f, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@315ba14a, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@17f9344b, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@27f0ad19, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@54e81b21, org.springframework.test.context.support.DirtiesContextTestExecutionListener@38d5b107, org.springframework.test.context.transaction.TransactionalTestExecutionListener@6650813a, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@44ea608c, org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener@50cf5a23, org.springframework.test.context.event.EventPublishingTestExecutionListener@450794b4, org.springframework.security.test.context.support.ReactorContextTestExecutionListener@273c947f, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@30457e14, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@1af1347d, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@632aa1a3, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@20765ed5, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@3b582111, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@2899a8db]
+01:44:43.778 [Test worker] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener - Before test class: context [DefaultTestContext@b09fac1 testClass = ReservationRestControllerTest, testInstance = [null], testMethod = [null], testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@62df0ff3 testClass = ReservationRestControllerTest, locations = '{}', classes = '{class bdbe.bdbd.BdbdApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@6c6c5427, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@4b3fa0b3, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@5827af16, [ImportsContextCustomizer@61019f59 key = [org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebClientAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebDriverAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityConfiguration, org.springframework.boot.test.autoconfigure.web.reactive.WebTestClientAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@1433046b, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@4763c727, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@773f7880, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@bb9e6dc], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -> true]], class annotated with @DirtiesContext [false] with mode [null].
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -26,25 +26,25 @@
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v2.7.6)
 
-2023-10-05 00:46:41.123  INFO 27031 --- [    Test worker] b.b.r.ReservationRestControllerTest      : Starting ReservationRestControllerTest using Java 11.0.17 on MacBook-Pro.local with PID 27031 (started by mae in /Users/mae/Desktop/KTC/3단계/Team10_BE)
-2023-10-05 00:46:41.124  INFO 27031 --- [    Test worker] b.b.r.ReservationRestControllerTest      : No active profile set, falling back to 1 default profile: "dev"
-2023-10-05 00:46:41.743  INFO 27031 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2023-10-05 00:46:41.799  INFO 27031 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 51 ms. Found 11 JPA repository interfaces.
-2023-10-05 00:46:42.293  INFO 27031 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2023-10-05 00:46:42.336  INFO 27031 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.14.Final
-2023-10-05 00:46:42.466  INFO 27031 --- [    Test worker] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
-2023-10-05 00:46:42.539  INFO 27031 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2023-10-05 00:46:42.959  INFO 27031 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2023-10-05 00:46:42.981  INFO 27031 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
-2023-10-05 00:46:44.294  INFO 27031 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2023-10-05 00:46:44.301  INFO 27031 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2023-10-05 00:46:44.983  INFO 27031 --- [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@8929865, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@489989eb, org.springframework.security.web.context.SecurityContextPersistenceFilter@78de0f6f, org.springframework.security.web.header.HeaderWriterFilter@2e04c89d, org.springframework.web.filter.CorsFilter@6d97a357, org.springframework.security.web.authentication.logout.LogoutFilter@7fb28ed, bdbe.bdbd._core.errors.security.JwtAuthenticationFilter@1e6cd1c, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7fb313e3, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@771ede0d, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1dab2cf5, org.springframework.security.web.session.SessionManagementFilter@5643052d, org.springframework.security.web.access.ExceptionTranslationFilter@3816efab, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@253c7189]
-2023-10-05 00:46:45.119  WARN 27031 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2023-10-05 00:46:45.565  INFO 27031 --- [    Test worker] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
-2023-10-05 00:46:45.565  INFO 27031 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2023-10-05 00:46:45.566  INFO 27031 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
-2023-10-05 00:46:45.581  INFO 27031 --- [    Test worker] b.b.r.ReservationRestControllerTest      : Started ReservationRestControllerTest in 4.717 seconds (JVM running for 5.592)
-2023-10-05 00:46:45.638  INFO 27031 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Began transaction (1) for test context [DefaultTestContext@6105f8a3 testClass = ReservationRestControllerTest, testInstance = bdbe.bdbd.reservation.ReservationRestControllerTest@618d2191, testMethod = save_test@ReservationRestControllerTest, testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@2237bada testClass = ReservationRestControllerTest, locations = '{}', classes = '{class bdbe.bdbd.BdbdApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@27953a83, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@4b3fa0b3, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@388ba540, [ImportsContextCustomizer@77e2a6e2 key = [org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebClientAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebDriverAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityConfiguration, org.springframework.boot.test.autoconfigure.web.reactive.WebTestClientAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@7bc10d84, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@7e38a7fe, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@56f6d40b, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@589da3f3], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -> true, 'org.springframework.test.context.web.ServletTestExecutionListener.populatedRequestContextHolder' -> true, 'org.springframework.test.context.web.ServletTestExecutionListener.resetRequestContextHolder' -> true, 'org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]; transaction manager [org.springframework.orm.jpa.JpaTransactionManager@6a16ee0d]; rollback [true]
+2023-10-05 01:44:44.088  INFO 28412 --- [    Test worker] b.b.r.ReservationRestControllerTest      : Starting ReservationRestControllerTest using Java 11.0.17 on MacBook-Pro.local with PID 28412 (started by mae in /Users/mae/Desktop/KTC/3단계/Team10_BE)
+2023-10-05 01:44:44.090  INFO 28412 --- [    Test worker] b.b.r.ReservationRestControllerTest      : No active profile set, falling back to 1 default profile: "dev"
+2023-10-05 01:44:44.676  INFO 28412 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-10-05 01:44:44.734  INFO 28412 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 52 ms. Found 11 JPA repository interfaces.
+2023-10-05 01:44:45.227  INFO 28412 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-10-05 01:44:45.262  INFO 28412 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.14.Final
+2023-10-05 01:44:45.376  INFO 28412 --- [    Test worker] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2023-10-05 01:44:45.446  INFO 28412 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-10-05 01:44:46.041  INFO 28412 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-10-05 01:44:46.074  INFO 28412 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2023-10-05 01:44:47.451  INFO 28412 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-10-05 01:44:47.459  INFO 28412 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-10-05 01:44:48.237  INFO 28412 --- [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@72924f19, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@46c093b4, org.springframework.security.web.context.SecurityContextPersistenceFilter@1ec98548, org.springframework.security.web.header.HeaderWriterFilter@34128fed, org.springframework.web.filter.CorsFilter@4ff00844, org.springframework.security.web.authentication.logout.LogoutFilter@57eb2555, bdbe.bdbd._core.errors.security.JwtAuthenticationFilter@20ee660b, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@445d878c, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@16eca98a, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@40e41f88, org.springframework.security.web.session.SessionManagementFilter@2a728076, org.springframework.security.web.access.ExceptionTranslationFilter@66ab3716, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@35fd03d9]
+2023-10-05 01:44:48.377  WARN 28412 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-10-05 01:44:48.814  INFO 28412 --- [    Test worker] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2023-10-05 01:44:48.814  INFO 28412 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2023-10-05 01:44:48.816  INFO 28412 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2023-10-05 01:44:48.833  INFO 28412 --- [    Test worker] b.b.r.ReservationRestControllerTest      : Started ReservationRestControllerTest in 5.024 seconds (JVM running for 5.884)
+2023-10-05 01:44:48.879  INFO 28412 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Began transaction (1) for test context [DefaultTestContext@b09fac1 testClass = ReservationRestControllerTest, testInstance = bdbe.bdbd.reservation.ReservationRestControllerTest@7e641005, testMethod = findAllByCarwash_test@ReservationRestControllerTest, testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@62df0ff3 testClass = ReservationRestControllerTest, locations = '{}', classes = '{class bdbe.bdbd.BdbdApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@6c6c5427, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@4b3fa0b3, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@5827af16, [ImportsContextCustomizer@61019f59 key = [org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebClientAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebDriverAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityConfiguration, org.springframework.boot.test.autoconfigure.web.reactive.WebTestClientAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@1433046b, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@4763c727, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@773f7880, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@bb9e6dc], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -> true, 'org.springframework.test.context.web.ServletTestExecutionListener.populatedRequestContextHolder' -> true, 'org.springframework.test.context.web.ServletTestExecutionListener.resetRequestContextHolder' -> true, 'org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]; transaction manager [org.springframework.orm.jpa.JpaTransactionManager@2f95ce11]; rollback [true]
 Hibernate: 
     select
         user0_.id as id1_11_,
@@ -59,6 +59,111 @@ Hibernate:
         user user0_ 
     where
         user0_.email=?
+Hibernate: 
+    select
+        carwash0_.id as id1_1_,
+        carwash0_.des as des2_1_,
+        carwash0_.name as name3_1_,
+        carwash0_.price as price4_1_,
+        carwash0_.rate as rate5_1_,
+        carwash0_.r_id as r_id7_1_,
+        carwash0_.tel as tel6_1_,
+        carwash0_.u_id as u_id8_1_ 
+    from
+        carwash carwash0_ limit ?
+Hibernate: 
+    select
+        region0_.id as id1_6_0_,
+        region0_.address as address2_6_0_,
+        region0_.latitude as latitude3_6_0_,
+        region0_.longitude as longitud4_6_0_,
+        region0_.place_name as place_na5_6_0_,
+        carwash1_.id as id1_1_1_,
+        carwash1_.des as des2_1_1_,
+        carwash1_.name as name3_1_1_,
+        carwash1_.price as price4_1_1_,
+        carwash1_.rate as rate5_1_1_,
+        carwash1_.r_id as r_id7_1_1_,
+        carwash1_.tel as tel6_1_1_,
+        carwash1_.u_id as u_id8_1_1_ 
+    from
+        region region0_ 
+    left outer join
+        carwash carwash1_ 
+            on region0_.id=carwash1_.r_id 
+    where
+        region0_.id=?
+Hibernate: 
+    select
+        carwash0_.id as id1_1_1_,
+        carwash0_.des as des2_1_1_,
+        carwash0_.name as name3_1_1_,
+        carwash0_.price as price4_1_1_,
+        carwash0_.rate as rate5_1_1_,
+        carwash0_.r_id as r_id7_1_1_,
+        carwash0_.tel as tel6_1_1_,
+        carwash0_.u_id as u_id8_1_1_,
+        region1_.id as id1_6_0_,
+        region1_.address as address2_6_0_,
+        region1_.latitude as latitude3_6_0_,
+        region1_.longitude as longitud4_6_0_,
+        region1_.place_name as place_na5_6_0_ 
+    from
+        carwash carwash0_ 
+    inner join
+        region region1_ 
+            on carwash0_.r_id=region1_.id 
+    where
+        carwash0_.r_id=?
+Hibernate: 
+    select
+        bay0_.id as id1_0_0_,
+        bay0_.bay_num as bay_num2_0_0_,
+        bay0_.bay_type as bay_type3_0_0_,
+        bay0_.w_id as w_id5_0_0_,
+        bay0_.status as status4_0_0_ 
+    from
+        bay bay0_ 
+    where
+        bay0_.id=?
+Hibernate: 
+    select
+        user0_.id as id1_11_,
+        user0_.credit as credit2_11_,
+        user0_.email as email3_11_,
+        user0_.password as password4_11_,
+        user0_.r_id as r_id8_11_,
+        user0_.role as role5_11_,
+        user0_.tel as tel6_11_,
+        user0_.username as username7_11_ 
+    from
+        user user0_ 
+    where
+        user0_.email=?
+Hibernate: 
+    insert 
+    into
+        reservation
+        (b_id, date, end_time, price, start_time, u_id) 
+    values
+        (?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        reservation
+        (b_id, date, end_time, price, start_time, u_id) 
+    values
+        (?, ?, ?, ?, ?, ?)
+Hibernate: 
+    update
+        bay 
+    set
+        bay_num=?,
+        bay_type=?,
+        w_id=?,
+        status=? 
+    where
+        id=?
 Hibernate: 
     select
         bay0_.id as id1_0_,
@@ -67,52 +172,19 @@ Hibernate:
         bay0_.w_id as w_id5_0_,
         bay0_.status as status4_0_ 
     from
-        bay bay0_ limit ?
-bayId : 1
+        bay bay0_ 
+    left outer join
+        carwash carwash1_ 
+            on bay0_.w_id=carwash1_.id 
+    where
+        carwash1_.id=?
 Hibernate: 
     select
-        carwash0_.id as id1_1_0_,
-        carwash0_.des as des2_1_0_,
-        carwash0_.name as name3_1_0_,
-        carwash0_.price as price4_1_0_,
-        carwash0_.rate as rate5_1_0_,
-        carwash0_.r_id as r_id7_1_0_,
-        carwash0_.tel as tel6_1_0_,
-        carwash0_.u_id as u_id8_1_0_,
-        region1_.id as id1_6_1_,
-        region1_.address as address2_6_1_,
-        region1_.latitude as latitude3_6_1_,
-        region1_.longitude as longitud4_6_1_,
-        region1_.place_name as place_na5_6_1_ 
+        bay0_.id as col_0_0_ 
     from
-        carwash carwash0_ 
-    inner join
-        region region1_ 
-            on carwash0_.r_id=region1_.id 
+        bay bay0_ 
     where
-        carwash0_.id=?
-Hibernate: 
-    insert 
-    into
-        reservation
-        (b_id, date, end_time, price, start_time, u_id) 
-    values
-        (?, ?, ?, ?, ?, ?)
-응답 Body : {"success":true,"response":null,"error":null}
-Hibernate: 
-    select
-        user0_.id as id1_11_,
-        user0_.credit as credit2_11_,
-        user0_.email as email3_11_,
-        user0_.password as password4_11_,
-        user0_.r_id as r_id8_11_,
-        user0_.role as role5_11_,
-        user0_.tel as tel6_11_,
-        user0_.username as username7_11_ 
-    from
-        user user0_ 
-    where
-        user0_.email=?
+        bay0_.w_id=?
 Hibernate: 
     select
         reservatio0_.id as id1_7_,
@@ -123,9 +195,16 @@ Hibernate:
         reservatio0_.start_time as start_ti5_7_,
         reservatio0_.u_id as u_id7_7_ 
     from
-        reservation reservatio0_
-Reservation(id=1, price=200, date=2023-10-05, startTime=10:00, endTime=11:00, bay=bdbe.bdbd.bay.Bay@7785430c, user=bdbe.bdbd.user.User@4e293c35)
-2023-10-05 00:46:46.115  INFO 27031 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Rolled back transaction for test: [DefaultTestContext@6105f8a3 testClass = ReservationRestControllerTest, testInstance = bdbe.bdbd.reservation.ReservationRestControllerTest@618d2191, testMethod = save_test@ReservationRestControllerTest, testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@2237bada testClass = ReservationRestControllerTest, locations = '{}', classes = '{class bdbe.bdbd.BdbdApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@27953a83, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@4b3fa0b3, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@388ba540, [ImportsContextCustomizer@77e2a6e2 key = [org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebClientAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebDriverAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityConfiguration, org.springframework.boot.test.autoconfigure.web.reactive.WebTestClientAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@7bc10d84, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@7e38a7fe, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@56f6d40b, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@589da3f3], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -> true, 'org.springframework.test.context.web.ServletTestExecutionListener.populatedRequestContextHolder' -> true, 'org.springframework.test.context.web.ServletTestExecutionListener.resetRequestContextHolder' -> true, 'org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]
+        reservation reservatio0_ 
+    left outer join
+        bay bay1_ 
+            on reservatio0_.b_id=bay1_.id 
+    where
+        bay1_.id in (
+            ?
+        )
+응답 Body : {"success":true,"response":{"bayList":[{"bayId":1,"bayNo":10,"bayBookedTime":[{"startTime":"10:00:00","endTime":"11:00:00"},{"startTime":"14:00:00","endTime":"16:00:00"}]}]},"error":null}
+2023-10-05 01:44:49.349  INFO 28412 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Rolled back transaction for test: [DefaultTestContext@b09fac1 testClass = ReservationRestControllerTest, testInstance = bdbe.bdbd.reservation.ReservationRestControllerTest@7e641005, testMethod = findAllByCarwash_test@ReservationRestControllerTest, testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@62df0ff3 testClass = ReservationRestControllerTest, locations = '{}', classes = '{class bdbe.bdbd.BdbdApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@6c6c5427, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@4b3fa0b3, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@5827af16, [ImportsContextCustomizer@61019f59 key = [org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebClientAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebDriverAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration, org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration, org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityConfiguration, org.springframework.boot.test.autoconfigure.web.reactive.WebTestClientAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@1433046b, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@4763c727, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@773f7880, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@bb9e6dc], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -> true, 'org.springframework.test.context.web.ServletTestExecutionListener.populatedRequestContextHolder' -> true, 'org.springframework.test.context.web.ServletTestExecutionListener.resetRequestContextHolder' -> true, 'org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
