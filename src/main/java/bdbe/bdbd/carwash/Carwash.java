@@ -37,7 +37,7 @@ public class Carwash{
     private String des; //세차장 설갸명
 
     @Column(name="price", nullable = true)
-    private int price; //별점
+    private int price; //30분당 가격
 
     @OneToOne //일대일-소유측
     @JoinColumn(name="r_id", nullable = false) //외래키
