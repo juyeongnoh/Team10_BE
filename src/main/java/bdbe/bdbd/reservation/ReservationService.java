@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +76,8 @@ public class ReservationService {
         List<ReservationInfoDTO> current = new ArrayList<>();
         List<ReservationInfoDTO> upcoming = new ArrayList<>();
         List<ReservationInfoDTO> completed = new ArrayList<>();
-        // 현재 시간 가져오기
+        // 현재 날짜, 시간 가져오기
+        LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
         // 예약 분류하기
         for (Reservation reservation : reservationList) {
@@ -83,15 +85,26 @@ public class ReservationService {
                     .orElseThrow(() -> new EntityNotFoundException("Bay not found"));
             Carwash carwash = carwashJPARepository.findById(bay.getCarwash().getId())
                     .orElseThrow(() -> new EntityNotFoundException("Carwash not found"));
-            // 진행중인 예약일 경우
-            if (now.isAfter(reservation.getStartTime()) && now.isBefore(reservation.getEndTime())) {
-                current.add(new ReservationInfoDTO(reservation, bay, carwash));
-                // 예정된 예약일 경우
-            } else if (now.isBefore(reservation.getStartTime())) {
-                upcoming.add(new ReservationInfoDTO(reservation, bay, carwash));
-                // 완료된 예약일 경우
-            } else if (now.isAfter(reservation.getEndTime())) {
+            // 예약 분류하기
+            if (reservation.getDate().equals(today)) { // 오늘일 경우
+                // 진행중인 예약일 경우 (현재시간이 예약의 시작시간 이후, 종료시간 전)
+                if (now.isAfter(reservation.getStartTime()) && now.isBefore(reservation.getEndTime())) {
+                    current.add(new ReservationInfoDTO(reservation, bay, carwash));
+                }
+                // 예정된 예약일 경우 (현재시간이 예약의 시작시간 전)
+                else if (now.isBefore(reservation.getStartTime())) {
+                    upcoming.add(new ReservationInfoDTO(reservation, bay, carwash));
+                }
+                // 완료된 예약일 경우 (현재시간이 예약의 종료시간 이후)
+                else if (now.isAfter(reservation.getEndTime())) {
+                    completed.add(new ReservationInfoDTO(reservation, bay, carwash));
+                }
+            } else if (reservation.getDate().isBefore(today)) {
+                // 예약날짜가 현재날짜 이전인 경우
                 completed.add(new ReservationInfoDTO(reservation, bay, carwash));
+            } else if (reservation.getDate().isAfter(today)) {
+                // 예약날짜가 현재날짜 이후인 경우
+                upcoming.add(new ReservationInfoDTO(reservation, bay, carwash));
             } else {
                 throw new IllegalStateException("reservation id: " + reservation.getId() + " 예약 상태가 올바르지 않습니다");
             }
