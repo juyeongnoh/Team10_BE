@@ -134,6 +134,7 @@ public class ReservationResponse {
     @Getter
     @Setter
     public static class ReservationInfoDTO{
+        private Long id; // 예약 id
         private LocalDate date;
         private TimeDTO time;
         private String carwashName;
@@ -141,6 +142,7 @@ public class ReservationResponse {
         private int price;
 //        private String image;
         public ReservationInfoDTO(Reservation reservation, Bay bay, Carwash carwash) {
+            this.id = reservation.getId();
             this.date = reservation.getDate();
             TimeDTO timeDTO = new TimeDTO();
             timeDTO.start = reservation.getStartTime();
