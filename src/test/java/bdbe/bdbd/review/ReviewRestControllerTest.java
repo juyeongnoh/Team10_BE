@@ -1,9 +1,13 @@
 package bdbe.bdbd.review;
 
+import bdbe.bdbd.bay.Bay;
+import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.region.Region;
 import bdbe.bdbd.region.RegionJPARepository;
+import bdbe.bdbd.reservation.Reservation;
+import bdbe.bdbd.reservation.ReservationJPARepository;
 import bdbe.bdbd.rkeyword.Rkeyword;
 import bdbe.bdbd.rkeyword.RkeywordJPARepository;
 import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeyword;
@@ -24,6 +28,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -59,6 +65,12 @@ public class ReviewRestControllerTest {
 
     @Autowired
     ReviewKeywordJPARepository reviewKeywordJPARepository;
+
+    @Autowired
+    BayJPARepository bayJPARepository;
+
+    @Autowired
+    ReservationJPARepository reservationJPARepository;
 
     @Autowired
     private ObjectMapper om;
@@ -100,10 +112,30 @@ public class ReviewRestControllerTest {
                 .map(Rkeyword::getId)
                 .collect(Collectors.toList());
 
+        Bay bay = Bay.builder()
+                .bayNum(10)
+                .bayType(2)
+                .carwash(savedCarwash)
+                .status(1)
+                .build();
+        Bay savedBay = bayJPARepository.save(bay);
+
+        Reservation reservation = Reservation.builder()
+                .id(20L)
+                .price(5000)
+                .date(LocalDate.now().plusDays(1))
+                .startTime(LocalTime.of(10, 0)) // 10:00 AM
+                .endTime(LocalTime.of(11, 0))  // 11:00 AM
+                .bay(savedBay)
+                .user(user)
+                .build();
+        Reservation savedReservation = reservationJPARepository.save(reservation);
+
 
         ReviewRequest.SaveDTO dto = new ReviewRequest.SaveDTO();
         dto.setCarwashId(savedCarwash.getId());
         dto.setRKeywordIdList(keywordIds);
+        dto.setReservationId(savedReservation.getId());
         dto.setRate(5);
         dto.setComment("좋네요");
 
