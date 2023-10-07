@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -120,7 +121,7 @@ public class ReservationRestControllerTest {
 //        resultActions.andExpect(jsonPath("$.success").value("true"));
 //    }
 
-    @WithUserDetails(value = "user@nate.com")
+//    @WithUserDetails(value = "user@nate.com")
     @Test
     @DisplayName("예약 기능")
     public void save_test() throws Exception {
@@ -205,6 +206,67 @@ public class ReservationRestControllerTest {
         //when
         ResultActions resultActions = mvc.perform(
                 get(String.format("/carwashes/%d/bays", carwash.getId()))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+        //then
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+
+
+    }
+
+    @WithUserDetails(value = "user@nate.com")
+    @Test
+    @DisplayName("결제 후 예약 내역 조회")
+    public void fetchLatestReservation_test() throws Exception {
+        //given
+        Region region = Region.builder().build();
+        Region savedRegion = regionJPARepository.save(region);
+
+//        User user = User.builder()
+//                .role("USER")
+//                .email("user@nate.com")
+//                .password("user1234!")
+//                .username("useruser")
+//                .build();
+//        User savedUser = userJPARepository.save(user);
+        User user = userJPARepository.findByEmail("user@nate.com")
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+
+
+        Carwash carwash = Carwash.builder()
+                .price(100)
+                .name("세차장")
+                .des("좋은 세차장입니다.")
+                .tel("010-2222-3333")
+                .region(savedRegion)
+                .user(user)
+                .build();
+        Carwash savedCarwash = carwashJPARepository.save(carwash);
+        Bay bay = Bay.builder()
+                .bayNum(10)
+                .bayType(2)
+                .carwash(carwash)
+                .status(1)
+                .build();
+        Bay savedBay = bayJPARepository.save(bay);
+
+//        User user = userJPARepository.findByEmail("user@nate.com").orElseThrow(()->new IllegalArgumentException("user not found"));
+//         예약 1
+        Reservation reservation = Reservation.builder()
+                .price(5000)
+                .date(LocalDate.now())
+                .startTime(LocalTime.of(10, 0)) // 10:00 AM
+                .endTime(LocalTime.of(11, 0))  // 11:00 AM
+                .bay(savedBay)
+                .user(user)
+                .build();
+        reservationJPARepository.save(reservation);
+
+        //when
+        ResultActions resultActions = mvc.perform(
+                get("/reservations")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
         //then

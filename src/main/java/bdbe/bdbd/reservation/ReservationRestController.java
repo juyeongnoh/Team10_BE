@@ -5,11 +5,7 @@ import bdbe.bdbd._core.errors.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -18,7 +14,7 @@ public class ReservationRestController {
 
     private final ReservationService reservationService;
 
-    // 예약하기
+    // 세차장 예약하기
     @PostMapping("/carwashes/{carwash_id}/bays/{bay_id}/reservations")
     public ResponseEntity<?> save(
             @PathVariable("carwash_id") Long carwashId,
@@ -32,7 +28,7 @@ public class ReservationRestController {
 
     }
 
-    // 예약 내역 보여주기
+    // 세차장별 예약 내역 조회
     @GetMapping("/carwashes/{carwash_id}/bays")
     public ResponseEntity<?> findAllByCarwash(
             @PathVariable("carwash_id") Long carwashId,
@@ -42,6 +38,16 @@ public class ReservationRestController {
         ReservationResponse.findAllResponseDTO dto = reservationService.findAllByCarwash(carwashId, userDetails.getUser());
         return ResponseEntity.ok(ApiUtils.success(dto));
 
+    }
+
+    // 결제 후 예약 내역 조회
+    @GetMapping("/reservations")
+    public ResponseEntity<?> fetchLatestReservation(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    )
+    {
+        ReservationResponse.findLatestOneResponseDTO dto = reservationService.fetchLatestReservation(userDetails.getUser());
+        return ResponseEntity.ok(ApiUtils.success(dto));
     }
 
 }

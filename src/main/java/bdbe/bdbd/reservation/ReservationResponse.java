@@ -1,10 +1,13 @@
 package bdbe.bdbd.reservation;
 
 import bdbe.bdbd.bay.Bay;
+import bdbe.bdbd.carwash.Carwash;
+import bdbe.bdbd.region.Region;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,6 +54,63 @@ public class ReservationResponse {
             private LocalTime endTime;
         }
 
+    }
+    @Getter
+    @Setter
+    @ToString
+    public static class findLatestOneResponseDTO {
+        private ReservationDTO reservation;
+        private CarwashDTO carwash;
+
+        public findLatestOneResponseDTO(Reservation reservation, Bay bay, Carwash carwash, Region region) {
+            ReservationDTO reservationDTO = new ReservationDTO();
+            reservationDTO.date = reservation.getDate();
+            TimeDTO timeDTO = new TimeDTO();
+            timeDTO.start = reservation.getStartTime();
+            timeDTO.end = reservation.getEndTime();
+            reservationDTO.time = timeDTO;
+            reservationDTO.price = reservation.getPrice();
+            reservationDTO.bayNo = bay.getBayNum();
+            this.reservation = reservationDTO;
+
+            CarwashDTO carwashDTO = new CarwashDTO();
+            carwashDTO.name = carwash.getName();
+            RegionDTO regionDTO = new RegionDTO();
+            regionDTO.latitude = region.getLatitude();
+            regionDTO.longitude = region.getLongitude();
+            carwashDTO.region = regionDTO;
+            this.carwash = carwashDTO;
+        }
+    }
+    @Getter
+    @Setter
+    @ToString
+    public static class ReservationDTO {
+        private LocalDate date;
+        private TimeDTO time;
+        private int price;
+        private int bayNo; // 예약된 베이 번호
+    }
+    @Getter
+    @Setter
+    @ToString
+    public static class CarwashDTO {
+        private String name;
+        private RegionDTO region;
+    }
+    @Getter
+    @Setter
+    @ToString
+    public static class TimeDTO{
+        private LocalTime start;
+        private LocalTime end;
+    }
+    @Getter
+    @Setter
+    @ToString
+    public static class RegionDTO{
+        private double latitude;
+        private double longitude;
     }
 
 }

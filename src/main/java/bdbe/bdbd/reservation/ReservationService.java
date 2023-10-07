@@ -5,28 +5,16 @@ import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
-import bdbe.bdbd.keyword.Keyword;
-import bdbe.bdbd.keyword.KeywordJPARepository;
-import bdbe.bdbd.keyword.carwashKeyword.CarwashKeyword;
-import bdbe.bdbd.keyword.carwashKeyword.CarwashKeywordJPARepository;
-import bdbe.bdbd.optime.Optime;
-import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.region.Region;
 import bdbe.bdbd.region.RegionJPARepository;
-import bdbe.bdbd.review.Review;
 import bdbe.bdbd.user.User;
-import bdbe.bdbd.user.UserJPARepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -35,6 +23,8 @@ public class ReservationService {
     private final ReservationJPARepository reservationJPARepository;
     private final CarwashJPARepository carwashJPARepository;
     private final BayJPARepository bayJPARepository;
+    private final RegionJPARepository regionJPARepository;
+
 
     @Transactional // 트랜잭션 시작
     public void save(ReservationRequest.SaveDTO dto, Long carwashId, Long bayId, User sessionUser) {
@@ -56,4 +46,20 @@ public class ReservationService {
         List<Reservation> reservationList = reservationJPARepository.findByBayIdIn(bayIdList);
         return new ReservationResponse.findAllResponseDTO(bayList, reservationList);
     }
+
+    public ReservationResponse.findLatestOneResponseDTO fetchLatestReservation(User sessionUser){
+        // 가장 최근의 예약 찾기
+        Reservation reservation = reservationJPARepository.findTopByUserIdOrderByIdDesc(sessionUser.getId())
+                .orElseThrow(() -> new NoSuchElementException("no reservation found"));
+        // 예약과 관련된 베이 찾기
+        Bay bay = bayJPARepository.findById(reservation.getBay().getId())
+                .orElseThrow(() -> new NoSuchElementException("no bay found"));
+        // 베이가 속해있는 세차장 찾기
+        Carwash carwash = carwashJPARepository.findById(bay.getCarwash().getId())
+                .orElseThrow(() -> new NoSuchElementException("no carwash found"));
+        // 세차장이 위치한 위치 찾기
+        Region region = regionJPARepository.findById(carwash.getRegion().getId())
+                .orElseThrow(() -> new NoSuchElementException("no region found"));
+            return new ReservationResponse.findLatestOneResponseDTO(reservation, bay, carwash, region);
+        }
 }
