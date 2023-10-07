@@ -74,7 +74,6 @@ public class ReviewRestControllerTest {
         Region savedRegion = regionJPARepository.save(region);
 
         User user = User.builder()
-                .region(savedRegion)
                 .role("USER")
                 .email("hi5@nate.com")
                 .password("user1234!")
