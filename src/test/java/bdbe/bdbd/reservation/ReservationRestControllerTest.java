@@ -75,7 +75,6 @@ public class ReservationRestControllerTest {
 //        Region savedRegion = regionJPARepository.save(region);
 //
 //        User user = User.builder()
-//                .region(savedRegion)
 //                .role("USER")
 //                .email("user3@nate.com")
 //                .password("user1234!")
@@ -121,31 +120,30 @@ public class ReservationRestControllerTest {
 //        resultActions.andExpect(jsonPath("$.success").value("true"));
 //    }
 
-//    @WithUserDetails(value = "user@nate.com")
+    @WithUserDetails(value = "user@nate.com")
     @Test
     @DisplayName("예약 기능")
     public void save_test() throws Exception {
         // given
+        Long carwashId = carwashJPARepository.findFirstBy().getId();
+        System.out.println("carwashId : "+ carwashId);
+        Long bayId = bayJPARepository.findFirstBy().getId();
+        System.out.println("bayId : " + bayId);
+        if(carwashId==null || bayId==null) throw new IllegalArgumentException("not found carwash or bay");
         // dto 생성
         SaveDTO saveDTO = new SaveDTO();
-        // SaveDTO 객체 생성 및 값 설정
-        saveDTO.setBayId(1L);
+//        // SaveDTO 객체 생성 및 값 설정
+        saveDTO.setBayId(bayId);
         saveDTO.setSelectedDate(LocalDate.now());  // 오늘 날짜로 설정
 
         SaveDTO.TimeDTO timeDTO = new SaveDTO.TimeDTO();
         timeDTO.setStart(LocalTime.of(10, 0));  // 10:00으로 시작 시간 설정
         timeDTO.setEnd(LocalTime.of(11, 00));    // 11:00으로 끝나는 시간 설정
         saveDTO.setTime(timeDTO);
-
-//        Long carwashId = carwashJPARepository.findFirstBy().getId();
-//        System.out.println("carwashId : "+ carwashId);
-        Long bayId = bayJPARepository.findFirstBy().getId();
-        System.out.println("bayId : " + bayId);
-//        if(carwashId==null || bayId==null) throw new IllegalArgumentException("not found carwash or bay");
-        // when
+//         when
 //        /carwashes/{carwash_id}/bays/{bay_id}/reservations
         ResultActions resultActions = mvc.perform(
-                post(String.format("/carwashes/%d/bays/%d/reservations", 8L, bayId))
+                post(String.format("/carwashes/%d/bays/%d/reservations", carwashId, bayId))
                         .content(om.writeValueAsString(saveDTO))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
@@ -173,7 +171,6 @@ public class ReservationRestControllerTest {
         //given
         Carwash carwash = carwashJPARepository.findFirstBy();
         Bay bay = Bay.builder()
-                .id(1L)
                 .bayNum(10)
                 .bayType(2)
                 .carwash(carwash)

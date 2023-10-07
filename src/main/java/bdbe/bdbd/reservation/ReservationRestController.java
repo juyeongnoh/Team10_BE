@@ -50,4 +50,14 @@ public class ReservationRestController {
         return ResponseEntity.ok(ApiUtils.success(dto));
     }
 
+    // 현재 시간 기준 예약 내역 조회
+    @GetMapping("/reservations/current-status")
+    public ResponseEntity<?> fetchCurrentStatusReservation(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    )
+    {
+        ReservationResponse.fetchCurrentStatusReservationDTO dto = reservationService.fetchCurrentStatusReservation(userDetails.getUser());
+        return ResponseEntity.ok(ApiUtils.success(dto));
+    }
+
 }

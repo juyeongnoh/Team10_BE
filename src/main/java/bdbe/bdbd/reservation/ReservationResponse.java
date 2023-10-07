@@ -2,6 +2,7 @@ package bdbe.bdbd.reservation;
 
 import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.carwash.Carwash;
+import bdbe.bdbd.file.File;
 import bdbe.bdbd.region.Region;
 import lombok.Getter;
 import lombok.Setter;
@@ -79,6 +80,7 @@ public class ReservationResponse {
             regionDTO.latitude = region.getLatitude();
             regionDTO.longitude = region.getLongitude();
             carwashDTO.region = regionDTO;
+//            carwashDTO.imagePath = image.getPath();
             this.carwash = carwashDTO;
         }
     }
@@ -97,6 +99,7 @@ public class ReservationResponse {
     public static class CarwashDTO {
         private String name;
         private RegionDTO region;
+//        private String imagePath;
     }
     @Getter
     @Setter
@@ -111,6 +114,42 @@ public class ReservationResponse {
     public static class RegionDTO{
         private double latitude;
         private double longitude;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class fetchCurrentStatusReservationDTO {
+        private List<ReservationInfoDTO> current;
+        private List<ReservationInfoDTO> upcoming;
+        private List<ReservationInfoDTO> completed;
+
+        public fetchCurrentStatusReservationDTO(List<ReservationInfoDTO> current, List<ReservationInfoDTO> upcoming, List<ReservationInfoDTO> completed) {
+            this.current = current;
+            this.upcoming = upcoming;
+            this.completed = completed;
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class ReservationInfoDTO{
+        private LocalDate date;
+        private TimeDTO time;
+        private String carwashName;
+        private int bayNum;
+        private int price;
+//        private String image;
+        public ReservationInfoDTO(Reservation reservation, Bay bay, Carwash carwash) {
+            this.date = reservation.getDate();
+            TimeDTO timeDTO = new TimeDTO();
+            timeDTO.start = reservation.getStartTime();
+            timeDTO.end = reservation.getEndTime();
+            this.time = timeDTO;
+            this.carwashName = carwash.getName();
+            this.bayNum = bay.getBayNum();
+            this.price = reservation.getPrice();
+        }
     }
 
 }
