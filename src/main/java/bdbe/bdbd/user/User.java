@@ -1,6 +1,5 @@
 package bdbe.bdbd.user;
 
-import bdbe.bdbd.region.Region;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,9 +18,6 @@ public class User{
     @Column(columnDefinition = "BIGINT")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) //외래키
-    @JoinColumn(name="r_id",  nullable = false)
-    private Region region;
 
     @Column(length = 100, nullable = false, unique = true)
     private String email; // 인증시 필요한 필드
@@ -38,9 +34,8 @@ public class User{
     private String tel;
 
     @Builder
-    public User(Long id, Region region, String email, String password, String username, String role, int credit, String tel) {
+    public User(Long id, String email, String password, String username, String role, int credit, String tel) {
         this.id = id;
-        this.region = region;
         this.email = email;
         this.password = password;
         this.username = username;
