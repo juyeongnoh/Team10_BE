@@ -21,7 +21,7 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT")
-    private int id;
+    private Long id;
 
     @Column(nullable = true)
     private int price;
@@ -45,7 +45,7 @@ public class Reservation {
 
 
     @Builder
-    public Reservation(int id, int price, LocalDate date, LocalTime startTime, LocalTime endTime, Bay bay, User user) {
+    public Reservation(Long id, int price, LocalDate date, LocalTime startTime, LocalTime endTime, Bay bay, User user) {
         this.id = id;
         this.price = price;
         this.date = date;
