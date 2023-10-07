@@ -12,7 +12,7 @@ public interface ReservationJPARepository extends JpaRepository<Reservation, Lon
 
     List<Reservation> findReservationsByBayId(Long bayId); // 베이의 예약 목록 찾기
 
-    List<Reservation> findReservationByUserId(Long userId); // userId의 예약 목록 찾기
+    List<Reservation> findByUserId(Long userId); // user의 예약 목록 찾기
 
 
     List<Reservation> findReservationByBayIdAndUserId(Long bayId, Long userId);
