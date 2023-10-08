@@ -73,10 +73,15 @@ public class SecurityConfig {
         // 11. 인증, 권한 필터 설정
         http.authorizeRequests(
                 authorize -> authorize
+                        .antMatchers("/owner/join", "/owner/login").permitAll()
+                        .antMatchers("/user/join", "/user/login").permitAll()
+                        .antMatchers("/admin/join", "/admin/login").permitAll()
+                        .antMatchers("/user/check", "/user/check").permitAll()
+                        .antMatchers("/owner/check", "/owner/check").permitAll()
                         .antMatchers("/owner/**").hasRole("OWNER")
                         .antMatchers("/user/**").hasRole("USER")
                         .antMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
         );
         //오너와 사용자 어드민 세가지로 url 접근 수정
 
