@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-// 로그인을 직접 서비스에서 할 예정이기 때문에, 사용은 안하겠지만
-// 나중에 통합테스트시에 유용하게 사용할 수 있기 때문에 나두자.
+// FIXME: 로그인은 직접 서비스에서 처리할 예정, 아래 메서드는 통합 테스트시 사용예정
 @RequiredArgsConstructor
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
