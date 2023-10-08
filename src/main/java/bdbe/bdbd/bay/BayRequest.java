@@ -4,6 +4,7 @@ import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.file.File;
 import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.region.Region;
+import bdbe.bdbd.reservation.ReservationResponse;
 import bdbe.bdbd.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +22,12 @@ public class BayRequest {
     @Setter
     @ToString
     public static class SaveDTO {
+
+        private Long bayId;
+        private Long carwashId;
+        private int bayNum;
+        private int status;
+
         @NotEmpty
         private String name;
         @NotNull
@@ -33,6 +40,15 @@ public class BayRequest {
         private List<Long> keywordId;
         private String description;
         private String tel;
+
+        public Bay toBayEntity(Carwash carwash) {
+            return Bay.builder()
+                    .id(bayId)
+                    .carwash(carwash)
+                    .bayNum(bayNum)
+                    .status(status)
+                    .build();
+        }
 
 
         public Carwash toCarwashEntity(Region region, User user) {
