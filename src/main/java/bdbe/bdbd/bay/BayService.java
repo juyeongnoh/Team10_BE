@@ -30,12 +30,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class BayService {
+    private final BayJPARepository bayJPARepository;
     private final CarwashJPARepository carwashJPARepository;
     private final KeywordJPARepository keywordJPARepository;
     private final RegionJPARepository regionJPARepository;
     private final OptimeJPARepository optimeJPARepository;
     private final CarwashKeywordJPARepository carwashKeywordJPARepository;
-    private final UserJPARepository userJPARepository;
 
     public List<CarwashResponse.FindAllDTO> findAll(int page) {
         // 1. 페이지 객체 만들기
@@ -74,4 +74,26 @@ public class BayService {
         }
         carwashKeywordJPARepository.saveAll(carwashKeywordList);
     } //변경감지, 더티체킹, flush, 트랜잭션 종료
+
+    public void createBay(BayRequest.SaveDTO dto) {
+        Carwash carwash = carwashJPARepository.findById(dto.getCarwashId())
+                .orElseThrow(() -> new IllegalArgumentException("Carwash not found"));
+        Bay bay = dto.toBayEntity(carwash);
+        System.out.println(bay);
+        bayJPARepository.save(bay);
+    }
+
+    public void deleteBay(BayRequest.SaveDTO saveDTO) {
+        Carwash carwash = carwashJPARepository.findById(saveDTO.getCarwashId())
+                .orElseThrow(() -> new IllegalArgumentException("Carwash not found"));
+
+        Object bay = bayJPARepository.findAllById(saveDTO.getBayId())
+                .orElseThrow(() -> new IllegalArgumentException("Bay not found"));
+
+        bayJPARepository.delete((Bay) bay);
+    }
+
+    public void statusBay(BayRequest.SaveDTO saveDTO) {
+
+    }
 }
