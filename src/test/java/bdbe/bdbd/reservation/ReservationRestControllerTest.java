@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 //@ActiveProfiles("test") //test profile 사용
-@Transactional
+//@Transactional
 @AutoConfigureMockMvc //MockMvc 사용
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 //통합테스트(SF-F-DS(Handler, ExHandler)-C-S-R-PC-DB) 다 뜬다.
@@ -102,23 +102,23 @@ public class ReservationRestControllerTest {
 //        bayJPARepository.save(bay);
     }
 
-//    @Test
-//    @DisplayName("찾기")
-//    public void findAll_test() throws Exception {
-//        // given
-//
-//        // when
-//        ResultActions resultActions = mvc.perform(
-//                get("/carwashes")
-//        );
-//
-//        // eye
-//        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-//        System.out.println("응답 Body : " + responseBody);
-//
-//        // verify
-//        resultActions.andExpect(jsonPath("$.success").value("true"));
-//    }
+    @Test
+    @DisplayName("찾기")
+    public void findAll_test() throws Exception {
+        // given
+
+        // when
+        ResultActions resultActions = mvc.perform(
+                get("/carwashes")
+        );
+
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+
+        // verify
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+    }
 
     @WithUserDetails(value = "user@nate.com")
     @Test
