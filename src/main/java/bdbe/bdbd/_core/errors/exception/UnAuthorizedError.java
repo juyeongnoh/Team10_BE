@@ -6,11 +6,13 @@ import bdbe.bdbd._core.errors.utils.ApiUtils;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-// 401 : Unauthorized (권한 없음)
-// 인증 안됨, 액세스 권한 없음
+/**
+ * HTTP 상태 코드 401 (Unauthorized) : 권한 없음
+ * 인증이 안되거나 액세스 권한 없을 때 발생합니다.
+ */
 @Getter
-public class UnAuthorizedError401 extends RuntimeException {
-    public UnAuthorizedError401(String message) {
+public class UnAuthorizedError extends RuntimeException {
+    public UnAuthorizedError(String message) {
         super(message);
     }
 

@@ -5,12 +5,13 @@ import bdbe.bdbd._core.errors.utils.ApiUtils;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-
-// 404 : Not Found (찾을 수 없음)
-// 리소스 찾을 수 없음
+/**
+ * HTTP 상태 코드 404 (Not Found)
+ * 리소스 찾을 수 없을 때 발생합니다.
+ */
 @Getter
-public class NotFoundError404 extends RuntimeException {
-    public NotFoundError404(String message) {
+public class NotFoundError extends RuntimeException {
+    public NotFoundError(String message) {
         super(message);
     }
 

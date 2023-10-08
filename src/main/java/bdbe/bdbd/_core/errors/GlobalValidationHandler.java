@@ -1,7 +1,7 @@
 package bdbe.bdbd._core.errors;
 
 
-import bdbe.bdbd._core.errors.exception.BadRequestError400;
+import bdbe.bdbd._core.errors.exception.BadRequestError;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -23,9 +23,11 @@ public class GlobalValidationHandler {
             if (arg instanceof Errors) {
                 Errors errors = (Errors) arg;
 
-                if (errors.hasErrors()) {
-                    throw new BadRequestError400(
-                            errors.getFieldErrors().get(0).getDefaultMessage()+":"+errors.getFieldErrors().get(0).getField()
+                if (errors.hasErrors()) { // 검증 오류 발생시 400
+                    throw new BadRequestError(
+                            String.format("%s:%s",
+                                    errors.getFieldErrors().get(0).getDefaultMessage(),
+                                    errors.getFieldErrors().get(0).getField())
                     );
                 }
             }
