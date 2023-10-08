@@ -5,11 +5,12 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 
-// 유효성 검사 실패, 잘못된 파라메터 요청
+// 400 : Bad Request(잘못된 요청)
+// 유효성 검사 실패, 잘못된 파라미터 요청
 @Getter
-public class Exception400 extends RuntimeException {
+public class BadRequestError400 extends RuntimeException {
 
-    public Exception400(String message) {
+    public BadRequestError400(String message) {
         super(message);
     }
 

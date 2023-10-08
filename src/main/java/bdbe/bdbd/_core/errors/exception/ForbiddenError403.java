@@ -6,10 +6,11 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 
-// 권한 없음
+// 403 : Forbidden (금지됨)
+// 인증이외의 이유, 액세스 권한 없음
 @Getter
-public class Exception403 extends RuntimeException {
-    public Exception403(String message) {
+public class ForbiddenError403 extends RuntimeException {
+    public ForbiddenError403(String message) {
         super(message);
     }
 
