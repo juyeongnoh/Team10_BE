@@ -25,6 +25,9 @@ public class Bay {
     @Column(name="bay_num", nullable = false)
     private int bayNum;
 
+    @Column(name="bay_type", nullable = true)
+    private int bayType;
+
     @ManyToOne(fetch = FetchType.LAZY) //외래키
     @JoinColumn(name="w_id",  nullable = false)
     private Carwash carwash;
@@ -36,17 +39,12 @@ public class Bay {
     private List<Reservation> reservationList = new ArrayList<>();
 
     @Builder
-    public Bay(Long id, int bayNum, int bayType, Carwash carwash, int status) {
+    public Bay(Long id, int bayNum, int bayType, Carwash carwash, int status, List<Reservation> reservationList) {
         this.id = id;
         this.bayNum = bayNum;
+        this.bayType = bayType;
         this.carwash = carwash;
         this.status = status;
-    }
-
-    public void changeStatus(int newStatus) {
-        if (newStatus != 0 && newStatus != 1) {
-            throw new IllegalArgumentException("Invalid status value: " + newStatus);
-        }
-        this.status = newStatus;
+        this.reservationList = reservationList;
     }
 }
