@@ -25,9 +25,6 @@ public class Bay {
     @Column(name="bay_num", nullable = false)
     private int bayNum;
 
-    @Column(name="bay_type", nullable = true)
-    private int bayType;
-
     @ManyToOne(fetch = FetchType.LAZY) //외래키
     @JoinColumn(name="w_id",  nullable = false)
     private Carwash carwash;
@@ -42,7 +39,6 @@ public class Bay {
     public Bay(Long id, int bayNum, int bayType, Carwash carwash, int status) {
         this.id = id;
         this.bayNum = bayNum;
-        this.bayType = bayType;
         this.carwash = carwash;
         this.status = status;
     }
