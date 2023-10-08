@@ -22,8 +22,7 @@ public class BayRequest {
     @Setter
     @ToString
     public static class SaveDTO {
-        @NotNull
-        private Long carwashId;
+
         @NotNull
         private int bayNum;
 
@@ -34,6 +33,14 @@ public class BayRequest {
                     .status(1) // 활성화 상태로 생성
                     .build();
         }
+
+    }
+    @Getter
+    @Setter
+    @ToString
+    public static class DeleteDTO {
+        @NotNull
+        private Long bayId;
 
     }
 
