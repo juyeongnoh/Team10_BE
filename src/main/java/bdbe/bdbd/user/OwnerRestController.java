@@ -1,6 +1,5 @@
 package bdbe.bdbd.user;
 
-import bdbe.bdbd._core.errors.exception.Exception400;
 import bdbe.bdbd._core.errors.security.JWTProvider;
 import bdbe.bdbd._core.errors.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +24,9 @@ public class OwnerRestController {
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
-   //  (기능4) 회원가입
+    // (기능4) 회원가입
     @PostMapping("/join")
-    public ResponseEntity<?> joinOwner(@RequestBody @Valid UserRequest.JoinDTO requestDTO, Errors errors) {
-        requestDTO.setRole(UserRole.ROLE_OWNER);
+    public ResponseEntity<?> join(@RequestBody @Valid UserRequest.JoinDTO requestDTO, Errors errors) {
         ownerService.join(requestDTO);
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
@@ -36,12 +34,8 @@ public class OwnerRestController {
     // (기능5) 로그인
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid UserRequest.LoginDTO requestDTO, Errors errors) {
-        if (errors.hasErrors()) {
-            String errorMessage = errors.getAllErrors().get(0).getDefaultMessage();
-            throw new Exception400(errorMessage);
-        }
-        UserResponse.LoginResponse response = ownerService.login(requestDTO);
-        return ResponseEntity.ok().header(JWTProvider.HEADER, response.getJwtToken()).body(ApiUtils.success(response));
+        String jwt = ownerService.login(requestDTO);
+        return ResponseEntity.ok().header(JWTProvider.HEADER, jwt).body(ApiUtils.success(null));
     }
     // 로그아웃 사용안함 - 프론트에서 JWT 토큰을 브라우저의 localstorage에서 삭제하면 됨.
 }
