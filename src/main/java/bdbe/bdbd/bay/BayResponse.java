@@ -1,12 +1,17 @@
-package bdbe.bdbd.carwash;
+package bdbe.bdbd.bay;
 
+import bdbe.bdbd.carwash.Carwash;
+import bdbe.bdbd.reservation.Reservation;
 import lombok.Getter;
 import lombok.Setter;
 
-public class CarwashResponse {
+import java.util.List;
+
+public class BayResponse {
     @Getter
     @Setter
     public static class FindAllDTO {
+
         private Long id;
         private String des;
         private String name;
@@ -14,6 +19,7 @@ public class CarwashResponse {
         private String tel;
         private Long rId;
         private Long userId;
+
 
         public FindAllDTO(Carwash carwash) {
             this.id = carwash.getId();
@@ -37,5 +43,23 @@ public class CarwashResponse {
         // getters, setters
     }
 
+    @Getter
+    @Setter
+    public static class getBayById{
 
+        private Long id;
+        private Long cid;
+        private int bayNum;
+        private int bayType;
+        private int status;
+        private List<Reservation> reservation;
+
+        public getBayById(Bay bay) {
+            this.id = bay.getId();
+            this.cid = bay.getCarwash().getId();
+            this.bayNum = bay.getBayNum();
+            this.status = bay.getStatus();
+            this.reservation = bay.getReservationList();
+        }
+    }
 }
