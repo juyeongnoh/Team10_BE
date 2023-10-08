@@ -1,8 +1,8 @@
 package bdbe.bdbd._core.errors.security;
 
 
-import bdbe.bdbd._core.errors.exception.UnAuthorizedError401;
-import bdbe.bdbd._core.errors.exception.ForbiddenError403;
+import bdbe.bdbd._core.errors.exception.UnAuthorizedError;
+import bdbe.bdbd._core.errors.exception.ForbiddenError;
 import bdbe.bdbd._core.errors.utils.FilterResponseUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -62,12 +62,12 @@ public class SecurityConfig {
 
         // 8. 인증 실패 처리
         http.exceptionHandling().authenticationEntryPoint((request, response, authException) -> {
-            FilterResponseUtils.unAuthorized(response, new UnAuthorizedError401("인증되지 않았습니다"));
+            FilterResponseUtils.unAuthorized(response, new UnAuthorizedError("인증되지 않았습니다"));
         });
 
         // 9. 권한 실패 처리
         http.exceptionHandling().accessDeniedHandler((request, response, accessDeniedException) -> {
-            FilterResponseUtils.forbidden(response, new ForbiddenError403("권한이 없습니다"));
+            FilterResponseUtils.forbidden(response, new ForbiddenError("권한이 없습니다"));
         });
 
         // 11. 인증, 권한 필터 설정
