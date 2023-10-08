@@ -45,11 +45,11 @@ public class UserService {
 
     public UserResponse.LoginResponse login(UserRequest.LoginDTO requestDTO) {
         User userPS = userJPARepository.findByEmail(requestDTO.getEmail()).orElseThrow(
-                () -> new BadRequestError("이메일을 찾을 수 없습니다 : "+requestDTO.getEmail())
+                () -> new BadRequestError("email not found : "+requestDTO.getEmail())
         );
 
         if(!passwordEncoder.matches(requestDTO.getPassword(), userPS.getPassword())) {
-            throw new BadRequestError("패스워드가 잘못입력되었습니다.");
+            throw new BadRequestError("wrong password");
         }
 
         String jwt = JWTProvider.create(userPS);
@@ -62,7 +62,7 @@ public class UserService {
     public void sameCheckEmail(String email) {
         Optional<User> userOP = userJPARepository.findByEmail(email);
         if (userOP.isPresent()) {
-            throw new BadRequestError("동일한 이메일이 존재합니다 : " + email);
+            throw new BadRequestError("duplicate email exist : " + email);
         }
     }
 

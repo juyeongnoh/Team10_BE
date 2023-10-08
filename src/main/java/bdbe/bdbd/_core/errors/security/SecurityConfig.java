@@ -62,12 +62,12 @@ public class SecurityConfig {
 
         // 인증 실패 처리
         http.exceptionHandling().authenticationEntryPoint((request, response, authException) -> {
-            FilterResponseUtils.unAuthorized(response, new UnAuthorizedError("인증되지 않았습니다"));
+            FilterResponseUtils.unAuthorized(response, new UnAuthorizedError("Not authenticated"));
         });
 
         // 권한 실패 처리
         http.exceptionHandling().accessDeniedHandler((request, response, accessDeniedException) -> {
-            FilterResponseUtils.forbidden(response, new ForbiddenError("권한이 없습니다"));
+            FilterResponseUtils.forbidden(response, new ForbiddenError("Permission denied"));
         });
 
         // 인증, 권한 필터 설정: 오너와 사용자 어드민 세가지로 url 접근 수정

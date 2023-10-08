@@ -34,19 +34,35 @@ public class CarwashService {
     private final UserJPARepository userJPARepository;
 
     public List<CarwashResponse.FindAllDTO> findAll(int page) {
-        // 1. 페이지 객체 만들기
-        Pageable pageable = PageRequest.of(page, 10);
-        // 2. DB 조회하기
-        Page<Carwash> carwashes = carwashJPARepository.findAll(pageable);
-        // 3. DTO 만들기
-        List<CarwashResponse.FindAllDTO> dtos = carwashes.getContent().stream()
-                .map(CarwashResponse.FindAllDTO::new)
-                .collect(Collectors.toList());
-        return dtos;
+        Pageable pageable = createPageRequest(page);
+        Page<Carwash> carwashEntities = carwashJPARepository.findAll(pageable);
+
+        return carwashEntitiesToDTOs(carwashEntities);
     }
 
+    private Pageable createPageRequest(int page) {
+        return PageRequest.of(page, 10);
+    }
 
-    @Transactional // 트랜잭션 시작
+    private List<CarwashResponse.FindAllDTO> carwashEntitiesToDTOs(Page<Carwash> carwashEntities) {
+        return carwashEntities.getContent().stream()
+                .map(CarwashResponse.FindAllDTO::new)
+                .collect(Collectors.toList());
+    }
+//    public List<CarwashResponse.FindAllDTO> findAll(int page) {
+//        // 1. 페이지 객체 만들기
+//        Pageable pageable = PageRequest.of(page, 10);
+//        // 2. DB 조회하기
+//        Page<Carwash> carwashes = carwashJPARepository.findAll(pageable);
+//        // 3. DTO 만들기
+//        List<CarwashResponse.FindAllDTO> dtos = carwashes.getContent().stream()
+//                .map(CarwashResponse.FindAllDTO::new)
+//                .collect(Collectors.toList());
+//        return dtos;
+//    }
+
+
+    @Transactional
     public void save(CarwashRequest.SaveDTO saveDTO, User sessionUser) {
         // 별점은 리뷰에서 계산해서 넣어주기
         // 지역
