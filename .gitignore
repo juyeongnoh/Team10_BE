@@ -6,7 +6,7 @@
 # 빌드, 로컬 설정 파일
 .idea/
 .gradle/
-
+build/
 ### Java ###
 # Compiled class file
 *.class
@@ -91,5 +91,11 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+# 추가
+*.iml
+!gradle-wrapper.jar
+out/
+
+
 
 # End of https://www.toptal.com/developers/gitignore/api/java,windows,macos
