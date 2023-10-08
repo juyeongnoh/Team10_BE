@@ -42,4 +42,11 @@ public class Bay {
         this.carwash = carwash;
         this.status = status;
     }
+
+    public void changeStatus(int newStatus) {
+        if (newStatus != 0 && newStatus != 1) {
+            throw new IllegalArgumentException("Invalid status value: " + newStatus);
+        }
+        this.status = newStatus;
+    }
 }
