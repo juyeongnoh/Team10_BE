@@ -14,7 +14,7 @@ public class ReviewResponse {
         private Long cId;
         private Reservation reservation; //1:1, 참조용(read-only)
         private String comment;
-        private double rate;
+        private int rate;
 
         public getReviewById(Review review) {
             this.id = review.getId();

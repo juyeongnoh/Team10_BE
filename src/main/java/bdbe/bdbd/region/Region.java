@@ -1,5 +1,6 @@
 package bdbe.bdbd.region;
 
+import bdbe.bdbd.carwash.Carwash;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,8 @@ public class Region { //지역
     @Column(nullable = true)
     private double longitude; //경도
 
+    @OneToOne(mappedBy = "region") //양방향 - 비소유측(생성자에 안들어감)
+    private Carwash carwash;
 
     @Builder
     public Region(Long id, String placeName, String address, double latitude, double longitude) {

@@ -1,14 +1,9 @@
 package bdbe.bdbd.user;
 
-import bdbe.bdbd.region.Region;
-import bdbe.bdbd.region.RegionJPARepository;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -31,44 +26,19 @@ public class UserRequest {
         @NotEmpty
         private String username;
 
-//        @NotNull
-//        private Long regionId;
+        @NotEmpty(message = "역할은 필수 입니다.")
+        @Pattern(regexp = "ROLE_USER|ROLE_OWNER", message = "유효하지 않은 역할입니다.")
+        private String role;
 
-        @Enumerated(EnumType.STRING)
-        @NotNull
-        private UserRole role;
-
-        //notNUll 설정 불가 by int
-        private int credit = 0;
-
-        @Size(min = 9, max = 14)
-        @NotEmpty
-        private String tel;
-
-        //        public User toEntity(RegionJPARepository regionRepository) {
-//            Region region = regionRepository.findById(regionId)
-//                    .orElseThrow(() -> new IllegalArgumentException("해당 ID의 Region이 존재하지 않습니다."));
-//
-//            return User.builder()
-//                    .email(email)
-//                    .password(password)
-//                    .username(username)
-//                    .role(String.valueOf(UserRole.ROLE_USER))
-//                    .build();
-//        }
-        public User toEntity(String encodedPassword) {
+        public User toEntity() {
             return User.builder()
                     .email(email)
-                    .password(encodedPassword)
+                    .password(password)
                     .username(username)
-                    .role(String.valueOf(role))
-                    .credit(0)
-                    .tel(tel)
+                    .role(role)
                     .build();
         }
-
     }
-
 
     @Getter
     @Setter
@@ -100,7 +70,5 @@ public class UserRequest {
         private String password;
     }
 
+
 }
-
-
-

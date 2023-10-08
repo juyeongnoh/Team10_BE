@@ -10,7 +10,7 @@ public class CarwashResponse {
         private Long id;
         private String des;
         private String name;
-        private double rate;
+        private int rate;
         private String tel;
         private Long rId;
         private Long userId;
