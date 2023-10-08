@@ -13,30 +13,38 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
+
 public class OwnerService {
          private final PasswordEncoder passwordEncoder;
          private final UserJPARepository userJPARepository;
 
+    @Transactional
     public void join(UserRequest.JoinDTO requestDTO) {
-             sameCheckEmail(requestDTO.getEmail());
+        sameCheckEmail(requestDTO.getEmail());
 
-             requestDTO.setPassword(passwordEncoder.encode(requestDTO.getPassword()));
-             try {
-                 userJPARepository.save(requestDTO.toEntity());
-             } catch (Exception e) {
-                 throw new InternalServerError("unknown server error");
-             }
-         }
+        String encodedPassword = passwordEncoder.encode(requestDTO.getPassword());
 
-    public String login(UserRequest.LoginDTO requestDTO) {
+        try {
+            userJPARepository.save(requestDTO.toEntity(encodedPassword));
+        } catch (Exception e) {
+            throw new InternalServerError("unknown server error");
+        }
+    }
+
+
+    public UserResponse.LoginResponse login(UserRequest.LoginDTO requestDTO) {
         User userPS = userJPARepository.findByEmail(requestDTO.getEmail()).orElseThrow(
                 () -> new BadRequestError("이메일을 찾을 수 없습니다 : "+requestDTO.getEmail())
         );
 
-        if(!passwordEncoder.matches(requestDTO.getPassword(), userPS.getPassword())){
-            throw new BadRequestError("패스워드가 잘못입력되었습니다 ");
+        if(!passwordEncoder.matches(requestDTO.getPassword(), userPS.getPassword())) {
+            throw new BadRequestError("패스워드가 잘못입력되었습니다.");
         }
-        return JWTProvider.create(userPS);
+
+        String jwt = JWTProvider.create(userPS);
+        String redirectUrl = "/owner/home";
+
+        return new UserResponse.LoginResponse(jwt, redirectUrl);
     }
 
 
