@@ -3,29 +3,11 @@ package bdbe.bdbd.bay;
 
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
-import bdbe.bdbd.carwash.CarwashRequest;
-import bdbe.bdbd.carwash.CarwashResponse;
-import bdbe.bdbd.keyword.Keyword;
-import bdbe.bdbd.keyword.KeywordJPARepository;
-import bdbe.bdbd.keyword.carwashKeyword.CarwashKeyword;
-import bdbe.bdbd.keyword.carwashKeyword.CarwashKeywordJPARepository;
-import bdbe.bdbd.optime.Optime;
-import bdbe.bdbd.optime.OptimeJPARepository;
-import bdbe.bdbd.region.Region;
-import bdbe.bdbd.region.RegionJPARepository;
-import bdbe.bdbd.user.User;
-import bdbe.bdbd.user.UserJPARepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -49,7 +31,9 @@ public class BayService {
         } else throw new EntityNotFoundException("bayId : "+ bayId + " not found");
     }
 
-    public void statusBay(BayRequest.SaveDTO saveDTO) {
-
+    public void changeStatus(Long bayId, int status) {
+        Bay bay = bayJPARepository.findById(bayId)
+                .orElseThrow(() -> new IllegalArgumentException("Bay not found"));
+        bay.changeStatus(status);
     }
 }
