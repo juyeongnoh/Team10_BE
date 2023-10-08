@@ -17,4 +17,16 @@ public class UserResponse {
             this.email = user.getEmail();
         }
     }
+
+    @Getter @Setter
+    public static class LoginResponse {
+        private String jwtToken;
+        private String redirectUrl;
+
+        public LoginResponse(String jwtToken, String redirectUrl) {
+            this.jwtToken = jwtToken;
+            this.redirectUrl = redirectUrl;
+        }
+    }
+
 }
