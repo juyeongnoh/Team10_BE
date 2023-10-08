@@ -32,7 +32,7 @@ public class ReservationService {
 //    private final Fil
 
 
-    @Transactional // 트랜잭션 시작
+    @Transactional
     public void save(ReservationRequest.SaveDTO dto, Long carwashId, Long bayId, User sessionUser) {
         Carwash carwash = carwashJPARepository.findById(carwashId)
                 .orElseThrow(() -> new IllegalArgumentException("carwash not found"));
