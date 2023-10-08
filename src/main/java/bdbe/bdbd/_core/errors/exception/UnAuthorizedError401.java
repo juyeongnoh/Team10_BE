@@ -6,11 +6,11 @@ import bdbe.bdbd._core.errors.utils.ApiUtils;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-
-// 인증 안됨
+// 401 : Unauthorized (권한 없음)
+// 인증 안됨, 액세스 권한 없음
 @Getter
-public class Exception401 extends RuntimeException {
-    public Exception401(String message) {
+public class UnAuthorizedError401 extends RuntimeException {
+    public UnAuthorizedError401(String message) {
         super(message);
     }
 
