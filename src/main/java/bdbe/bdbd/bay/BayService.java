@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,22 +35,18 @@ public class BayService {
     private final CarwashJPARepository carwashJPARepository;
 
 
-    public void createBay(BayRequest.SaveDTO dto) {
-        Carwash carwash = carwashJPARepository.findById(dto.getCarwashId())
+    public void createBay(BayRequest.SaveDTO dto, Long carwashId) {
+        Carwash carwash = carwashJPARepository.findById(carwashId)
                 .orElseThrow(() -> new IllegalArgumentException("Carwash not found"));
         Bay bay = dto.toBayEntity(carwash);
         System.out.println(bay);
         bayJPARepository.save(bay);
     }
 
-    public void deleteBay(BayRequest.SaveDTO saveDTO) {
-        Carwash carwash = carwashJPARepository.findById(saveDTO.getCarwashId())
-                .orElseThrow(() -> new IllegalArgumentException("Carwash not found"));
-
-        Object bay = bayJPARepository.findAllById(saveDTO.getBayId())
-                .orElseThrow(() -> new IllegalArgumentException("Bay not found"));
-
-        bayJPARepository.delete((Bay) bay);
+    public void deleteBay(Long bayId) {
+        if (bayJPARepository.existsById(bayId)) { // 존재한다면 삭제
+            bayJPARepository.deleteById(bayId);
+        } else throw new EntityNotFoundException("bayId : "+ bayId + " not found");
     }
 
     public void statusBay(BayRequest.SaveDTO saveDTO) {
