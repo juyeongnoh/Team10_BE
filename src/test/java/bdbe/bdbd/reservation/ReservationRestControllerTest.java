@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,9 +75,8 @@ public class ReservationRestControllerTest {
 //        Region savedRegion = regionJPARepository.save(region);
 //
 //        User user = User.builder()
-//                .region(savedRegion)
 //                .role("USER")
-//                .email("user3@nate.com")
+//                .email("user@nate.com")
 //                .password("user1234!")
 //                .username("useruser")
 //                .build();
@@ -125,26 +125,25 @@ public class ReservationRestControllerTest {
     @DisplayName("예약 기능")
     public void save_test() throws Exception {
         // given
+        Long carwashId = carwashJPARepository.findFirstBy().getId();
+        System.out.println("carwashId : "+ carwashId);
+        Long bayId = bayJPARepository.findFirstBy().getId();
+        System.out.println("bayId : " + bayId);
+        if(carwashId==null || bayId==null) throw new IllegalArgumentException("not found carwash or bay");
         // dto 생성
         SaveDTO saveDTO = new SaveDTO();
-        // SaveDTO 객체 생성 및 값 설정
-        saveDTO.setBayId(1L);
+//        // SaveDTO 객체 생성 및 값 설정
+        saveDTO.setBayId(bayId);
         saveDTO.setSelectedDate(LocalDate.now());  // 오늘 날짜로 설정
 
         SaveDTO.TimeDTO timeDTO = new SaveDTO.TimeDTO();
         timeDTO.setStart(LocalTime.of(10, 0));  // 10:00으로 시작 시간 설정
         timeDTO.setEnd(LocalTime.of(11, 00));    // 11:00으로 끝나는 시간 설정
         saveDTO.setTime(timeDTO);
-
-//        Long carwashId = carwashJPARepository.findFirstBy().getId();
-//        System.out.println("carwashId : "+ carwashId);
-        Long bayId = bayJPARepository.findFirstBy().getId();
-        System.out.println("bayId : " + bayId);
-//        if(carwashId==null || bayId==null) throw new IllegalArgumentException("not found carwash or bay");
-        // when
+//         when
 //        /carwashes/{carwash_id}/bays/{bay_id}/reservations
         ResultActions resultActions = mvc.perform(
-                post(String.format("/carwashes/%d/bays/%d/reservations", 8L, bayId))
+                post(String.format("/carwashes/%d/bays/%d/reservations", carwashId, bayId))
                         .content(om.writeValueAsString(saveDTO))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
@@ -172,7 +171,6 @@ public class ReservationRestControllerTest {
         //given
         Carwash carwash = carwashJPARepository.findFirstBy();
         Bay bay = Bay.builder()
-                .id(1L)
                 .bayNum(10)
                 .bayType(2)
                 .carwash(carwash)
@@ -214,6 +212,141 @@ public class ReservationRestControllerTest {
 
 
     }
+
+    @WithUserDetails(value = "user@nate.com")
+    @Test
+    @DisplayName("결제 후 예약 내역 조회")
+    public void fetchLatestReservation_test() throws Exception {
+        //given
+        Region region = Region.builder().build();
+        Region savedRegion = regionJPARepository.save(region);
+
+        User user = userJPARepository.findByEmail("user@nate.com")
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+
+
+        Carwash carwash = Carwash.builder()
+                .price(100)
+                .name("세차장")
+                .des("좋은 세차장입니다.")
+                .tel("010-2222-3333")
+                .region(savedRegion)
+                .user(user)
+                .build();
+        Carwash savedCarwash = carwashJPARepository.save(carwash);
+        Bay bay = Bay.builder()
+                .bayNum(10)
+                .bayType(2)
+                .carwash(carwash)
+                .status(1)
+                .build();
+        Bay savedBay = bayJPARepository.save(bay);
+
+//        User user = userJPARepository.findByEmail("user@nate.com").orElseThrow(()->new IllegalArgumentException("user not found"));
+//         예약 1
+        Reservation reservation = Reservation.builder()
+                .price(5000)
+                .date(LocalDate.now())
+                .startTime(LocalTime.of(10, 0)) // 10:00 AM
+                .endTime(LocalTime.of(11, 0))  // 11:00 AM
+                .bay(savedBay)
+                .user(user)
+                .build();
+        reservationJPARepository.save(reservation);
+
+        //when
+        ResultActions resultActions = mvc.perform(
+                get("/reservations")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+        //then
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+
+    }
+
+//    /reservations/current-status
+    @WithUserDetails(value = "user@nate.com")
+    @Test
+    @DisplayName("현재 시간 기준 예약 내역 조회")
+    public void fetchCurrentStatusReservation_test() throws Exception {
+        //given
+        Region region = Region.builder().build();
+        Region savedRegion = regionJPARepository.save(region);
+
+        User user = userJPARepository.findByEmail("user@nate.com")
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+
+
+        Carwash carwash = Carwash.builder()
+                .price(100)
+                .name("세차장")
+                .des("좋은 세차장입니다.")
+                .tel("010-2222-3333")
+                .region(savedRegion)
+                .user(user)
+                .build();
+        Carwash savedCarwash = carwashJPARepository.save(carwash);
+
+        Bay bay = Bay.builder()
+                .bayNum(10)
+                .bayType(2)
+                .carwash(savedCarwash)
+                .status(1)
+                .build();
+        Bay savedBay = bayJPARepository.save(bay);
+        // 보여주기
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+        System.out.println("today = " + today);
+        System.out.println("now : " + now.toString());
+
+//         예약 1
+        Reservation reservation = Reservation.builder()
+                .id(20L)
+                .price(5000)
+                .date(LocalDate.now().plusDays(1))
+                .startTime(LocalTime.of(10, 0)) // 10:00 AM
+                .endTime(LocalTime.of(11, 0))  // 11:00 AM
+                .bay(savedBay)
+                .user(user)
+                .build();
+        reservationJPARepository.save(reservation);
+
+//        // 예약 2
+        Reservation reservation2 = Reservation.builder()
+                .price(4500)
+                .date(LocalDate.now().minusDays(1))
+                .startTime(LocalTime.of(14, 0)) // 10:00 AM
+                .endTime(LocalTime.of(16, 0))  // 11:00 AM
+                .bay(savedBay)
+                .user(user)
+                .build();
+        reservationJPARepository.save(reservation2);
+                // 예약 3
+        Reservation reservation3 = Reservation.builder()
+                .price(4500)
+                .date(LocalDate.now())
+                .startTime(LocalTime.of(20, 0)) // 10:00 AM
+                .endTime(LocalTime.of(22, 0))  // 11:00 AM
+                .bay(savedBay)
+                .user(user)
+                .build();
+        reservationJPARepository.save(reservation3);
+//
+        //when
+        ResultActions resultActions = mvc.perform(
+                get("/reservations/current-status")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+        //then
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+
+    }
+
 
 
 }

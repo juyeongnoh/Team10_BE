@@ -1,9 +1,13 @@
 package bdbe.bdbd.review;
 
+import bdbe.bdbd.bay.Bay;
+import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.region.Region;
 import bdbe.bdbd.region.RegionJPARepository;
+import bdbe.bdbd.reservation.Reservation;
+import bdbe.bdbd.reservation.ReservationJPARepository;
 import bdbe.bdbd.rkeyword.Rkeyword;
 import bdbe.bdbd.rkeyword.RkeywordJPARepository;
 import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeyword;
@@ -24,6 +28,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,6 +67,12 @@ public class ReviewRestControllerTest {
     ReviewKeywordJPARepository reviewKeywordJPARepository;
 
     @Autowired
+    BayJPARepository bayJPARepository;
+
+    @Autowired
+    ReservationJPARepository reservationJPARepository;
+
+    @Autowired
     private ObjectMapper om;
 
 
@@ -74,7 +86,6 @@ public class ReviewRestControllerTest {
         Region savedRegion = regionJPARepository.save(region);
 
         User user = User.builder()
-                .region(savedRegion)
                 .role("USER")
                 .email("hi5@nate.com")
                 .password("user1234!")
@@ -101,10 +112,30 @@ public class ReviewRestControllerTest {
                 .map(Rkeyword::getId)
                 .collect(Collectors.toList());
 
+        Bay bay = Bay.builder()
+                .bayNum(10)
+                .bayType(2)
+                .carwash(savedCarwash)
+                .status(1)
+                .build();
+        Bay savedBay = bayJPARepository.save(bay);
+
+        Reservation reservation = Reservation.builder()
+                .id(20L)
+                .price(5000)
+                .date(LocalDate.now().plusDays(1))
+                .startTime(LocalTime.of(10, 0)) // 10:00 AM
+                .endTime(LocalTime.of(11, 0))  // 11:00 AM
+                .bay(savedBay)
+                .user(user)
+                .build();
+        Reservation savedReservation = reservationJPARepository.save(reservation);
+
 
         ReviewRequest.SaveDTO dto = new ReviewRequest.SaveDTO();
         dto.setCarwashId(savedCarwash.getId());
         dto.setRKeywordIdList(keywordIds);
+        dto.setReservationId(savedReservation.getId());
         dto.setRate(5);
         dto.setComment("좋네요");
 
@@ -157,16 +188,60 @@ public class ReviewRestControllerTest {
     @DisplayName("리뷰 별점 확인 코드")
     public void checkRateTest() throws Exception {
         // given
+        Region region = Region.builder().build();
+        Region savedRegion = regionJPARepository.save(region);
 
-        Rkeyword rkeyword = rkeywordJPARepository.findAll().get(0);
-        if(rkeyword==null) throw new Exception("rkeyword not found");
-        System.out.println("rkeyword Id : " + rkeyword.getId());
+        User user = User.builder()
+                .role("USER")
+                .email("hi5@nate.com")
+                .password("user1234!")
+                .username("useruser")
+                .build();
+        User savedUser = userJPARepository.save(user);
+
+        Carwash carwash = Carwash.builder()
+                .name("세차장")
+                .des("좋은 세차장입니다.")
+                .tel("010-2222-3333")
+                .region(savedRegion)
+                .user(savedUser)
+                .build();
+        Carwash savedCarwash = carwashJPARepository.save(carwash);
+        // 키워드
+        List<Rkeyword> keywordList = new ArrayList<>();
+        Rkeyword keyword = Rkeyword.builder().keywordName("하부세차").build();
+        keywordList.add(keyword);
+        Rkeyword keyword2 = Rkeyword.builder().keywordName("야간 조명").build();
+        keywordList.add(keyword2);
+        List<Rkeyword> savedKeywordList = rkeywordJPARepository.saveAll(keywordList);
+        List<Long> keywordIds = savedKeywordList.stream()
+                .map(Rkeyword::getId)
+                .collect(Collectors.toList());
+
+        Bay bay = Bay.builder()
+                .bayNum(10)
+                .bayType(2)
+                .carwash(savedCarwash)
+                .status(1)
+                .build();
+        Bay savedBay = bayJPARepository.save(bay);
+
+        Reservation reservation = Reservation.builder()
+                .id(20L)
+                .price(5000)
+                .date(LocalDate.now().plusDays(1))
+                .startTime(LocalTime.of(10, 0)) // 10:00 AM
+                .endTime(LocalTime.of(11, 0))  // 11:00 AM
+                .bay(savedBay)
+                .user(user)
+                .build();
+        Reservation savedReservation = reservationJPARepository.save(reservation);
+
         //dto 보냄
         ReviewRequest.SaveDTO dto = new ReviewRequest.SaveDTO();
         dto.setCarwashId(13L);
-        ArrayList<Long> list = new ArrayList<>();
-        list.add(rkeyword.getId());
-        dto.setRKeywordIdList(list);
+        dto.setRKeywordIdList(keywordIds);
+        dto.setReservationId(savedReservation.getId());
         dto.setRate(1);
         dto.setComment("좋네요");
 
