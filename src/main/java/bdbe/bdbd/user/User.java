@@ -1,13 +1,11 @@
 package bdbe.bdbd.user;
 
 import bdbe.bdbd.region.Region;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
+@Setter
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -19,9 +17,9 @@ public class User{
     @Column(columnDefinition = "BIGINT")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) //외래키
-    @JoinColumn(name="r_id",  nullable = false)
-    private Region region;
+//    @ManyToOne(fetch = FetchType.LAZY) //외래키
+//    @JoinColumn(name="r_id", nullable = false)
+//    private Region region;
 
     @Column(length = 100, nullable = false, unique = true)
     private String email; // 인증시 필요한 필드
@@ -30,21 +28,23 @@ public class User{
     @Column(length = 45, nullable = false)
     private String username;
 
-    @Column(length = 30, nullable = false)
-    private String role;
-    @Column(nullable = true)
-    private int credit;
-    @Column(length = 20, nullable = true)
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10, nullable = false)
+    private UserRole role;
+
+    @Column(length = 20, nullable = false)
     private String tel;
 
+    @Column(length = 10, nullable = false)
+    private int credit;
+
     @Builder
-    public User(Long id, Region region, String email, String password, String username, String role, int credit, String tel) {
+    public User(Long id, String email, String password, String username, String role, int credit, String tel) {
         this.id = id;
-        this.region = region;
         this.email = email;
         this.password = password;
         this.username = username;
-        this.role = role;
+        this.role = UserRole.valueOf(role);
         this.credit = credit;
         this.tel = tel;
     }
