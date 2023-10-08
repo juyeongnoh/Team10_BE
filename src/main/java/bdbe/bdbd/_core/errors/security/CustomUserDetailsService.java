@@ -20,13 +20,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> userOP = userJPARepository.findByEmail(email);
-
-        if (userOP.isEmpty()) {
-            return null;
-        } else {
-            User userPS = userOP.get();
-            return new CustomUserDetails(userPS); //가입된 유저이면 세션 만듬
-        }
+        User user = userJPARepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User with email: " + email + " not found."));
+        return new CustomUserDetails(user); // 세션 생성
     }
+
 }
