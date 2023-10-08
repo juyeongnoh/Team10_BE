@@ -21,10 +21,11 @@ public class ReservationResponse {
         private List<BayResponseDTO> bayList;
 
         public findAllResponseDTO(List<Bay> bayList, List<Reservation> reservationList) {
-            this.bayList = bayList.stream().map(bay -> {
-                BayResponseDTO bayResponseDTO = new BayResponseDTO();
-                bayResponseDTO.setBayId(bay.getId());
-                bayResponseDTO.setBayNo(bay.getBayNum());
+            this.bayList = bayList.stream()
+                    .map(bay -> {
+                        BayResponseDTO bayResponseDTO = new BayResponseDTO();
+                        bayResponseDTO.setBayId(bay.getId());
+                        bayResponseDTO.setBayNo(bay.getBayNum());
                 // 해당 베이의 예약 모두 담기
                 List<BookedTimeDTO> bookedTimes = reservationList.stream()
                         .filter(reservation -> reservation.getBay().getId().equals(bay.getId()))
