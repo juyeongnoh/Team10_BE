@@ -5,10 +5,13 @@ import bdbe.bdbd._core.errors.utils.ApiUtils;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-// 서버 에러
+/**
+ * HTTP 상태 코드 500 (Internal Server Error) : 내부 서버 오류
+ * 서버에 에러가 발생할 때 발생합니다.
+ */
 @Getter
-public class Exception500 extends RuntimeException {
-    public Exception500(String message) {
+public class InternalServerError extends RuntimeException {
+    public InternalServerError(String message) {
         super(message);
     }
 

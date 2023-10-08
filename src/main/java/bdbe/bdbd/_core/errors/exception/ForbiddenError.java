@@ -5,11 +5,13 @@ import bdbe.bdbd._core.errors.utils.ApiUtils;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-
-// 권한 없음
+/**
+ * HTTP 상태 코드 403 (Forbidden) : 금지됨
+ * 인증 이외의 이유로 액세스 권한 없을 때 발생합니다.
+ */
 @Getter
-public class Exception403 extends RuntimeException {
-    public Exception403(String message) {
+public class ForbiddenError extends RuntimeException {
+    public ForbiddenError(String message) {
         super(message);
     }
 
