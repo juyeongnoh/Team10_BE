@@ -17,12 +17,19 @@ import java.util.Optional;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserJPARepository userJPARepository;
+    /**
+     * 가입된 유저에 대하여 세션을 생성하고 반환한다.
+     *
+     * @param email 검색할 사용자의 이메일 주소
+     * @return 가입된 유저에 해당하는 세션 정보
+     * @throws UsernameNotFoundException 주어진 이메일에 해당하는 유저를 찾을 수 없을 때 발생
+    */
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userJPARepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User with email: " + email + " not found."));
-        return new CustomUserDetails(user); // 세션 생성
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("User with email: %s not found.", email)));
+        return new CustomUserDetails(user);
     }
 
 }
