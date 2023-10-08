@@ -1,12 +1,10 @@
 package bdbe.bdbd.user;
 
-import bdbe.bdbd.region.Region;
-import bdbe.bdbd.region.RegionJPARepository;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.persistence.*;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;

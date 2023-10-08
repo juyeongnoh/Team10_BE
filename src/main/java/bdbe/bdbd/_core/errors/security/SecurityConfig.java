@@ -1,8 +1,8 @@
 package bdbe.bdbd._core.errors.security;
 
 
-import bdbe.bdbd._core.errors.exception.Exception401;
-import bdbe.bdbd._core.errors.exception.Exception403;
+import bdbe.bdbd._core.errors.exception.ForbiddenError;
+import bdbe.bdbd._core.errors.exception.UnAuthorizedError;
 import bdbe.bdbd._core.errors.utils.FilterResponseUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,38 +39,38 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // 1. CSRF 해제
+        // CSRF 해제
         http.csrf().disable(); // postman 접근해야 함!! - CSR 할때!!
 
-        // 2. iframe 거부
+        // iframe 거부
         http.headers().frameOptions().sameOrigin();
 
-        // 3. cors 재설정
+        // cors 재설정
         http.cors().configurationSource(configurationSource());
 
-        // 4. jSessionId 사용 거부 (5번을 설정하면 jsessionId가 거부되기 때문에 4번은 사실 필요 없다)
+        // jSessionId 사용 거부 (5번을 설정하면 jsessionId가 거부되기 때문에 4번은 사실 필요 없다)
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        // 5. form 로긴 해제 (UsernamePasswordAuthenticationFilter 비활성화)
+        // form 로긴 해제 (UsernamePasswordAuthenticationFilter 비활성화)
         http.formLogin().disable();
 
-        // 6. 로그인 인증창이 뜨지 않게 비활성화
+        // 로그인 인증창이 뜨지 않게 비활성화
         http.httpBasic().disable();
 
-        // 7. 커스텀 필터 적용 (시큐리티 필터 교환)
+        // 커스텀 필터 적용 (시큐리티 필터 교환)
         http.apply(new CustomSecurityFilterManager());
 
-        // 8. 인증 실패 처리
+        // 인증 실패 처리
         http.exceptionHandling().authenticationEntryPoint((request, response, authException) -> {
-            FilterResponseUtils.unAuthorized(response, new Exception401("인증되지 않았습니다"));
+            FilterResponseUtils.unAuthorized(response, new UnAuthorizedError("Not authenticated"));
         });
 
-        // 9. 권한 실패 처리
+        // 권한 실패 처리
         http.exceptionHandling().accessDeniedHandler((request, response, accessDeniedException) -> {
-            FilterResponseUtils.forbidden(response, new Exception403("권한이 없습니다"));
+            FilterResponseUtils.forbidden(response, new ForbiddenError("Permission denied"));
         });
 
-        // 11. 인증, 권한 필터 설정
+        // 인증, 권한 필터 설정: 오너와 사용자 어드민 세가지로 url 접근 수정
         http.authorizeRequests(
                 authorize -> authorize
                         .antMatchers("/owner/join", "/owner/login").permitAll()
@@ -83,7 +83,6 @@ public class SecurityConfig {
                         .antMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
         );
-        //오너와 사용자 어드민 세가지로 url 접근 수정
 
         return http.build();
     }
@@ -91,10 +90,10 @@ public class SecurityConfig {
     public CorsConfigurationSource configurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*"); // GET, POST, PUT, DELETE (Javascript 요청 허용)
-        configuration.addAllowedOriginPattern("*"); // 모든 IP 주소 허용 (프론트 앤드 IP만 허용 react)
+        configuration.addAllowedMethod("*"); // GET, POST, PUT, DELETE, HEAD (Javascript 요청 허용)
+        configuration.addAllowedOriginPattern("*"); // 모든 IP 주소 허용 (프론트엔드 IP만 허용 react)
         configuration.setAllowCredentials(true); // 클라이언트에서 쿠키 요청 허용
-        configuration.addExposedHeader("Authorization"); // 옛날에는 디폴트 였다. 지금은 아닙니다.
+        configuration.addExposedHeader("Authorization"); // 권고사항
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

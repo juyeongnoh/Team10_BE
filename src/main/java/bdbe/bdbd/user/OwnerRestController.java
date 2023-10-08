@@ -1,6 +1,6 @@
 package bdbe.bdbd.user;
 
-import bdbe.bdbd._core.errors.exception.Exception400;
+import bdbe.bdbd._core.errors.exception.BadRequestError;
 import bdbe.bdbd._core.errors.security.JWTProvider;
 import bdbe.bdbd._core.errors.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class OwnerRestController {
     public ResponseEntity<?> login(@RequestBody @Valid UserRequest.LoginDTO requestDTO, Errors errors) {
         if (errors.hasErrors()) {
             String errorMessage = errors.getAllErrors().get(0).getDefaultMessage();
-            throw new Exception400(errorMessage);
+            throw new BadRequestError(errorMessage);
         }
         UserResponse.LoginResponse response = ownerService.login(requestDTO);
         return ResponseEntity.ok().header(JWTProvider.HEADER, response.getJwtToken()).body(ApiUtils.success(response));

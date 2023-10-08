@@ -1,6 +1,5 @@
 package bdbe.bdbd.user;
 
-import bdbe.bdbd.region.Region;
 import lombok.*;
 
 import javax.persistence.*;

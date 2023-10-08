@@ -27,7 +27,7 @@ public class Reservation {
     private int price;
 
     @Column(name="date", length = 50, nullable = true)
-    private LocalDate date; // 요일명 (평일 or 주말)
+    private LocalDate date; // 예약 날짜
 
     @Column(name="start_time", nullable = true)
     private LocalTime startTime; // ex)10:00

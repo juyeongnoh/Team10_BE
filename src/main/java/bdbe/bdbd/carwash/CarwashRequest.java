@@ -1,6 +1,7 @@
 package bdbe.bdbd.carwash;
 
 import bdbe.bdbd.file.File;
+import bdbe.bdbd.optime.DayType;
 import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.region.Region;
 import bdbe.bdbd.user.User;
@@ -58,14 +59,14 @@ public class CarwashRequest {
             List<Optime> optimeList = new ArrayList<>();
 
             optimeList.add(Optime.builder()
-                    .dayName("평일")
+                    .dayName(DayType.WEEKDAY)
                     .startTime(optime.getWeekday().getStart())
                     .endTime(optime.getWeekday().getEnd())
                     .carwash(carwash)
                     .build());
 
             optimeList.add(Optime.builder()
-                    .dayName("주말")
+                    .dayName(DayType.WEEKEND)
                     .startTime(optime.getWeekend().getStart())
                     .endTime(optime.getWeekend().getEnd())
                     .carwash(carwash)

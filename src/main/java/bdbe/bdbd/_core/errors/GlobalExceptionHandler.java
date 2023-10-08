@@ -11,28 +11,28 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception400.class)
-    public ResponseEntity<?> badRequest(Exception400 e){
+    @ExceptionHandler(BadRequestError.class)
+    public ResponseEntity<?> badRequest(BadRequestError e){
         return new ResponseEntity<>(e.body(), e.status());
     }
 
-    @ExceptionHandler(Exception401.class)
-    public ResponseEntity<?> unAuthorized(Exception401 e){
+    @ExceptionHandler(UnAuthorizedError.class)
+    public ResponseEntity<?> unAuthorized(UnAuthorizedError e){
         return new ResponseEntity<>(e.body(), e.status());
     }
 
-    @ExceptionHandler(Exception403.class)
-    public ResponseEntity<?> forbidden(Exception403 e){
+    @ExceptionHandler(ForbiddenError.class)
+    public ResponseEntity<?> forbidden(ForbiddenError e){
         return new ResponseEntity<>(e.body(), e.status());
     }
 
-    @ExceptionHandler(Exception404.class)
-    public ResponseEntity<?> notFound(Exception404 e){
+    @ExceptionHandler(NotFoundError.class)
+    public ResponseEntity<?> notFound(NotFoundError e){
         return new ResponseEntity<>(e.body(), e.status());
     }
 
-    @ExceptionHandler(Exception500.class)
-    public ResponseEntity<?> serverError(Exception500 e){
+    @ExceptionHandler(InternalServerError.class)
+    public ResponseEntity<?> serverError(InternalServerError e){
         return new ResponseEntity<>(e.body(), e.status());
     }
 

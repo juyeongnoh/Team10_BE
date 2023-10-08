@@ -11,23 +11,25 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-// 로그인을 직접 서비스에서 할 예정이기 때문에, 사용은 안하겠지만
-// 나중에 통합테스트시에 유용하게 사용할 수 있기 때문에 나두자.
+// FIXME: 로그인은 직접 서비스에서 처리할 예정, 아래 메서드는 통합 테스트시 사용예정
 @RequiredArgsConstructor
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserJPARepository userJPARepository;
+    /**
+     * 가입된 유저에 대하여 세션을 생성하고 반환한다.
+     *
+     * @param email 검색할 사용자의 이메일 주소
+     * @return 가입된 유저에 해당하는 세션 정보
+     * @throws UsernameNotFoundException 주어진 이메일에 해당하는 유저를 찾을 수 없을 때 발생
+    */
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> userOP = userJPARepository.findByEmail(email);
-
-        if (userOP.isEmpty()) {
-            return null;
-        } else {
-            User userPS = userOP.get();
-            return new CustomUserDetails(userPS); //가입된 유저이면 세션 만듬
-        }
+        User user = userJPARepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("User with email: %s not found.", email)));
+        return new CustomUserDetails(user);
     }
+
 }
