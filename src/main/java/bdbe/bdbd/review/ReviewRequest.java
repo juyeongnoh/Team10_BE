@@ -15,15 +15,17 @@ public class ReviewRequest {
     @ToString
     public static class SaveDTO {
         private Long carwashId;
+        private Long reservationId;
         private List<Long> rKeywordIdList;
         private double rate;
         private String comment;
 
 
-        public Review toReviewEntity(User user, Carwash carwash) {
+        public Review toReviewEntity(User user, Carwash carwash, Reservation reservation) {
             return Review.builder()
                     .user(user)
                     .carwash(carwash)
+                    .reservation(reservation)
                     .comment(comment)
                     .rate(rate)
                     .build();
