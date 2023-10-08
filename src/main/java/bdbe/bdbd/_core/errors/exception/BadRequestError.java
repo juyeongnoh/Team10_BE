@@ -4,12 +4,14 @@ import bdbe.bdbd._core.errors.utils.ApiUtils;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-
-// 유효성 검사 실패, 잘못된 파라메터 요청
+/**
+ * HTTP 상태 코드 400 (Bad Request) : 잘못된 요청
+ * 유효성 검사 실패 또는 잘못된 파라미터 요청시 발생합니다.
+ */
 @Getter
-public class Exception400 extends RuntimeException {
+public class BadRequestError extends RuntimeException {
 
-    public Exception400(String message) {
+    public BadRequestError(String message) {
         super(message);
     }
 

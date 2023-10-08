@@ -19,8 +19,9 @@ public class Optime{ // 영업시간
     @Column(columnDefinition = "BIGINT")
     private Long id;
 
+    @Enumerated(EnumType.STRING) // DB에 문자열 저장
     @Column(name="day_name", length = 50, nullable = true)
-    private String dayName; // 요일명 (평일 or 주말)
+    private DayType dayName; // enum 요일명
 
     @Column(name="start_time", nullable = true)
     private LocalTime startTime; // ex)10:00
@@ -33,7 +34,7 @@ public class Optime{ // 영업시간
     private Carwash carwash;
 
     @Builder
-    public Optime(Long id, String dayName, LocalTime startTime, LocalTime endTime, Carwash carwash) {
+    public Optime(Long id, DayType dayName, LocalTime startTime, LocalTime endTime, Carwash carwash) {
         this.id = id;
         this.dayName = dayName;
         this.startTime = startTime;

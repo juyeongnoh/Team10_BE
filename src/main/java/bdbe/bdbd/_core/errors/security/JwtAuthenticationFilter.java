@@ -5,7 +5,6 @@ import bdbe.bdbd.user.User;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +38,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             DecodedJWT decodedJWT = JWTProvider.verify(jwt);
             Long id = decodedJWT.getClaim("id").asLong();
             String role = decodedJWT.getClaim("role").asString();
-            System.out.println("roles : "+role);
+            log.info("role: {}", role);
             User user = User.builder().id(id).role(role).build();
             CustomUserDetails myUserDetails = new CustomUserDetails(user);
             Authentication authentication =
