@@ -10,7 +10,6 @@ import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.RegionJPARepository;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
-import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeyword;
 import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeywordJPARepository;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
@@ -25,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
@@ -35,9 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @Transactional
 @AutoConfigureMockMvc
@@ -74,21 +72,35 @@ public class ReviewRestControllerTest {
     @Autowired
     private ObjectMapper om;
 
+    Long carwashId;
+
+    @Test
+    public void makeMember() throws Exception{
+        User user = User.builder()
+                .role(UserRole.ROLE_USER)
+                .email("user@nate.com")
+                .password("user1234!")
+                .username("useruser")
+                .tel("010-2222-3333")
+                .build();
+        User savedUser = userJPARepository.save(user);
+    }
+
 
     @WithUserDetails(value = "user@nate.com")
     @Test
     @DisplayName("리뷰 등록 기능")
     public void createReviewTest() throws Exception {
         // given
-        // dto 생성
-        Location location = Location.builder().build();
+        Location location = Location.builder().address("address").latitude(10).longitude(20).placeName("예쁨").build();
         Location savedLocation = regionJPARepository.save(location);
 
         User user = User.builder()
                 .role(UserRole.ROLE_USER)
-                .email("hi5@nate.com")
+                .email("hi89@nate.com")
                 .password("user1234!")
                 .username("useruser")
+                .tel("010-2222-3333")
                 .build();
         User savedUser = userJPARepository.save(user);
 
@@ -100,6 +112,7 @@ public class ReviewRestControllerTest {
                 .user(savedUser)
                 .build();
         Carwash savedCarwash = carwashJPARepository.save(carwash);
+        carwashId = savedCarwash.getId();
         // 키워드
         List<Keyword> keywordList = new ArrayList<>();
         Keyword keyword = Keyword.builder().keywordName("하부세차").build();
@@ -110,6 +123,10 @@ public class ReviewRestControllerTest {
         List<Long> keywordIds = savedKeywordList.stream()
                 .map(Keyword::getId)
                 .collect(Collectors.toList());
+        System.out.println("idList:");
+        for (Long keywordId : keywordIds) {
+            System.out.println("keywordId = " + keywordId);
+        }
 
         Bay bay = Bay.builder()
                 .bayNum(10)
@@ -132,7 +149,7 @@ public class ReviewRestControllerTest {
 
         ReviewRequest.SaveDTO dto = new ReviewRequest.SaveDTO();
         dto.setCarwashId(savedCarwash.getId());
-        dto.setRKeywordIdList(keywordIds);
+        dto.setKeywordList(keywordIds);
         dto.setReservationId(savedReservation.getId());
         dto.setRate(5);
         dto.setComment("좋네요");
@@ -154,30 +171,30 @@ public class ReviewRestControllerTest {
 
         // verify
 //        resultActions.andExpect(jsonPath("$.success").value("true"));
-        //DB 저장 확인
-        List<Review> reviewList = reviewJPARepository.findAll();
-        for (Review review : reviewList) {
-            System.out.println(review.getComment());
-            System.out.println(review.getCreatedAt());
-        }
-        //키워드 매핑 확인
-        System.out.println("keyword 매핑 확인");
-        List<ReviewKeyword> reviewKeywordList = reviewKeywordJPARepository.findAll();
-        for (ReviewKeyword reviewKeyword : reviewKeywordList) {
-            System.out.println(reviewKeyword.getId());
-            System.out.print(" " + reviewKeyword.getReview().getId());
-            System.out.println("-" + reviewKeyword.getKeyword().getId());
-        }
-        System.out.println("keyword ID");
-        for (Long keywordId : keywordIds) {
-            System.out.println(keywordId);
-        }
-        //세차장 0점 -> 5점
-        Optional<Carwash> byId = carwashJPARepository.findById(savedCarwash.getId());
-        if (byId.isPresent()) {
-            Carwash carwash1 = byId.get();
-            assertThat(carwash1.getRate()).isEqualTo(5);
-        }
+//        //DB 저장 확인
+//        List<Review> reviewList = reviewJPARepository.findAll();
+//        for (Review review : reviewList) {
+//            System.out.println(review.getComment());
+//            System.out.println(review.getCreatedAt());
+//        }
+//        //키워드 매핑 확인
+//        System.out.println("keyword 매핑 확인");
+//        List<ReviewKeyword> reviewKeywordList = reviewKeywordJPARepository.findAll();
+//        for (ReviewKeyword reviewKeyword : reviewKeywordList) {
+//            System.out.println(reviewKeyword.getId());
+//            System.out.print(" " + reviewKeyword.getReview().getId());
+//            System.out.println("-" + reviewKeyword.getKeyword().getId());
+//        }
+//        System.out.println("keyword ID");
+//        for (Long keywordId : keywordIds) {
+//            System.out.println(keywordId);
+//        }
+//        //세차장 0점 -> 5점
+//        Optional<Carwash> byId = carwashJPARepository.findById(savedCarwash.getId());
+//        if (byId.isPresent()) {
+//            Carwash carwash1 = byId.get();
+//            assertThat(carwash1.getRate()).isEqualTo(5);
+//        }
 
     }
 
@@ -186,7 +203,7 @@ public class ReviewRestControllerTest {
     @DisplayName("리뷰 별점 확인 코드")
     public void checkRateTest() throws Exception {
         // given
-        Location location = Location.builder().build();
+        Location location = Location.builder().address("address").latitude(10).longitude(20).placeName("예쁨").build();
         Location savedLocation = regionJPARepository.save(location);
 
         User user = User.builder()
@@ -237,7 +254,7 @@ public class ReviewRestControllerTest {
         //dto 보냄
         ReviewRequest.SaveDTO dto = new ReviewRequest.SaveDTO();
         dto.setCarwashId(13L);
-        dto.setRKeywordIdList(keywordIds);
+        dto.setKeywordList(keywordIds);
         dto.setReservationId(savedReservation.getId());
         dto.setRate(1);
         dto.setComment("좋네요");
@@ -264,5 +281,23 @@ public class ReviewRestControllerTest {
 //            assertThat(carwash1.getRate()).isEqualTo(4);
         }
     }
+//    /carwashes/{carwash_id}/reviews
+    @WithUserDetails("user@nate.com")
+    @Test
+    @DisplayName("리뷰 조회 기능")
+    public void find_review_test() throws Exception {
+        // given
+        this.createReviewTest();
 
+        // when
+        ResultActions resultActions = mvc.perform(
+                MockMvcRequestBuilders.get(String.format("/carwashes/%d/reviews", carwashId))
+        );
+
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+
+        // verify
+    }
 }

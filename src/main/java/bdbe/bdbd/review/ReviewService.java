@@ -3,6 +3,8 @@ package bdbe.bdbd.review;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.carwash.CarwashResponse;
+import bdbe.bdbd.keyword.Keyword;
+import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
 import bdbe.bdbd.review.ReviewResponse.ReviewByCarwashIdDTO;
@@ -12,6 +14,7 @@ import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeywordJPARepository;
 import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,7 @@ public class ReviewService {
     private final CarwashJPARepository carwashJPARepository;
     private final ReservationJPARepository reservationJPARepository;
     private final ReviewKeywordJPARepository reviewKeywordJPARepository;
+    private final KeywordJPARepository keywordJPARepository;
 
     @Transactional
     public void createReview(ReviewRequest.SaveDTO dto, User user) {
@@ -37,7 +41,23 @@ public class ReviewService {
         Review review = dto.toReviewEntity(user, carwash, reservation);
         log.info("review: {}", review);
 
-        reviewJPARepository.save(review);
+        Review savedReview = reviewJPARepository.save(review);
+        // 리뷰 키워드 저장
+        List<Long> keywordIdList = dto.getKeywordList();
+        System.out.println("keywordIdList:");
+        for (Long aLong : keywordIdList) {
+            System.out.println(aLong);
+        }
+        keywordIdList.stream()
+                .map(id -> {
+                    Keyword keyword = keywordJPARepository.findById(id)
+                            .orElseThrow(() -> new IllegalArgumentException("keyword not found"));
+                    ReviewKeyword reviewKeyword = ReviewKeyword.builder().keyword(keyword).review(savedReview).build();
+                    ReviewKeyword savedReviewKeyword = reviewKeywordJPARepository.save(reviewKeyword);
+                    System.out.println("reviewKeyword:" + savedReviewKeyword.toString());
+                    return savedReviewKeyword;
+                })
+                .collect(Collectors.toList());
 
         updateAverageRate(dto, carwash);
 
@@ -65,6 +85,10 @@ public class ReviewService {
         List<ReviewByCarwashIdDTO> dto = reviewList.stream()
                 .map(r -> {
                     List<ReviewKeyword> reviewKeywordList = reviewKeywordJPARepository.findByReview_Id(r.getId());
+                    for (ReviewKeyword reviewKeyword : reviewKeywordList) {
+                        System.out.println(reviewKeyword.getReview().getComment());
+                        System.out.println("id:"+reviewKeyword.getKeyword().getId());
+                    }
                     return new ReviewByCarwashIdDTO(r, r.getUser(), reviewKeywordList);
                 })
                 .collect(Collectors.toList());

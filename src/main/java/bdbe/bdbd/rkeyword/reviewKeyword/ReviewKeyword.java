@@ -19,11 +19,11 @@ public class ReviewKeyword { //키워드
     @Column(columnDefinition = "BIGINT")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) //외래키
+    @ManyToOne
     @JoinColumn(name="r_id",  nullable = false)
     private Review review;
 
-    @ManyToOne(fetch = FetchType.LAZY) //외래키
+    @ManyToOne
     @JoinColumn(name="k_id",  nullable = false)
     private Keyword keyword;
 
