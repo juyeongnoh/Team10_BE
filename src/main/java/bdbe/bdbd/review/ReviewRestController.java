@@ -24,21 +24,9 @@ public class ReviewRestController {
     }
 
     @GetMapping("/carwashes/{carwash_id}/reviews")
-    public ResponseEntity<Review> getReviewsByCarwashId(@PathVariable("carwash_id") Long carwashId) {
-        Review review = reviewService.getReviewsByCarwashId(carwashId);
-        if (review != null) {
-            return new ResponseEntity<>(review, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<?> getReviewsByCarwashId(@PathVariable("carwash_id") Long carwashId) {
+        ReviewResponse.ReviewResponseDTO dto = reviewService.getReviewsByCarwashId(carwashId);
+        return ResponseEntity.ok(ApiUtils.success(dto));
     }
-/*
-
-    @GetMapping
-    public ResponseEntity<List<Review>> getReviews(@PathVariable Long carWashId) {
-        List<Review> reviews = reviewService.getReviewsByCarWashId(carWashId);
-        return ResponseEntity.ok(reviews);
-    }
-*/
 
 }
