@@ -2,6 +2,7 @@ package bdbe.bdbd._core.errors.security;
 
 
 import bdbe.bdbd.user.User;
+import bdbe.bdbd.user.UserRole;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -39,7 +40,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             Long id = decodedJWT.getClaim("id").asLong();
             String role = decodedJWT.getClaim("role").asString();
             log.info("role: {}", role);
-            User user = User.builder().id(id).role(role).build();
+            User user = User.builder().id(id).role(UserRole.ROLE_USER).build();
             CustomUserDetails myUserDetails = new CustomUserDetails(user);
             Authentication authentication =
                     new UsernamePasswordAuthenticationToken(

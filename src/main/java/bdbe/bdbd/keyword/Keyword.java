@@ -20,9 +20,13 @@ public class Keyword { //키워드
     @Column(length = 50, nullable = false)
     private String keywordName;
 
+    @Column(nullable = false)
+    private int keywordType;
+
     @Builder
-    public Keyword(Long id, String keywordName) {
+    public Keyword(Long id, String keywordName, int keywordType) {
         this.id = id;
         this.keywordName = keywordName;
+        this.keywordType = keywordType;
     }
 }

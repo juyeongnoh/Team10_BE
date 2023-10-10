@@ -4,18 +4,18 @@ import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
-import bdbe.bdbd.region.Region;
-import bdbe.bdbd.region.RegionJPARepository;
+import bdbe.bdbd.keyword.Keyword;
+import bdbe.bdbd.keyword.KeywordJPARepository;
+import bdbe.bdbd.location.Location;
+import bdbe.bdbd.location.RegionJPARepository;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
-import bdbe.bdbd.rkeyword.Rkeyword;
-import bdbe.bdbd.rkeyword.RkeywordJPARepository;
 import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeyword;
 import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeywordJPARepository;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
+import bdbe.bdbd.user.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @AutoConfigureMockMvc
@@ -61,7 +60,7 @@ public class ReviewRestControllerTest {
     CarwashJPARepository carwashJPARepository;
 
     @Autowired
-    RkeywordJPARepository rkeywordJPARepository;
+    KeywordJPARepository keywordJPARepository;
 
     @Autowired
     ReviewKeywordJPARepository reviewKeywordJPARepository;
@@ -82,11 +81,11 @@ public class ReviewRestControllerTest {
     public void createReviewTest() throws Exception {
         // given
         // dto 생성
-        Region region = Region.builder().build();
-        Region savedRegion = regionJPARepository.save(region);
+        Location location = Location.builder().build();
+        Location savedLocation = regionJPARepository.save(location);
 
         User user = User.builder()
-                .role("USER")
+                .role(UserRole.ROLE_USER)
                 .email("hi5@nate.com")
                 .password("user1234!")
                 .username("useruser")
@@ -97,24 +96,23 @@ public class ReviewRestControllerTest {
                 .name("세차장")
                 .des("좋은 세차장입니다.")
                 .tel("010-2222-3333")
-                .region(savedRegion)
+                .location(savedLocation)
                 .user(savedUser)
                 .build();
         Carwash savedCarwash = carwashJPARepository.save(carwash);
         // 키워드
-        List<Rkeyword> keywordList = new ArrayList<>();
-        Rkeyword keyword = Rkeyword.builder().keywordName("하부세차").build();
+        List<Keyword> keywordList = new ArrayList<>();
+        Keyword keyword = Keyword.builder().keywordName("하부세차").build();
         keywordList.add(keyword);
-        Rkeyword keyword2 = Rkeyword.builder().keywordName("야간 조명").build();
+        Keyword keyword2 = Keyword.builder().keywordName("야간 조명").build();
         keywordList.add(keyword2);
-        List<Rkeyword> savedKeywordList = rkeywordJPARepository.saveAll(keywordList);
+        List<Keyword> savedKeywordList = keywordJPARepository.saveAll(keywordList);
         List<Long> keywordIds = savedKeywordList.stream()
-                .map(Rkeyword::getId)
+                .map(Keyword::getId)
                 .collect(Collectors.toList());
 
         Bay bay = Bay.builder()
                 .bayNum(10)
-                .bayType(2)
                 .carwash(savedCarwash)
                 .status(1)
                 .build();
@@ -188,11 +186,11 @@ public class ReviewRestControllerTest {
     @DisplayName("리뷰 별점 확인 코드")
     public void checkRateTest() throws Exception {
         // given
-        Region region = Region.builder().build();
-        Region savedRegion = regionJPARepository.save(region);
+        Location location = Location.builder().build();
+        Location savedLocation = regionJPARepository.save(location);
 
         User user = User.builder()
-                .role("USER")
+                .role(UserRole.ROLE_USER)
                 .email("hi5@nate.com")
                 .password("user1234!")
                 .username("useruser")
@@ -203,24 +201,23 @@ public class ReviewRestControllerTest {
                 .name("세차장")
                 .des("좋은 세차장입니다.")
                 .tel("010-2222-3333")
-                .region(savedRegion)
+                .location(savedLocation)
                 .user(savedUser)
                 .build();
         Carwash savedCarwash = carwashJPARepository.save(carwash);
         // 키워드
-        List<Rkeyword> keywordList = new ArrayList<>();
-        Rkeyword keyword = Rkeyword.builder().keywordName("하부세차").build();
+        List<Keyword> keywordList = new ArrayList<>();
+        Keyword keyword = Keyword.builder().keywordName("하부세차").build();
         keywordList.add(keyword);
-        Rkeyword keyword2 = Rkeyword.builder().keywordName("야간 조명").build();
+        Keyword keyword2 = Keyword.builder().keywordName("야간 조명").build();
         keywordList.add(keyword2);
-        List<Rkeyword> savedKeywordList = rkeywordJPARepository.saveAll(keywordList);
+        List<Keyword> savedKeywordList = keywordJPARepository.saveAll(keywordList);
         List<Long> keywordIds = savedKeywordList.stream()
-                .map(Rkeyword::getId)
+                .map(Keyword::getId)
                 .collect(Collectors.toList());
 
         Bay bay = Bay.builder()
                 .bayNum(10)
-                .bayType(2)
                 .carwash(savedCarwash)
                 .status(1)
                 .build();

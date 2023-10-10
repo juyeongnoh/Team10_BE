@@ -1,7 +1,7 @@
 package bdbe.bdbd.rkeyword.reviewKeyword;
 
+import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.review.Review;
-import bdbe.bdbd.rkeyword.Rkeyword;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,10 +25,10 @@ public class ReviewKeyword { //키워드
 
     @ManyToOne(fetch = FetchType.LAZY) //외래키
     @JoinColumn(name="k_id",  nullable = false)
-    private Rkeyword keyword;
+    private Keyword keyword;
 
     @Builder
-    public ReviewKeyword(Long id, Review review, Rkeyword keyword) {
+    public ReviewKeyword(Long id, Review review, Keyword keyword) {
         this.id = id;
         this.review = review;
         this.keyword = keyword;
