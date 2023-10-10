@@ -2,15 +2,21 @@ package bdbe.bdbd.review;
 
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
-import bdbe.bdbd.keyword.KeywordJPARepository;
+import bdbe.bdbd.carwash.CarwashResponse;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
+import bdbe.bdbd.review.ReviewResponse.ReviewByCarwashIdDTO;
+import bdbe.bdbd.review.ReviewResponse.ReviewResponseDTO;
+import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeyword;
 import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeywordJPARepository;
 import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -20,6 +26,7 @@ public class ReviewService {
     private final ReviewJPARepository reviewJPARepository;
     private final CarwashJPARepository carwashJPARepository;
     private final ReservationJPARepository reservationJPARepository;
+    private final ReviewKeywordJPARepository reviewKeywordJPARepository;
 
     @Transactional
     public void createReview(ReviewRequest.SaveDTO dto, User user) {
@@ -52,8 +59,17 @@ public class ReviewService {
         carwash.updateRate(rate);
     }
 
-    public Review getReviewById(Long id) {
-        return (Review) reviewJPARepository.findById(id).orElse(null);
+    public ReviewResponseDTO getReviewsByCarwashId(Long carwashId) {
+        List<Review> reviewList = reviewJPARepository.findByCarwash_Id(carwashId);
+
+        List<ReviewByCarwashIdDTO> dto = reviewList.stream()
+                .map(r -> {
+                    List<ReviewKeyword> reviewKeywordList = reviewKeywordJPARepository.findByReview_Id(r.getId());
+                    return new ReviewByCarwashIdDTO(r, r.getUser(), reviewKeywordList);
+                })
+                .collect(Collectors.toList());
+
+        return new ReviewResponseDTO(dto);
     }
 
 }
