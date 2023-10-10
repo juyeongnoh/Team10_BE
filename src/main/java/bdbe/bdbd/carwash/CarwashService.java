@@ -7,8 +7,8 @@ import bdbe.bdbd.keyword.carwashKeyword.CarwashKeyword;
 import bdbe.bdbd.keyword.carwashKeyword.CarwashKeywordJPARepository;
 import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.optime.OptimeJPARepository;
-import bdbe.bdbd.region.Region;
-import bdbe.bdbd.region.RegionJPARepository;
+import bdbe.bdbd.location.Location;
+import bdbe.bdbd.location.RegionJPARepository;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
 import lombok.RequiredArgsConstructor;
@@ -34,21 +34,17 @@ public class CarwashService {
     private final UserJPARepository userJPARepository;
 
     public List<CarwashResponse.FindAllDTO> findAll(int page) {
-        Pageable pageable = createPageRequest(page);
+
+        Pageable pageable = PageRequest.of(page, 10);
         Page<Carwash> carwashEntities = carwashJPARepository.findAll(pageable);
 
-        return carwashEntitiesToDTOs(carwashEntities);
-    }
-
-    private Pageable createPageRequest(int page) {
-        return PageRequest.of(page, 10);
-    }
-
-    private List<CarwashResponse.FindAllDTO> carwashEntitiesToDTOs(Page<Carwash> carwashEntities) {
-        return carwashEntities.getContent().stream()
+        List<CarwashResponse.FindAllDTO> carwashResponses = carwashEntities.getContent().stream()
                 .map(CarwashResponse.FindAllDTO::new)
                 .collect(Collectors.toList());
+
+        return carwashResponses;
     }
+
 //    public List<CarwashResponse.FindAllDTO> findAll(int page) {
 //        // 1. 페이지 객체 만들기
 //        Pageable pageable = PageRequest.of(page, 10);
@@ -66,10 +62,10 @@ public class CarwashService {
     public void save(CarwashRequest.SaveDTO saveDTO, User sessionUser) {
         // 별점은 리뷰에서 계산해서 넣어주기
         // 지역
-        Region region = saveDTO.toRegionEntity();
-        regionJPARepository.save(region);
+        Location location = saveDTO.toRegionEntity();
+        regionJPARepository.save(location);
         // 세차장
-        Carwash carwash = saveDTO.toCarwashEntity(region, sessionUser);
+        Carwash carwash = saveDTO.toCarwashEntity(location, sessionUser);
         carwashJPARepository.save(carwash);
         // 운영시간
         List<Optime> optimes = saveDTO.toOptimeEntities(carwash);

@@ -2,15 +2,17 @@ package bdbe.bdbd.review;
 
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
+import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
-import bdbe.bdbd.rkeyword.RkeywordJPARepository;
 import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeywordJPARepository;
 import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -18,8 +20,6 @@ public class ReviewService {
     private final ReviewJPARepository reviewJPARepository;
     private final CarwashJPARepository carwashJPARepository;
     private final ReservationJPARepository reservationJPARepository;
-    private final RkeywordJPARepository rkeywordJPARepository;
-    private final ReviewKeywordJPARepository reviewKeywordJPARepository;
 
     @Transactional
     public void createReview(ReviewRequest.SaveDTO dto, User user) {
@@ -28,7 +28,8 @@ public class ReviewService {
         Reservation reservation = reservationJPARepository.findById(dto.getReservationId())
                 .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
         Review review = dto.toReviewEntity(user, carwash, reservation);
-        System.out.println(review);
+        log.info("review: {}", review);
+
         reviewJPARepository.save(review);
 
         updateAverageRate(dto, carwash);

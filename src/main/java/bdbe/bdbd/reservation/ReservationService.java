@@ -5,8 +5,8 @@ import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
-import bdbe.bdbd.region.Region;
-import bdbe.bdbd.region.RegionJPARepository;
+import bdbe.bdbd.location.Location;
+import bdbe.bdbd.location.RegionJPARepository;
 import bdbe.bdbd.reservation.ReservationResponse.ReservationInfoDTO;
 import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -64,9 +63,9 @@ public class ReservationService {
         Carwash carwash = carwashJPARepository.findById(bay.getCarwash().getId())
                 .orElseThrow(() -> new NoSuchElementException("no carwash found"));
         // 세차장이 위치한 위치 찾기
-        Region region = regionJPARepository.findById(carwash.getRegion().getId())
+        Location location = regionJPARepository.findById(carwash.getLocation().getId())
                 .orElseThrow(() -> new NoSuchElementException("no region found"));
-        return new ReservationResponse.findLatestOneResponseDTO(reservation, bay, carwash, region);
+        return new ReservationResponse.findLatestOneResponseDTO(reservation, bay, carwash, location);
     }
 
     public ReservationResponse.fetchCurrentStatusReservationDTO fetchCurrentStatusReservation(User sessionUser) {
