@@ -34,8 +34,8 @@ public class User{
     @Column(length = 20, nullable = false)
     private String tel;
 
-    @Column(length = 10, nullable = false)
-    private int credit;
+//    @Column(length = 10, nullable = false)
+//    private int credit;
 
     @Builder
     public User(Long id, String email, String password, String username, String role, int credit, String tel) {
@@ -44,7 +44,7 @@ public class User{
         this.password = password;
         this.username = username;
         this.role = UserRole.valueOf(role);
-        this.credit = credit;
+//        this.credit = credit;
         this.tel = tel;
     }
 
