@@ -8,7 +8,7 @@ import bdbe.bdbd.keyword.carwashKeyword.CarwashKeywordJPARepository;
 import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.location.Location;
-import bdbe.bdbd.location.RegionJPARepository;
+import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class CarwashService {
     private final CarwashJPARepository carwashJPARepository;
     private final KeywordJPARepository keywordJPARepository;
-    private final RegionJPARepository regionJPARepository;
+    private final LocationJPARepository locationJPARepository;
     private final OptimeJPARepository optimeJPARepository;
     private final CarwashKeywordJPARepository carwashKeywordJPARepository;
     private final UserJPARepository userJPARepository;
@@ -63,7 +63,7 @@ public class CarwashService {
         // 별점은 리뷰에서 계산해서 넣어주기
         // 지역
         Location location = saveDTO.toRegionEntity();
-        regionJPARepository.save(location);
+        locationJPARepository.save(location);
         // 세차장
         Carwash carwash = saveDTO.toCarwashEntity(location, sessionUser);
         carwashJPARepository.save(carwash);
