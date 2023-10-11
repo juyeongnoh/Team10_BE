@@ -23,22 +23,10 @@ public class ReviewRestController {
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
-    @GetMapping("reviews/{review_id}") //특정 리뷰 조회 ( 필요한가..?)
-    public ResponseEntity<Review> getReviewById(@PathVariable Long id) {
-        Review review = reviewService.getReviewById(id);
-        if (review != null) {
-            return new ResponseEntity<>(review, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    @GetMapping("/carwashes/{carwash_id}/reviews")
+    public ResponseEntity<?> getReviewsByCarwashId(@PathVariable("carwash_id") Long carwashId) {
+        ReviewResponse.ReviewResponseDTO dto = reviewService.getReviewsByCarwashId(carwashId);
+        return ResponseEntity.ok(ApiUtils.success(dto));
     }
-/*
-
-    @GetMapping
-    public ResponseEntity<List<Review>> getReviews(@PathVariable Long carWashId) {
-        List<Review> reviews = reviewService.getReviewsByCarWashId(carWashId);
-        return ResponseEntity.ok(reviews);
-    }
-*/
 
 }

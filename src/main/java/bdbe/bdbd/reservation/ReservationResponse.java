@@ -2,8 +2,7 @@ package bdbe.bdbd.reservation;
 
 import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.carwash.Carwash;
-import bdbe.bdbd.file.File;
-import bdbe.bdbd.region.Region;
+import bdbe.bdbd.location.Location;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -64,7 +63,7 @@ public class ReservationResponse {
         private ReservationDTO reservation;
         private CarwashDTO carwash;
 
-        public findLatestOneResponseDTO(Reservation reservation, Bay bay, Carwash carwash, Region region) {
+        public findLatestOneResponseDTO(Reservation reservation, Bay bay, Carwash carwash, Location location) {
             ReservationDTO reservationDTO = new ReservationDTO();
             reservationDTO.date = reservation.getDate();
             TimeDTO timeDTO = new TimeDTO();
@@ -78,8 +77,8 @@ public class ReservationResponse {
             CarwashDTO carwashDTO = new CarwashDTO();
             carwashDTO.name = carwash.getName();
             RegionDTO regionDTO = new RegionDTO();
-            regionDTO.latitude = region.getLatitude();
-            regionDTO.longitude = region.getLongitude();
+            regionDTO.latitude = location.getLatitude();
+            regionDTO.longitude = location.getLongitude();
             carwashDTO.region = regionDTO;
 //            carwashDTO.imagePath = image.getPath();
             this.carwash = carwashDTO;
