@@ -1,13 +1,12 @@
 package bdbe.bdbd.review;
 
 import bdbe.bdbd.reservation.Reservation;
-import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeyword;
+import bdbe.bdbd.keyword.reviewKeyword.ReviewKeyword;
 import bdbe.bdbd.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 

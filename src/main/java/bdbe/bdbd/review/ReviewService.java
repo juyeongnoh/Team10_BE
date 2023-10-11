@@ -2,19 +2,17 @@ package bdbe.bdbd.review;
 
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
-import bdbe.bdbd.carwash.CarwashResponse;
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
 import bdbe.bdbd.review.ReviewResponse.ReviewByCarwashIdDTO;
 import bdbe.bdbd.review.ReviewResponse.ReviewResponseDTO;
-import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeyword;
-import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeywordJPARepository;
+import bdbe.bdbd.keyword.reviewKeyword.ReviewKeyword;
+import bdbe.bdbd.keyword.reviewKeyword.ReviewKeywordJPARepository;
 import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
