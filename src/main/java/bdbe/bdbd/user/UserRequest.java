@@ -59,8 +59,7 @@ public class UserRequest {
                     .email(email)
                     .password(encodedPassword)
                     .username(username)
-                    .role(String.valueOf(role))
-                    .credit(0)
+                    .role(role)
                     .tel(tel)
                     .build();
         }

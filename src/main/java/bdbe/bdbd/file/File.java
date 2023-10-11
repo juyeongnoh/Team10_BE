@@ -23,25 +23,17 @@ public class File {
     @JoinColumn(name="c_id",  nullable = false)
     private Carwash carwash;
 
-    @Column(length = 100, nullable = true)
+    @Column(length = 100, nullable = false)
     private String name;
 
-    @Column(length = 50, nullable = true)
-    private String ext;
-
-    @Column(length = 255, nullable = true)
+    @Column(length = 255, nullable = false)
     private String path;
 
-    @Column(nullable = true)
-    private int size;
-
     @Builder
-    public File(Long id, Carwash carwash, String name, String ext, String path, int size) {
+    public File(Long id, Carwash carwash, String name, String path) {
         this.id = id;
         this.carwash = carwash;
         this.name = name;
-        this.ext = ext;
         this.path = path;
-        this.size = size;
     }
 }
