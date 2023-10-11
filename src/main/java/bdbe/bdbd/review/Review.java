@@ -32,15 +32,15 @@ public class Review {
     @JoinColumn(name="c_id",  nullable = false)
     private Carwash carwash;
 
-    @Column(length = 100, nullable = true)
-    private String comment;
-
-    @Column(nullable = true)
-    private double rate;
-
     @OneToOne
     @JoinColumn(name = "r_id", nullable = false) //외래키 가짐
     private Reservation reservation;
+
+    @Column(length = 100, nullable = false)
+    private String comment;
+
+    @Column(nullable = false)
+    private double rate;
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
@@ -54,13 +54,13 @@ public class Review {
 
 
     @Builder
-    public Review(Long id, User user, Carwash carwash, String comment, double rate, Reservation reservation, LocalDateTime createdAt) {
+    public Review(Long id, User user, Carwash carwash, Reservation reservation, String comment, double rate, LocalDateTime createdAt) {
         this.id = id;
         this.user = user;
         this.carwash = carwash;
+        this.reservation = reservation;
         this.comment = comment;
         this.rate = rate;
-        this.reservation = reservation;
         this.createdAt = createdAt;
     }
 }
