@@ -1,4 +1,4 @@
-package bdbe.bdbd.region;
+package bdbe.bdbd.location;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,28 +10,28 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name="region")
-public class Region { //지역
+@Table(name="location")
+public class Location { //지역
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "BIGINT")
     private Long id;
 
-    @Column(name="place_name", length = 255, nullable = true)
+    @Column(name="place_name", length = 255, nullable = false)
     private String placeName; //장소명
 
-    @Column(name="address", length = 255, nullable = true)
+    @Column(name="address", length = 255, nullable = false)
     private String address; //도로명 주소
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private double latitude; //위도
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private double longitude; //경도
 
 
     @Builder
-    public Region(Long id, String placeName, String address, double latitude, double longitude) {
+    public Location(Long id, String placeName, String address, double latitude, double longitude) {
         this.id = id;
         this.placeName = placeName;
         this.address = address;
