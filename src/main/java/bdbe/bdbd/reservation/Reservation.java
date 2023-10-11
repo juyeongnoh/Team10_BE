@@ -23,16 +23,16 @@ public class Reservation {
     @Column(columnDefinition = "BIGINT")
     private Long id;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private int price;
 
-    @Column(name="date", length = 50, nullable = true)
+    @Column(name="date", length = 50, nullable = false)
     private LocalDate date; // 예약 날짜
 
-    @Column(name="start_time", nullable = true)
+    @Column(name="start_time", nullable = false)
     private LocalTime startTime; // ex)10:00
 
-    @Column(name="end_time", nullable = true)
+    @Column(name="end_time", nullable = false)
     private LocalTime endTime;
 
     @ManyToOne(fetch = FetchType.LAZY) //외래키
