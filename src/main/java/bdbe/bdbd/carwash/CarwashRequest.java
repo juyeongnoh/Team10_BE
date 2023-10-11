@@ -3,7 +3,7 @@ package bdbe.bdbd.carwash;
 import bdbe.bdbd.file.File;
 import bdbe.bdbd.optime.DayType;
 import bdbe.bdbd.optime.Optime;
-import bdbe.bdbd.region.Region;
+import bdbe.bdbd.location.Location;
 import bdbe.bdbd.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,19 +35,19 @@ public class CarwashRequest {
         private String tel;
 
 
-        public Carwash toCarwashEntity(Region region, User user) {
+        public Carwash toCarwashEntity(Location location, User user) {
             return Carwash.builder()
                     .name(name)
                     .tel(tel)
                     .des(description)
                     .price(Integer.parseInt(price))  // 문자열 price를 int로 변환
-                    .region(region)
+                    .location(location)
                     .user(user)
                     .build();
         }
 
-        public Region toRegionEntity() {
-            return Region.builder()
+        public Location toRegionEntity() {
+            return Location.builder()
                     .placeName(region.getPlaceName())
                     .address(region.getAddress())
                     .latitude(region.getLatitude())
@@ -81,9 +81,7 @@ public class CarwashRequest {
                 String ext = getFileExtension(image);
                 File file = File.builder()
                         .name(image)
-                        .ext(ext)
                         .path("https://cdn.example.com/images/image1.jpg")
-                        .size(1500000)
                         .build();
                 fileList.add(file);
             }
