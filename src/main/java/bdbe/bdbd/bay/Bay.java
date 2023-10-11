@@ -29,14 +29,14 @@ public class Bay {
     @JoinColumn(name="w_id",  nullable = false)
     private Carwash carwash;
 
-    @Column(name="status", nullable = true)
+    @Column(name="status", nullable = false)
     private int status; //상태
 
     @OneToMany(mappedBy = "bay") //읽기 전용, 양방향
     private List<Reservation> reservationList = new ArrayList<>();
 
     @Builder
-    public Bay(Long id, int bayNum, int bayType, Carwash carwash, int status) {
+    public Bay(Long id, int bayNum, Carwash carwash, int status) {
         this.id = id;
         this.bayNum = bayNum;
         this.carwash = carwash;

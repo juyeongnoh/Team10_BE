@@ -27,7 +27,7 @@ public class BayResponse {
             this.name = carwash.getName();
             this.rate = carwash.getRate();
             this.tel = carwash.getTel();
-            this.rId = carwash.getRegion().getId();
+            this.rId = carwash.getLocation().getId();
             this.userId = carwash.getUser().getId();
         }
     }
