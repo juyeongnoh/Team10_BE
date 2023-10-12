@@ -17,12 +17,16 @@ public class Keyword { //키워드
     @Column(columnDefinition = "BIGINT")
     private Long id;
 
-    @Column(length = 50, nullable = false)
-    private String keywordName;
+    @Column(name="name", length = 50, nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private int type;
 
     @Builder
-    public Keyword(Long id, String keywordName) {
+    public Keyword(Long id, String name, int type) {
         this.id = id;
-        this.keywordName = keywordName;
+        this.name = name;
+        this.type = type;
     }
 }

@@ -2,15 +2,24 @@ package bdbe.bdbd.review;
 
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
+import bdbe.bdbd.keyword.Keyword;
+import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
-import bdbe.bdbd.rkeyword.RkeywordJPARepository;
-import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeywordJPARepository;
+import bdbe.bdbd.review.ReviewResponse.ReviewByCarwashIdDTO;
+import bdbe.bdbd.review.ReviewResponse.ReviewResponseDTO;
+import bdbe.bdbd.keyword.reviewKeyword.ReviewKeyword;
+import bdbe.bdbd.keyword.reviewKeyword.ReviewKeywordJPARepository;
 import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -18,8 +27,8 @@ public class ReviewService {
     private final ReviewJPARepository reviewJPARepository;
     private final CarwashJPARepository carwashJPARepository;
     private final ReservationJPARepository reservationJPARepository;
-    private final RkeywordJPARepository rkeywordJPARepository;
     private final ReviewKeywordJPARepository reviewKeywordJPARepository;
+    private final KeywordJPARepository keywordJPARepository;
 
     @Transactional
     public void createReview(ReviewRequest.SaveDTO dto, User user) {
@@ -28,8 +37,25 @@ public class ReviewService {
         Reservation reservation = reservationJPARepository.findById(dto.getReservationId())
                 .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
         Review review = dto.toReviewEntity(user, carwash, reservation);
-        System.out.println(review);
-        reviewJPARepository.save(review);
+        log.info("review: {}", review);
+
+        Review savedReview = reviewJPARepository.save(review);
+        // 리뷰 키워드 저장
+        List<Long> keywordIdList = dto.getKeywordList();
+        System.out.println("keywordIdList:");
+        for (Long aLong : keywordIdList) {
+            System.out.println(aLong);
+        }
+        keywordIdList.stream()
+                .map(id -> {
+                    Keyword keyword = keywordJPARepository.findById(id)
+                            .orElseThrow(() -> new IllegalArgumentException("keyword not found"));
+                    ReviewKeyword reviewKeyword = ReviewKeyword.builder().keyword(keyword).review(savedReview).build();
+                    ReviewKeyword savedReviewKeyword = reviewKeywordJPARepository.save(reviewKeyword);
+                    System.out.println("reviewKeyword:" + savedReviewKeyword.toString());
+                    return savedReviewKeyword;
+                })
+                .collect(Collectors.toList());
 
         updateAverageRate(dto, carwash);
 
@@ -51,8 +77,21 @@ public class ReviewService {
         carwash.updateRate(rate);
     }
 
-    public Review getReviewById(Long id) {
-        return (Review) reviewJPARepository.findById(id).orElse(null);
+    public ReviewResponseDTO getReviewsByCarwashId(Long carwashId) {
+        List<Review> reviewList = reviewJPARepository.findByCarwash_Id(carwashId);
+
+        List<ReviewByCarwashIdDTO> dto = reviewList.stream()
+                .map(r -> {
+                    List<ReviewKeyword> reviewKeywordList = reviewKeywordJPARepository.findByReview_Id(r.getId());
+                    for (ReviewKeyword reviewKeyword : reviewKeywordList) {
+                        System.out.println(reviewKeyword.getReview().getComment());
+                        System.out.println("id:"+reviewKeyword.getKeyword().getId());
+                    }
+                    return new ReviewByCarwashIdDTO(r, r.getUser(), reviewKeywordList);
+                })
+                .collect(Collectors.toList());
+
+        return new ReviewResponseDTO(dto);
     }
 
 }

@@ -2,7 +2,7 @@ package bdbe.bdbd.carwash;
 
 import bdbe.bdbd.file.File;
 import bdbe.bdbd.keyword.carwashKeyword.CarwashKeyword;
-import bdbe.bdbd.region.Region;
+import bdbe.bdbd.location.Location;
 import bdbe.bdbd.user.User;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -27,21 +27,21 @@ public class Carwash{
     @Column(length = 100, nullable = false)
     private String name; //세차장 이름
 
-    @Column(nullable = true)
-    private double rate; //별점
+    @Column(nullable = false)
+    private double rate = 0; // 별점
 
-    @Column(length = 50, nullable = true)
+    @Column(length = 50, nullable = false)
     private String tel; //전화번호
 
-    @Column(length = 255, nullable = true)
-    private String des; //세차장 설갸명
+    @Column(length = 255, nullable = false)
+    private String des; //세차장 설명
 
-    @Column(name="price", nullable = true)
+    @Column(name="price", nullable = false)
     private int price; //30분당 가격
 
     @OneToOne //일대일-소유측
-    @JoinColumn(name="r_id", nullable = false) //외래키
-    private Region region;
+    @JoinColumn(name="l_id", nullable = false) //외래키
+    private Location location;
 
     @ManyToOne(fetch = FetchType.LAZY) //외래키
     @JoinColumn(name="u_id",  nullable = false)
@@ -54,17 +54,15 @@ public class Carwash{
     private List<File> fileList = new ArrayList<>();
 
     @Builder
-    public Carwash(Long id, String name, double rate, String tel, String des, int price, Region region, User user, List<CarwashKeyword> carwashKeywords, List<File> fileList) {
+    public Carwash(Long id, String name, double rate, String tel, String des, int price, Location location, User user) {
         this.id = id;
         this.name = name;
         this.rate = rate;
         this.tel = tel;
         this.des = des;
         this.price = price;
-        this.region = region;
+        this.location = location;
         this.user = user;
-        this.carwashKeywords = carwashKeywords;
-        this.fileList = fileList;
     }
 
     public void updateRate(double rate) {

@@ -1,8 +1,14 @@
 package bdbe.bdbd.review;
 
 import bdbe.bdbd.reservation.Reservation;
+import bdbe.bdbd.keyword.reviewKeyword.ReviewKeyword;
+import bdbe.bdbd.user.User;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ReviewResponse {
 
@@ -26,6 +32,35 @@ public class ReviewResponse {
         }
 
     }
+    @Getter
+    @Setter
+    public static class ReviewByCarwashIdDTO {
+        private double rate;
+        private String username;
+        private LocalDateTime created_at;
+        private String comment;
+        private List<Long> keywordIdList;
+
+        public ReviewByCarwashIdDTO(Review review, User user, List<ReviewKeyword> reviewKeyword) {
+            this.rate = review.getRate();
+            this.username = user.getUsername();
+            this.created_at = review.getCreatedAt();
+            this.comment = review.getComment();
+            this.keywordIdList = reviewKeyword.stream()
+                            .map(rk -> rk.getKeyword().getId())
+                            .collect(Collectors.toList());
+        }
+    }
+    @Getter
+    @Setter
+    public static class ReviewResponseDTO {
+        private List<ReviewByCarwashIdDTO> reviews;
+
+        public ReviewResponseDTO(List<ReviewByCarwashIdDTO> reviews) {
+            this.reviews = reviews;
+        }
+    }
+
 }
 
 

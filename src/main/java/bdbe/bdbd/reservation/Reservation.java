@@ -1,39 +1,46 @@
 package bdbe.bdbd.reservation;
 
 import bdbe.bdbd.bay.Bay;
-import bdbe.bdbd.review.Review;
 import bdbe.bdbd.user.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 
 @Getter
 @NoArgsConstructor
 @Entity
 @Data
+@EntityListeners(AuditingEntityListener.class)
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "BIGINT")
+    @Column(columnDefinition = "Long")
     private Long id;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private int price;
 
-    @Column(name="date", length = 50, nullable = true)
-    private LocalDate date; // 예약 날짜
+    @Column(name="start_time", nullable = false)
+    private LocalDateTime startTime; // ex) 2023-10-11T12:34
 
-    @Column(name="start_time", nullable = true)
-    private LocalTime startTime; // ex)10:00
+    @Column(name="end_time", nullable = false)
+    private LocalDateTime endTime;
 
-    @Column(name="end_time", nullable = true)
-    private LocalTime endTime;
+    @CreatedDate
+    @Column(name = "created_at", updatable = false, nullable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY) //외래키
     @JoinColumn(name="b_id",  nullable = false)
@@ -45,10 +52,10 @@ public class Reservation {
 
 
     @Builder
-    public Reservation(Long id, int price, LocalDate date, LocalTime startTime, LocalTime endTime, Bay bay, User user) {
+
+    public Reservation(Long id, int price, LocalDateTime startTime, LocalDateTime endTime, Bay bay, User user) {
         this.id = id;
         this.price = price;
-        this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
         this.bay = bay;
