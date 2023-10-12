@@ -81,12 +81,12 @@ public class CarwashRestControllerTest {
         dto.setDescription("테스트 설명");
         dto.setPrice("100");
 
-        CarwashRequest.RegionDTO regionDTO = new CarwashRequest.RegionDTO();
-        regionDTO.setPlaceName("test 장소");
-        regionDTO.setAddress("test 주소");
-        regionDTO.setLatitude(1.234);
-        regionDTO.setLongitude(5.678);
-        dto.setRegion(regionDTO);
+        CarwashRequest.LocationDTO locationDTO = new CarwashRequest.LocationDTO();
+        locationDTO.setPlaceName("test 장소");
+        locationDTO.setAddress("test 주소");
+        locationDTO.setLatitude(1.234);
+        locationDTO.setLongitude(5.678);
+        dto.setLocation(locationDTO);
 
         CarwashRequest.OperatingTimeDTO optimeDTO = new CarwashRequest.OperatingTimeDTO();
         CarwashRequest.OperatingTimeDTO.TimeSlot weekdaySlot = new CarwashRequest.OperatingTimeDTO.TimeSlot();
@@ -101,7 +101,7 @@ public class CarwashRestControllerTest {
         dto.setOptime(optimeDTO);
 
 //        dto.setImage(Arrays.asList("image1.jpg", "image2.jpg"));
-        Keyword keyword = Keyword.builder().keywordName("하부세차").build();
+        Keyword keyword = Keyword.builder().name("하부세차").build();
         Keyword savedKeyword = keywordJPARepository.save(keyword);
         dto.setKeywordId(Arrays.asList(savedKeyword.getId()));
 

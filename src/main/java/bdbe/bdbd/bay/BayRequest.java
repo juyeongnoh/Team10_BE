@@ -41,7 +41,7 @@ public class BayRequest {
     @Getter
     @Setter
     @ToString
-    public static class RegionDTO {
+    public static class LocationDTO {
         private String placeName;
         private String address;
         private double latitude;
