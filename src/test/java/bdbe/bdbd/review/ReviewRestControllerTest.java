@@ -7,10 +7,10 @@ import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.location.Location;
-import bdbe.bdbd.location.RegionJPARepository;
+import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
-import bdbe.bdbd.rkeyword.reviewKeyword.ReviewKeywordJPARepository;
+import bdbe.bdbd.keyword.reviewKeyword.ReviewKeywordJPARepository;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
 import bdbe.bdbd.user.UserRole;
@@ -49,7 +49,7 @@ public class ReviewRestControllerTest {
     ReviewJPARepository reviewJPARepository;
 
     @Autowired
-    RegionJPARepository regionJPARepository;
+    LocationJPARepository locationJPARepository;
 
     @Autowired
     UserJPARepository userJPARepository;
@@ -93,7 +93,7 @@ public class ReviewRestControllerTest {
     public void createReviewTest() throws Exception {
         // given
         Location location = Location.builder().address("address").latitude(10).longitude(20).placeName("예쁨").build();
-        Location savedLocation = regionJPARepository.save(location);
+        Location savedLocation = locationJPARepository.save(location);
 
         User user = User.builder()
                 .role(UserRole.ROLE_USER)
@@ -204,7 +204,7 @@ public class ReviewRestControllerTest {
     public void checkRateTest() throws Exception {
         // given
         Location location = Location.builder().address("address").latitude(10).longitude(20).placeName("예쁨").build();
-        Location savedLocation = regionJPARepository.save(location);
+        Location savedLocation = locationJPARepository.save(location);
 
         User user = User.builder()
                 .role(UserRole.ROLE_USER)
