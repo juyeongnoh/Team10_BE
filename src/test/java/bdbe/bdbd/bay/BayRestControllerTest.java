@@ -1,7 +1,7 @@
 package bdbe.bdbd.bay;
 
 import bdbe.bdbd.carwash.CarwashJPARepository;
-import bdbe.bdbd.location.RegionJPARepository;
+import bdbe.bdbd.location.LocationJPARepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ public class BayRestControllerTest {
     private MockMvc mvc;
 
     @Autowired
-    RegionJPARepository regionJPARepository;
+    LocationJPARepository locationJPARepository;
 
     @Autowired
     BayJPARepository bayJPARepository;
