@@ -1,4 +1,4 @@
-package bdbe.bdbd.rkeyword.reviewKeyword;
+package bdbe.bdbd.keyword.reviewKeyword;
 
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.review.Review;

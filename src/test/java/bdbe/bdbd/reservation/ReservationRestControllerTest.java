@@ -6,7 +6,7 @@ import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.location.Location;
-import bdbe.bdbd.location.RegionJPARepository;
+import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.reservation.ReservationRequest.SaveDTO;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
@@ -56,7 +56,7 @@ public class ReservationRestControllerTest {
     BayJPARepository bayJPARepository;
 
     @Autowired
-    RegionJPARepository regionJPARepository;
+    LocationJPARepository locationJPARepository;
 
     @Autowired
     private ObjectMapper om;
@@ -212,7 +212,7 @@ public class ReservationRestControllerTest {
     public void fetchLatestReservation_test() throws Exception {
         //given
         Location location = Location.builder().build();
-        Location savedLocation = regionJPARepository.save(location);
+        Location savedLocation = locationJPARepository.save(location);
 
         User user = userJPARepository.findByEmail("user@nate.com")
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
@@ -265,7 +265,7 @@ public class ReservationRestControllerTest {
     public void fetchCurrentStatusReservation_test() throws Exception {
         //given
         Location location = Location.builder().build();
-        Location savedLocation = regionJPARepository.save(location);
+        Location savedLocation = locationJPARepository.save(location);
 
         User user = userJPARepository.findByEmail("user@nate.com")
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
