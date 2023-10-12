@@ -62,7 +62,7 @@ public class CarwashService {
     public void save(CarwashRequest.SaveDTO saveDTO, User sessionUser) {
         // 별점은 리뷰에서 계산해서 넣어주기
         // 지역
-        Location location = saveDTO.toRegionEntity();
+        Location location = saveDTO.toLocationEntity();
         locationJPARepository.save(location);
         // 세차장
         Carwash carwash = saveDTO.toCarwashEntity(location, sessionUser);

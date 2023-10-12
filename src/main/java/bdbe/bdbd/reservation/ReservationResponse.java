@@ -77,10 +77,10 @@ public class ReservationResponse {
 
             CarwashDTO carwashDTO = new CarwashDTO();
             carwashDTO.name = carwash.getName();
-            RegionDTO regionDTO = new RegionDTO();
-            regionDTO.latitude = location.getLatitude();
-            regionDTO.longitude = location.getLongitude();
-            carwashDTO.region = regionDTO;
+            LocationDTO locationDTO = new LocationDTO();
+            locationDTO.latitude = location.getLatitude();
+            locationDTO.longitude = location.getLongitude();
+            carwashDTO.location = locationDTO;
 //            carwashDTO.imagePath = image.getPath();
             this.carwash = carwashDTO;
         }
@@ -99,7 +99,7 @@ public class ReservationResponse {
     @ToString
     public static class CarwashDTO {
         private String name;
-        private RegionDTO region;
+        private LocationDTO location;
 //        private String imagePath;
     }
     @Getter
@@ -112,7 +112,7 @@ public class ReservationResponse {
     @Getter
     @Setter
     @ToString
-    public static class RegionDTO{
+    public static class LocationDTO{
         private double latitude;
         private double longitude;
     }
