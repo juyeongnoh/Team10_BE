@@ -47,18 +47,77 @@ public class BayRestControllerTest {
     @DisplayName("베이 추가")
     public void createBayTest() throws Exception{
 
+//        Long carwashId = carwashJPARepository.findFirstBy().getId();
+//        System.out.println("carwashId:" + carwashId);
+//        if(carwashId==null) throw new IllegalArgumentException("not found carwash");
+//
+//        BayRequest.SaveDTO saveDTO = new BayRequest.SaveDTO();
+//        saveDTO.setBayNum(saveDTO.getBayNum());
+//
+//        String requestBody = om.writeValueAsString(carwashId);
+//        System.out.println("요청 데이터:" + requestBody);
+//
+//        ResultActions resultActions = mvc.perform(
+//                post("/owner/carwashes/%d/bays", carwashId)
+//                        .content(requestBody)
+//                        .contentType(MediaType.APPLICATION_ATOM_XML_VALUE)
+//        );
+//
+//        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+//        System.out.println("응답 body:" + responseBody);
+
         Long carwashId = carwashJPARepository.findFirstBy().getId();
         System.out.println("carwashId:" + carwashId);
         if(carwashId==null) throw new IllegalArgumentException("not found carwash");
 
         BayRequest.SaveDTO saveDTO = new BayRequest.SaveDTO();
-        saveDTO.setBayNum(saveDTO.getBayNum());
+        saveDTO.setBayNum(7);
 
-        String requestBody = om.writeValueAsString(carwashId);
-        System.out.println("요청 데이터:" + requestBody);
+        String requestBody = om.writeValueAsString(saveDTO);
 
         ResultActions resultActions = mvc.perform(
-                post("/owner/carwashes/%d/bays", carwashId)
+                post("/owner/carwashes/{carwash_id}/bays", carwashId)
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_ATOM_XML_VALUE)
+        );
+
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+    }
+
+    @Test
+    @DisplayName("베이 삭제")
+    public void deleteBayTest() throws Exception {
+
+        Long carwashId = carwashJPARepository.findFirstBy().getId();
+        System.out.println("carwashId:" + carwashId);
+        if (carwashId == null) throw new IllegalArgumentException("not found carwash");
+        Long bayId = bayJPARepository.findFirstBy().getId();
+        System.out.println("bayId:" + bayId);
+        if (bayId == null) throw new IllegalArgumentException("not found bay");
+
+        ResultActions resultActions = mvc.perform(
+                        delete("owner/carwashes/%d/bays/%d", carwashId, bayId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value("true")
+                );
+    }
+
+    @Test
+    @DisplayName("베이 활성화/비활성화")
+    public void changeStatusTest() throws Exception {
+
+        Long bayId = 1L;
+        int status = 0;
+
+        BayRequest.SaveDTO saveDTO = new BayRequest.SaveDTO();
+        saveDTO.setBayNum(saveDTO.getBayNum());
+
+        String requestBody = om.writeValueAsString(bayId);
+        System.out.println("요청 데이터:" +requestBody);
+
+        ResultActions resultActions = mvc.perform(
+                post("/owner/bays/%d/status", bayId)
                         .content(requestBody)
                         .contentType(MediaType.APPLICATION_ATOM_XML_VALUE)
         );
@@ -69,16 +128,6 @@ public class BayRestControllerTest {
         resultActions.andExpect(jsonPath("$.success").value("true"));
     }
 
-    @Test
-    @DisplayName("베이 삭제")
-    public void deleteBayTest() throws Exception {
 
-        Long carwashId = 1L;
-        Long bayId = 1L;
-
-        mockMvc.perform(delete("owner/carwashes/%d/bays/%d", carwashId, bayId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value("true"));
-    }
 
 }
