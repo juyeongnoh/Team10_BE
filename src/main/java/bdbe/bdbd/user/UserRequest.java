@@ -36,8 +36,8 @@ public class UserRequest {
         @NotNull
         private UserRole role;
 
-        //notNUll 설정 불가 by int
-        private int credit = 0;
+//        //notNUll 설정 불가 by int
+//        private int credit = 0;
 
         @Size(min = 9, max = 14)
         @NotEmpty
