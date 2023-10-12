@@ -72,7 +72,7 @@ public class OwnerRestControllerTest {
     private ObjectMapper om;
 
     @Test
-    public void check_test() throws Exception {
+    public void checkTest() throws Exception {
         //given
         UserRequest.EmailCheckDTO requestDTO = new UserRequest.EmailCheckDTO();
         requestDTO.setEmail("newowner@naver.com");
@@ -89,7 +89,7 @@ public class OwnerRestControllerTest {
     }
 
     @Test
-    public void join_test() throws Exception {
+    public void joinTest() throws Exception {
         UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
         requestDTO.setUsername("imnewowner");
         requestDTO.setEmail("newowner@naver.com");
@@ -111,7 +111,7 @@ public class OwnerRestControllerTest {
     }
 
     @Test
-    public void login_test() throws Exception {
+    public void loginTest() throws Exception {
         UserRequest.LoginDTO requestDTO = new UserRequest.LoginDTO();
         requestDTO.setEmail("mockowner@naver.com");
         requestDTO.setPassword("asdf1234!");
@@ -131,10 +131,11 @@ public class OwnerRestControllerTest {
     }
     //jwt.io 에서 ROLE_OWNER정상반환 확인함 및 리다이렉트 확인
 
+
     @Test
-    public void login_as_user_on_owner_page_test() throws Exception {
+    public void loginAsUserOnOwnerPageTest() throws Exception {
         UserRequest.LoginDTO requestDTO = new UserRequest.LoginDTO();
-        requestDTO.setEmail("userRoleUser@naver.com");  // 이 사용자는 ROLE_USER 권한을 가진 계정이어야 합니다.
+        requestDTO.setEmail("userRoleUser@naver.com");
         requestDTO.setPassword("aaaa1111!");
 
         String requestBody = om.writeValueAsString(requestDTO);
@@ -144,7 +145,7 @@ public class OwnerRestControllerTest {
                                 .content(requestBody)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))  // 변경된 부분
+                .andExpect(status().is(HttpStatus.UNAUTHORIZED.value()))
                 .andExpect(jsonPath("$.error.message").value("can't access this page"))
                 .andDo(print());
     }
