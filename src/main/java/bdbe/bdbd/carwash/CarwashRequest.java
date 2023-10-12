@@ -48,7 +48,7 @@ public class CarwashRequest {
 
         public Location toRegionEntity() {
             return Location.builder()
-                    .placeName(region.getPlaceName())
+                    .place(region.getPlaceName())
                     .address(region.getAddress())
                     .latitude(region.getLatitude())
                     .longitude(region.getLongitude())
@@ -59,14 +59,14 @@ public class CarwashRequest {
             List<Optime> optimeList = new ArrayList<>();
 
             optimeList.add(Optime.builder()
-                    .dayName(DayType.WEEKDAY)
+                    .dayType(DayType.WEEKDAY)
                     .startTime(optime.getWeekday().getStart())
                     .endTime(optime.getWeekday().getEnd())
                     .carwash(carwash)
                     .build());
 
             optimeList.add(Optime.builder()
-                    .dayName(DayType.WEEKEND)
+                    .dayType(DayType.WEEKEND)
                     .startTime(optime.getWeekend().getStart())
                     .endTime(optime.getWeekend().getEnd())
                     .carwash(carwash)

@@ -2,7 +2,7 @@ package bdbe.bdbd.carwash;
 
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
-import bdbe.bdbd.location.RegionJPARepository;
+import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +34,7 @@ public class CarwashRestControllerTest {
     private MockMvc mvc;
 
     @Autowired
-    RegionJPARepository regionJPARepository;
+    LocationJPARepository locationJPARepository;
 
     @Autowired
     UserJPARepository userJPARepository;
