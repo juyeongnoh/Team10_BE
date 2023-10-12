@@ -57,7 +57,7 @@ public class UserRestControllerTest {
 
 
     @Test
-    public void check_test() throws Exception {
+    public void checkTest() throws Exception {
         //given
         UserRequest.EmailCheckDTO requestDTO = new UserRequest.EmailCheckDTO();
         requestDTO.setEmail("bdbd@naver.com");
@@ -74,7 +74,7 @@ public class UserRestControllerTest {
     }
 
     @Test
-    public void join_test() throws Exception {
+    public void joinTest() throws Exception {
         UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
         requestDTO.setUsername("imnewuser");
         requestDTO.setEmail("newuser@naver.com");
@@ -96,7 +96,7 @@ public class UserRestControllerTest {
     }
 
     @Test
-    public void login_test() throws Exception {
+    public void loginTest() throws Exception {
         UserRequest.LoginDTO requestDTO = new UserRequest.LoginDTO();
         requestDTO.setEmail("mock@naver.com");
         requestDTO.setPassword("asdf1234!");
