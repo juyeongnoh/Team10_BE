@@ -32,6 +32,7 @@ public class User{
     @Column(length = 50, nullable = false)
     private String tel;
 
+
     @Builder
     public User(Long id, String email, String password, String username, UserRole role, String tel) {
         this.id = id;
