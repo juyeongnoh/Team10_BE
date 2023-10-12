@@ -5,8 +5,8 @@ import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.keyword.KeywordJPARepository;
-import bdbe.bdbd.region.Region;
-import bdbe.bdbd.region.RegionJPARepository;
+import bdbe.bdbd.location.Location;
+import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.reservation.ReservationRequest.SaveDTO;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
@@ -56,7 +56,7 @@ public class ReservationRestControllerTest {
     BayJPARepository bayJPARepository;
 
     @Autowired
-    RegionJPARepository regionJPARepository;
+    LocationJPARepository locationJPARepository;
 
     @Autowired
     private ObjectMapper om;
@@ -166,7 +166,6 @@ public class ReservationRestControllerTest {
         Carwash carwash = carwashJPARepository.findFirstBy();
         Bay bay = Bay.builder()
                 .bayNum(10)
-                .bayType(2)
                 .carwash(carwash)
                 .status(1)
                 .build();
@@ -212,8 +211,8 @@ public class ReservationRestControllerTest {
     @DisplayName("결제 후 예약 내역 조회")
     public void fetchLatestReservation_test() throws Exception {
         //given
-        Region region = Region.builder().build();
-        Region savedRegion = regionJPARepository.save(region);
+        Location location = Location.builder().build();
+        Location savedLocation = locationJPARepository.save(location);
 
         User user = userJPARepository.findByEmail("user@nate.com")
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
@@ -224,13 +223,12 @@ public class ReservationRestControllerTest {
                 .name("세차장")
                 .des("좋은 세차장입니다.")
                 .tel("010-2222-3333")
-                .region(savedRegion)
+                .location(savedLocation)
                 .user(user)
                 .build();
         Carwash savedCarwash = carwashJPARepository.save(carwash);
         Bay bay = Bay.builder()
                 .bayNum(10)
-                .bayType(2)
                 .carwash(carwash)
                 .status(1)
                 .build();
@@ -266,8 +264,8 @@ public class ReservationRestControllerTest {
     @DisplayName("현재 시간 기준 예약 내역 조회")
     public void fetchCurrentStatusReservation_test() throws Exception {
         //given
-        Region region = Region.builder().build();
-        Region savedRegion = regionJPARepository.save(region);
+        Location location = Location.builder().build();
+        Location savedLocation = locationJPARepository.save(location);
 
         User user = userJPARepository.findByEmail("user@nate.com")
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
@@ -278,14 +276,13 @@ public class ReservationRestControllerTest {
                 .name("세차장")
                 .des("좋은 세차장입니다.")
                 .tel("010-2222-3333")
-                .region(savedRegion)
+                .location(savedLocation)
                 .user(user)
                 .build();
         Carwash savedCarwash = carwashJPARepository.save(carwash);
 
         Bay bay = Bay.builder()
                 .bayNum(10)
-                .bayType(2)
                 .carwash(savedCarwash)
                 .status(1)
                 .build();
