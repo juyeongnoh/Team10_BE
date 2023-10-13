@@ -36,11 +36,11 @@ public class ReservationService {
     public void save(ReservationRequest.SaveDTO dto, Long carwashId, Long bayId, User sessionUser) {
         Carwash carwash = carwashJPARepository.findById(carwashId)
                 .orElseThrow(() -> new IllegalArgumentException("carwash not found"));
-//        Bay bay = bayJPARepository.findById(bayId)
-//                .orElseThrow(() -> new IllegalArgumentException("bay not found"));
-//        //예약 생성
-//        Reservation reservation = dto.toReservationEntity(carwash, bay, sessionUser);
-//        reservationJPARepository.save(reservation);
+        Bay bay = bayJPARepository.findById(bayId)
+                .orElseThrow(() -> new IllegalArgumentException("bay not found"));
+        //예약 생성
+        Reservation reservation = dto.toReservationEntity(carwash, bay, sessionUser);
+        reservationJPARepository.save(reservation);
     } //변경감지, 더티체킹, flush, 트랜잭션 종료
 
     public ReservationResponse.findAllResponseDTO findAllByCarwash(Long carwashId, User sessionUser) {
