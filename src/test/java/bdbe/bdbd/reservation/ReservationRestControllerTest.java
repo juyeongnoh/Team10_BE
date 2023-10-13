@@ -7,6 +7,9 @@ import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
+import bdbe.bdbd.optime.DayType;
+import bdbe.bdbd.optime.Optime;
+import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.reservation.ReservationRequest.SaveDTO;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
@@ -31,12 +34,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import static bdbe.bdbd.optime.DayType.HOLIDAY;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-//@ActiveProfiles("test") //test profile 사용
-@Transactional
+//@Transactional
 @AutoConfigureMockMvc //MockMvc 사용
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 //통합테스트(SF-F-DS(Handler, ExHandler)-C-S-R-PC-DB) 다 뜬다.
@@ -63,6 +66,9 @@ public class ReservationRestControllerTest {
     LocationJPARepository locationJPARepository;
 
     @Autowired
+    OptimeJPARepository optimeJPARepository;
+
+    @Autowired
     private ObjectMapper om;
 
     private User user;
@@ -83,17 +89,9 @@ public class ReservationRestControllerTest {
 //                .password("user1234!")
 //                .username("useruser")
 //                .build();
-//        User savedUser = userJPARepository.save(user);
+//        User savedUser = userJPARepository.findFirstBy();
 
-//        Carwash carwash = Carwash.builder()
-//                .price(100)
-//                .name("세차장")
-//                .des("좋은 세차장입니다.")
-//                .tel("010-2222-3333")
-//                .location(savedLocation)
-//                .user(savedUser)
-//                .build();
-//        Carwash savedCarwash = carwashJPARepository.save(carwash);
+
 //        Carwash savedCarwash = carwashJPARepository.findFirstBy();
 
 
@@ -104,6 +102,25 @@ public class ReservationRestControllerTest {
 //                .status(1)
 //                .build();
 //        bayJPARepository.save(bay);
+
+//        Carwash carwash = carwashJPARepository.findFirstBy();
+
+//        Optime optime = Optime.builder()
+//                .dayType(HOLIDAY)
+//                .startTime(LocalTime.of(6, 0)) // 오전 6시
+//                .endTime(LocalTime.of(22, 0)) // 오후 10시
+//                .build();
+//        Optime savedOptime = optimeJPARepository.save(optime);
+//        Carwash carwash = Carwash.builder()
+//                .price(100)
+//                .name("세차장")
+//                .des("좋은 세차장입니다.")
+//                .tel("010-2222-3333")
+//                .optime(savedOptime)
+//                .location(savedLocation)
+//                .user(savedUser)
+//                .build();
+//        carwashJPARepository.save(carwash);
     }
 
 
@@ -130,8 +147,9 @@ public class ReservationRestControllerTest {
         SaveDTO saveDTO = new SaveDTO();
         // SaveDTO 객체 생성 및 값 설정
         saveDTO.setBayId(bayId);
-        saveDTO.setStartTime(LocalDateTime.now());
-        saveDTO.setEndTime(LocalDateTime.now().plusMinutes(30)); //30분 뒤로 설정
+        LocalDate date = LocalDate.now();
+        saveDTO.setStartTime(LocalDateTime.of(date, LocalTime.of(6, 0))); // 오전 6시
+        saveDTO.setEndTime(LocalDateTime.of(date, LocalTime.of(22, 00))); // 오후 10시
 //
         String requestBody = om.writeValueAsString(saveDTO);
         System.out.println("요청 데이터 : " + requestBody);
@@ -149,7 +167,7 @@ public class ReservationRestControllerTest {
 
         // verify
         resultActions.andExpect(jsonPath("$.success").value("true"));
-        // eye(2)
+
 
     }
 
@@ -201,35 +219,14 @@ public class ReservationRestControllerTest {
     @DisplayName("결제 후 예약 내역 조회")
     public void fetchLatestReservation_test() throws Exception {
         //given
-        Location location = Location.builder().build();
-        Location savedLocation = locationJPARepository.save(location);
+        User user = userJPARepository.findFirstBy();
+        Bay savedBay = bayJPARepository.findFirstBy();
 
-        User user = userJPARepository.findByEmail("user@nate.com")
-                .orElseThrow(() -> new IllegalArgumentException("user not found"));
-
-
-        Carwash carwash = Carwash.builder()
-                .price(100)
-                .name("세차장")
-                .des("좋은 세차장입니다.")
-                .tel("010-2222-3333")
-                .location(savedLocation)
-                .user(user)
-                .build();
-        Carwash savedCarwash = carwashJPARepository.save(carwash);
-        Bay bay = Bay.builder()
-                .bayNum(10)
-                .carwash(carwash)
-                .status(1)
-                .build();
-        Bay savedBay = bayJPARepository.save(bay);
-
-//        User user = userJPARepository.findByEmail("user@nate.com").orElseThrow(()->new IllegalArgumentException("user not found"));
-//         예약 1
+        // 예약 1
         Reservation reservation = Reservation.builder()
                 .price(5000)
-                .startTime(LocalDateTime.from(LocalTime.of(10, 0))) // 10:00 AM
-                .endTime(LocalDateTime.from(LocalTime.of(11, 0)))  // 11:00 AM
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusMinutes(30)) //60분 뒤로 설정
                 .bay(savedBay)
                 .user(user)
                 .build();

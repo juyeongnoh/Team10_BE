@@ -1,6 +1,8 @@
 package bdbe.bdbd.optime;
 
 import bdbe.bdbd.carwash.Carwash;
+import bdbe.bdbd.keyword.carwashKeyword.CarwashKeyword;
+import bdbe.bdbd.reservation.Reservation;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,17 +32,11 @@ public class Optime{ // 영업시간
 
     @Column(name="end_time", nullable = false)
     private LocalTime endTime;
-
-    @ManyToOne(fetch = FetchType.LAZY) //외래키
-    @JoinColumn(name="c_id",  nullable = false)
-    private Carwash carwash;
-
     @Builder
-    public Optime(Long id, DayType dayType, LocalTime startTime, LocalTime endTime, Carwash carwash) {
+    public Optime(Long id, DayType dayType, LocalTime startTime, LocalTime endTime) {
         this.id = id;
         this.dayType = dayType;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.carwash = carwash;
     }
 }

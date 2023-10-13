@@ -7,6 +7,7 @@ import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
+import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.reservation.ReservationResponse.ReservationInfoDTO;
 import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +30,23 @@ public class ReservationService {
     private final CarwashJPARepository carwashJPARepository;
     private final BayJPARepository bayJPARepository;
     private final LocationJPARepository locationJPARepository;
-//    private final Fil
-
 
     @Transactional
     public void save(ReservationRequest.SaveDTO dto, Long carwashId, Long bayId, User sessionUser) {
         Carwash carwash = carwashJPARepository.findById(carwashId)
                 .orElseThrow(() -> new IllegalArgumentException("carwash not found"));
+        // 예약 시간이 영업시간을 벗어나는지 확인
+        LocalTime opStartTime = carwash.getOptime().getStartTime();
+        LocalTime opEndTime = carwash.getOptime().getEndTime();
+
+        LocalTime dtoStartTimePart = dto.getStartTime().toLocalTime();
+        LocalTime dtoEndTimePart = dto.getEndTime().toLocalTime();
+
+        if (!((opStartTime.isBefore(dtoStartTimePart) || opStartTime.equals(dtoStartTimePart)) &&
+                (opEndTime.isAfter(dtoEndTimePart) || opEndTime.equals(dtoEndTimePart)))) {
+            throw new IllegalArgumentException("예약 시간이 영업 시간을 벗어났습니다.");
+        }
+        // 베이 찾기
         Bay bay = bayJPARepository.findById(bayId)
                 .orElseThrow(() -> new IllegalArgumentException("bay not found"));
         //예약 생성
