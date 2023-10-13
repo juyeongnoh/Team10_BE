@@ -58,7 +58,7 @@ public class CarwashRestControllerTest {
 
         // when
         ResultActions resultActions = mvc.perform(
-                get("/carwashes")
+                get("/carwashes/recommended")
         );
 
         // eye
@@ -69,7 +69,7 @@ public class CarwashRestControllerTest {
         resultActions.andExpect(jsonPath("$.success").value("true"));
     }
 
-    @WithUserDetails(value = "user@nate.com")
+    @WithUserDetails(value = "owner@nate.com")
     @Test
     @DisplayName("세차장 등록 기능")
     public void save_test() throws Exception {
@@ -77,6 +77,7 @@ public class CarwashRestControllerTest {
         // dto 생성
         CarwashRequest.SaveDTO dto = new CarwashRequest.SaveDTO();
         dto.setName("test 세차장");
+
         dto.setTel("01012345678");
         dto.setDescription("테스트 설명");
         dto.setPrice("100");
@@ -110,7 +111,7 @@ public class CarwashRestControllerTest {
         System.out.println("요청 데이터 : " + requestBody);
         // when
         ResultActions resultActions = mvc.perform(
-                post("/carwashes/register")
+                post("/owner/carwashes/register")
                         .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );

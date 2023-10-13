@@ -10,6 +10,7 @@ import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.reservation.ReservationRequest.SaveDTO;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
+import bdbe.bdbd.user.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +22,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 //@ActiveProfiles("test") //test profile 사용
-//@Transactional
+@Transactional
 @AutoConfigureMockMvc //MockMvc 사용
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 //통합테스트(SF-F-DS(Handler, ExHandler)-C-S-R-PC-DB) 다 뜬다.
@@ -66,17 +69,22 @@ public class ReservationRestControllerTest {
 
     @BeforeEach()
     public void setup() {
-//        Locationn location = Location.builder().build();
+//        Location location = Location.builder()
+//                .place("place")
+//                .address("address")
+//                .latitude(1.234)
+//                .longitude(2.345)
+//                .build();
 //        Location savedLocation = locationJPARepository.save(location);
-//
+
 //        User user = User.builder()
-//                .role("USER")
+//                .role(UserRole.ROLE_USER)
 //                .email("user@nate.com")
 //                .password("user1234!")
 //                .username("useruser")
 //                .build();
 //        User savedUser = userJPARepository.save(user);
-//
+
 //        Carwash carwash = Carwash.builder()
 //                .price(100)
 //                .name("세차장")
@@ -86,55 +94,52 @@ public class ReservationRestControllerTest {
 //                .user(savedUser)
 //                .build();
 //        Carwash savedCarwash = carwashJPARepository.save(carwash);
-//
-//        //Long id, int bayNum, int bayType, Carwash carwash, int status
+//        Carwash savedCarwash = carwashJPARepository.findFirstBy();
+
+
+        //Long id, int bayNum, int bayType, Carwash carwash, int status
 //        Bay bay = Bay.builder()
 //                .bayNum(1)
-//                .bayType(1)
-//                .carwash(carwash)
+//                .carwash(savedCarwash)
 //                .status(1)
 //                .build();
 //        bayJPARepository.save(bay);
     }
 
-    @Test
-    @DisplayName("찾기")
-    public void findAll_test() throws Exception {
-        // given
-
-        // when
-        ResultActions resultActions = mvc.perform(
-                get("/carwashes")
-        );
-
-        // eye
-        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-        System.out.println("응답 Body : " + responseBody);
-
-        // verify
-        resultActions.andExpect(jsonPath("$.success").value("true"));
-    }
 
     @WithUserDetails(value = "user@nate.com")
     @Test
     @DisplayName("예약 기능")
     public void save_test() throws Exception {
-        // given
-        Long carwashId = carwashJPARepository.findFirstBy().getId();
+//        // given
+        Carwash carwash = carwashJPARepository.findFirstBy();
+        Long carwashId = carwash.getId();
         System.out.println("carwashId : "+ carwashId);
         Long bayId = bayJPARepository.findFirstBy().getId();
         System.out.println("bayId : " + bayId);
-        if(carwashId==null || bayId==null) throw new IllegalArgumentException("not found carwash or bay");
-        // dto 생성
-        SaveDTO saveDTO = new SaveDTO();
-//        // SaveDTO 객체 생성 및 값 설정
-        saveDTO.setBayId(bayId);
-        saveDTO.setSelectedDate(LocalDate.now());  // 오늘 날짜로 설정
+        if(carwash != null) {
+            carwashId = carwash.getId();
+            System.out.println("carwashId : " + carwashId);
+        } else {
+            System.out.println("No Carwash entity found");
+             throw new EntityNotFoundException("No Carwash entity found");
+        }
 
-        SaveDTO.TimeDTO timeDTO = new SaveDTO.TimeDTO();
-        timeDTO.setStart(LocalDateTime.from(LocalTime.of(10, 00))) // 10:00으로 시작 시간 설정
-        ; timeDTO.setEnd(LocalDateTime.from(LocalTime.of(11, 00)));    // 11:00으로 끝나는 시간 설정
-        saveDTO.setTime(timeDTO);
+        Bay bay = bayJPARepository.findFirstBy();
+        if(bay != null) {
+            bayId = bay.getId();
+            System.out.println("bayId : " + bayId);
+        } else {
+            System.out.println("No Bay entity found");
+             throw new EntityNotFoundException("No Bay entity found");
+        }
+//        // dto 생성
+        SaveDTO saveDTO = new SaveDTO();
+        // SaveDTO 객체 생성 및 값 설정
+        saveDTO.setBayId(bayId);
+        saveDTO.setBayId(1L);
+        saveDTO.setStartTime(LocalDateTime.now());
+        saveDTO.setEndTime(LocalDateTime.now().plusMinutes(30)); //30분 뒤로 설정
 //         when
 //        /carwashes/{carwash_id}/bays/{bay_id}/reservations
         ResultActions resultActions = mvc.perform(
@@ -149,8 +154,6 @@ public class ReservationRestControllerTest {
 
         // verify
         resultActions.andExpect(jsonPath("$.success").value("true"));
-        User user = userJPARepository.findByEmail("user@nate.com")
-                .orElseThrow(() -> new IllegalArgumentException("user not found"));
         // eye(2)
         List<Reservation> reservationList = reservationJPARepository.findAll();
         for (Reservation reservation : reservationList) {
