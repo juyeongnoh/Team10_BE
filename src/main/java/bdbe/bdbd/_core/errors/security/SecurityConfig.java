@@ -78,10 +78,11 @@ public class SecurityConfig {
                         .antMatchers("/admin/join", "/admin/login").permitAll()
                         .antMatchers("/user/check", "/user/check").permitAll()
                         .antMatchers("/owner/check", "/owner/check").permitAll()
-                        .antMatchers("/owner/**").hasRole("OWNER")
-                        .antMatchers("/user/**").hasRole("USER")
+//                        .antMatchers("/owner/**").hasRole("OWNER")
+//                        .antMatchers("/user/**").hasRole("USER")
                         .antMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
+//                        .anyRequest().authenticated()
         );
 
         return http.build();

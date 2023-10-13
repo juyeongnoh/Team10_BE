@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Transactional
+//@Transactional
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class OwnerRestControllerTest {
@@ -57,7 +57,7 @@ public class OwnerRestControllerTest {
         MockUserWithUserRole.setTel("010-1234-5678");
 
         userJPARepository.save(MockUserWithUserRole);
-        //권한 검사를 위한 userrole객체
+//        권한 검사를 위한 user role 객체
     }
 
     @AfterEach
@@ -92,10 +92,9 @@ public class OwnerRestControllerTest {
     public void joinTest() throws Exception {
         UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
         requestDTO.setUsername("imnewowner");
-        requestDTO.setEmail("newowner@naver.com");
-        requestDTO.setPassword("asdf1234!");
+        requestDTO.setEmail("owner@nate.com");
+        requestDTO.setPassword("owner1234!");
         requestDTO.setRole(UserRole.ROLE_OWNER);
-//        requestDTO.setCredit(0);
         requestDTO.setTel("010-1234-5678");
 
 
@@ -119,9 +118,9 @@ public class OwnerRestControllerTest {
         String requestBody = om.writeValueAsString(requestDTO);
 
         mvc.perform(
-                        post("/owner/login")
-                                .content(requestBody)
-                                .contentType(MediaType.APPLICATION_JSON)
+                    post("/owner/login")
+                            .content(requestBody)
+                            .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andExpect(header().exists(JWTProvider.HEADER))
