@@ -5,10 +5,10 @@ import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.keyword.carwashKeyword.CarwashKeyword;
 import bdbe.bdbd.keyword.carwashKeyword.CarwashKeywordJPARepository;
-import bdbe.bdbd.optime.Optime;
-import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
+import bdbe.bdbd.optime.Optime;
+import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class CarwashService {
@@ -34,29 +35,30 @@ public class CarwashService {
     private final UserJPARepository userJPARepository;
 
     public List<CarwashResponse.FindAllDTO> findAll(int page) {
+        // Pageable 검증
+        if (page < 0) {
+            throw new IllegalArgumentException("Invalid page number.");
+        }
 
         Pageable pageable = PageRequest.of(page, 10);
         Page<Carwash> carwashEntities = carwashJPARepository.findAll(pageable);
+
+        // Page 객체 검증
+        if (carwashEntities == null || !carwashEntities.hasContent()) {
+            throw new NoSuchElementException("No carwash entities found.");
+        }
 
         List<CarwashResponse.FindAllDTO> carwashResponses = carwashEntities.getContent().stream()
                 .map(CarwashResponse.FindAllDTO::new)
                 .collect(Collectors.toList());
 
+        // List 객체 검증
+        if (carwashResponses == null || carwashResponses.isEmpty()) {
+            throw new NoSuchElementException("No carwash entities transformed.");
+        }
+
         return carwashResponses;
     }
-
-//    public List<CarwashResponse.FindAllDTO> findAll(int page) {
-//        // 1. 페이지 객체 만들기
-//        Pageable pageable = PageRequest.of(page, 10);
-//        // 2. DB 조회하기
-//        Page<Carwash> carwashes = carwashJPARepository.findAll(pageable);
-//        // 3. DTO 만들기
-//        List<CarwashResponse.FindAllDTO> dtos = carwashes.getContent().stream()
-//                .map(CarwashResponse.FindAllDTO::new)
-//                .collect(Collectors.toList());
-//        return dtos;
-//    }
-
 
     @Transactional
     public void save(CarwashRequest.SaveDTO saveDTO, User sessionUser) {
