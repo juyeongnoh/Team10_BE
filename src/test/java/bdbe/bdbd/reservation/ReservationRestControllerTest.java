@@ -117,13 +117,6 @@ public class ReservationRestControllerTest {
         System.out.println("carwashId : "+ carwashId);
         Long bayId = bayJPARepository.findFirstBy().getId();
         System.out.println("bayId : " + bayId);
-        if(carwash != null) {
-            carwashId = carwash.getId();
-            System.out.println("carwashId : " + carwashId);
-        } else {
-            System.out.println("No Carwash entity found");
-             throw new EntityNotFoundException("No Carwash entity found");
-        }
 
         Bay bay = bayJPARepository.findFirstBy();
         if(bay != null) {
@@ -166,29 +159,26 @@ public class ReservationRestControllerTest {
     public void findAllByCarwash_test() throws Exception {
         //given
         Carwash carwash = carwashJPARepository.findFirstBy();
-        Bay bay = Bay.builder()
-                .bayNum(10)
-                .carwash(carwash)
-                .status(1)
-                .build();
-        Bay savedBay = bayJPARepository.save(bay);
+        System.out.println("carwashId : " + carwash.getId());
+        Bay bay = bayJPARepository.findFirstBy();
+        System.out.println("bayId : " + bay.getId());
 
         User user = userJPARepository.findByEmail("user@nate.com").orElseThrow(()->new IllegalArgumentException("user not found"));
         // 예약 1
         Reservation reservation = Reservation.builder()
                 .price(5000)
-                .startTime(LocalDateTime.from(LocalTime.of(10, 0))) // 10:00 AM
-                .endTime(LocalDateTime.from(LocalTime.of(11, 0)))  // 11:00 AM
-                .bay(savedBay)
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusMinutes(30)) //30분 뒤로 설정
+                .bay(bay)
                 .user(user)
                 .build();
         reservationJPARepository.save(reservation);
         // 예약 2
         Reservation reservation2 = Reservation.builder()
                 .price(5000)
-                .startTime(LocalDateTime.from(LocalTime.of(14, 0))) // 10:00 AM
-                .endTime(LocalDateTime.from(LocalTime.of(16, 0)))  // 11:00 AM
-                .bay(savedBay)
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusMinutes(60)) //60분 뒤로 설정
+                .bay(bay)
                 .user(user)
                 .build();
         reservationJPARepository.save(reservation2);
