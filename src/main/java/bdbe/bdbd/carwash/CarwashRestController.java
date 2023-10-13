@@ -19,7 +19,7 @@ public class CarwashRestController {
     private final CarwashService carwashService;
 
     // 전체 세차장 목록 조회, 10개씩 페이징
-    @GetMapping("/carwashes")
+    @GetMapping("/carwashes/recommended")
     public ResponseEntity<?> findAll(@RequestParam(value = "page", defaultValue = "0") Integer page) {
         List<CarwashResponse.FindAllDTO> dtos = carwashService.findAll(page);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(dtos);
@@ -27,7 +27,7 @@ public class CarwashRestController {
     }
 
     //세차장 등록
-    @PostMapping("/carwashes/register")
+    @PostMapping("/owner/carwashes/register")
     public ResponseEntity<?> save(@RequestBody @Valid CarwashRequest.SaveDTO saveDTOs, Errors errors,  @AuthenticationPrincipal CustomUserDetails userDetails) {
         carwashService.save(saveDTOs, userDetails.getUser());
         return ResponseEntity.ok(ApiUtils.success(null));
