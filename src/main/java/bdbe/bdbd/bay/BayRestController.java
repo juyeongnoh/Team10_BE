@@ -15,23 +15,23 @@ public class BayRestController {
 
     private final BayService bayService;
 
-    @PostMapping("/carwashes/{carwash_id}/bays")  //베이 추가
+    @PostMapping("/owner/carwashes/{carwash_id}/bays")  //베이 추가
     public ResponseEntity<?> createBay(
-            @RequestBody @Valid BayRequest.SaveDTO saveDTO,
-            Errors errors,
-            @PathVariable("carwash_id") Long carwashId) {
+            @PathVariable("carwash_id") Long carwashId,
+            @RequestBody BayRequest.SaveDTO saveDTO, Errors errors)
+    {
         bayService.createBay(saveDTO, carwashId);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
-    @DeleteMapping("/bays/{bay_id}") //베이 삭제
+    @DeleteMapping("/owner/bays/{bay_id}") //베이 삭제
     public ResponseEntity<?> deleteBay(@PathVariable("bay_id") Long bayId){
         bayService.deleteBay(bayId);
         return ResponseEntity.ok(ApiUtils.success(null));
 
     }
 
-    @PostMapping("/bays/{bays_id}/status") //베이 활성화/비활성화
+    @PostMapping("/owner/bays/{bays_id}/status") //베이 활성화/비활성화
     public ResponseEntity<?> statusBay(
             @PathVariable("bay_id") Long bayId,
             @RequestParam int status) {

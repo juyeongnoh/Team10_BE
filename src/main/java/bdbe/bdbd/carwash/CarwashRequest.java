@@ -24,7 +24,7 @@ public class CarwashRequest {
         @NotEmpty
         private String name;
         @NotNull
-        private RegionDTO region;
+        private LocationDTO location;
 
         private String price;
 
@@ -46,12 +46,12 @@ public class CarwashRequest {
                     .build();
         }
 
-        public Location toRegionEntity() {
+        public Location toLocationEntity() {
             return Location.builder()
-                    .placeName(region.getPlaceName())
-                    .address(region.getAddress())
-                    .latitude(region.getLatitude())
-                    .longitude(region.getLongitude())
+                    .place(toLocationEntity().getPlace())
+                    .address(toLocationEntity().getAddress())
+                    .latitude(toLocationEntity().getLatitude())
+                    .longitude(toLocationEntity().getLongitude())
                     .build();
         }
 
@@ -59,14 +59,14 @@ public class CarwashRequest {
             List<Optime> optimeList = new ArrayList<>();
 
             optimeList.add(Optime.builder()
-                    .dayName(DayType.WEEKDAY)
+                    .dayType(DayType.WEEKDAY)
                     .startTime(optime.getWeekday().getStart())
                     .endTime(optime.getWeekday().getEnd())
                     .carwash(carwash)
                     .build());
 
             optimeList.add(Optime.builder()
-                    .dayName(DayType.WEEKEND)
+                    .dayType(DayType.WEEKEND)
                     .startTime(optime.getWeekend().getStart())
                     .endTime(optime.getWeekend().getEnd())
                     .carwash(carwash)
@@ -101,7 +101,7 @@ public class CarwashRequest {
     @Getter
     @Setter
     @ToString
-    public static class RegionDTO {
+    public static class LocationDTO {
         private String placeName;
         private String address;
         private double latitude;

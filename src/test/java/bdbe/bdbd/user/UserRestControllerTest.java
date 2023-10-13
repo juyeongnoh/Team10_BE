@@ -57,7 +57,7 @@ public class UserRestControllerTest {
 
 
     @Test
-    public void check_test() throws Exception {
+    public void checkTest() throws Exception {
         //given
         UserRequest.EmailCheckDTO requestDTO = new UserRequest.EmailCheckDTO();
         requestDTO.setEmail("bdbd@naver.com");
@@ -74,13 +74,13 @@ public class UserRestControllerTest {
     }
 
     @Test
-    public void join_test() throws Exception {
+    public void joinTest() throws Exception {
         UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
         requestDTO.setUsername("imnewuser");
         requestDTO.setEmail("newuser@naver.com");
         requestDTO.setPassword("asdf1234!");
         requestDTO.setRole(UserRole.ROLE_USER);
-        requestDTO.setCredit(0);
+//        requestDTO.setCredit(0);
         requestDTO.setTel("010-1234-5678");
 
 
@@ -96,7 +96,7 @@ public class UserRestControllerTest {
     }
 
     @Test
-    public void login_test() throws Exception {
+    public void loginTest() throws Exception {
         UserRequest.LoginDTO requestDTO = new UserRequest.LoginDTO();
         requestDTO.setEmail("mock@naver.com");
         requestDTO.setPassword("asdf1234!");
@@ -126,7 +126,7 @@ public class UserRestControllerTest {
         requestDTO.setEmail(email);
         requestDTO.setPassword("asdf1234!");
         requestDTO.setRole(UserRole.ROLE_USER);
-        requestDTO.setCredit(0);
+//        requestDTO.setCredit(0);
         requestDTO.setTel("010-1234-5678");
 
 
@@ -138,7 +138,7 @@ public class UserRestControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(jsonPath("$.success").value("false"))
-                .andExpect(jsonPath("$.error.message").value("동일한 이메일이 존재합니다 : " + email))
+                .andExpect(jsonPath("$.error.message").value("duplicate email exist : " + email))
                 .andExpect(jsonPath("$.error.status").value(400))
                 .andDo(print());
     }
@@ -152,7 +152,7 @@ public class UserRestControllerTest {
         requestDTO.setEmail(email);
         requestDTO.setPassword("asdf1234!");
         requestDTO.setRole(UserRole.ROLE_USER);
-        requestDTO.setCredit(0);
+//        requestDTO.setCredit(0);
         requestDTO.setTel("010-1234-5678");
 
 
@@ -178,7 +178,7 @@ public class UserRestControllerTest {
         requestDTO.setEmail(email);
         requestDTO.setPassword("asdf1234");
         requestDTO.setRole(UserRole.ROLE_USER);
-        requestDTO.setCredit(0);
+//        requestDTO.setCredit(0);
         requestDTO.setTel("010-1234-5678");
 
 
@@ -210,7 +210,7 @@ public class UserRestControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(jsonPath("$.success").value("false"))
-                .andExpect(jsonPath("$.error.message").value("이메일을 찾을 수 없습니다 : " + email))
+                .andExpect(jsonPath("$.error.message").value("email not found : "+requestDTO.getEmail()))
                 .andExpect(jsonPath("$.error.status").value(400))
                 .andDo(print());
     }
@@ -252,7 +252,7 @@ public class UserRestControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(jsonPath("$.success").value("false"))
-                .andExpect(jsonPath("$.error.message").value("패스워드가 잘못입력되었습니다."))
+                .andExpect(jsonPath("$.error.message").value("wrong password"))
                 .andExpect(jsonPath("$.error.status").value(400))
                 .andDo(print());
     }

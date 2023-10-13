@@ -30,22 +30,22 @@ public class UserRequest {
         private String username;
 
 //        @NotNull
-//        private Long regionId;
+//        private Long locationId;
 
         @Enumerated(EnumType.STRING)
         @NotNull
         private UserRole role;
 
-        //notNUll 설정 불가 by int
-        private int credit = 0;
+//        //notNUll 설정 불가 by int
+//        private int credit = 0;
 
         @Size(min = 9, max = 14)
         @NotEmpty
         private String tel;
 
-        //        public User toEntity(RegionJPARepository regionRepository) {
-//            Region region = regionRepository.findById(regionId)
-//                    .orElseThrow(() -> new IllegalArgumentException("해당 ID의 Region이 존재하지 않습니다."));
+        //        public User toEntity(LocationJPARepository locationRepository) {
+//            Location location = locationRepository.findById(locationId)
+//                    .orElseThrow(() -> new IllegalArgumentException("해당 ID의 Location이 존재하지 않습니다."));
 //
 //            return User.builder()
 //                    .email(email)
