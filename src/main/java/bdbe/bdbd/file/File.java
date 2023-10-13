@@ -27,13 +27,17 @@ public class File {
     private String name;
 
     @Column(length = 255, nullable = false)
+    private String url;
+
+    @Column(length = 255, nullable = false)
     private String path;
 
     @Builder
-    public File(Long id, Carwash carwash, String name, String path) {
+    public File(Long id, Carwash carwash, String name, String url, String path) {
         this.id = id;
         this.carwash = carwash;
         this.name = name;
+        this.url = url;
         this.path = path;
     }
 }
