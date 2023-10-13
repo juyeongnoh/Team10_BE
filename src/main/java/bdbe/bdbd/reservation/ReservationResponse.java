@@ -88,7 +88,6 @@ public class ReservationResponse {
     @Setter
     @ToString
     public static class ReservationDTO {
-        private LocalDate date;
         private TimeDTO time;
         private int price;
         private int bayNo; // 예약된 베이 번호

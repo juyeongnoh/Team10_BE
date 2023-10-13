@@ -70,7 +70,7 @@ public class CarwashService {
         Carwash carwash = saveDTO.toCarwashEntity(location, sessionUser);
         carwashJPARepository.save(carwash);
         // 운영시간
-        List<Optime> optimes = saveDTO.toOptimeEntities(carwash);
+        List<Optime> optimes = saveDTO.toOptimeEntities();
         optimeJPARepository.saveAll(optimes);
         // 키워드
         List<Long> keywordIdList = saveDTO.getKeywordId();

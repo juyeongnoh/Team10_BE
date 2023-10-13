@@ -3,6 +3,7 @@ package bdbe.bdbd.carwash;
 import bdbe.bdbd.file.File;
 import bdbe.bdbd.keyword.carwashKeyword.CarwashKeyword;
 import bdbe.bdbd.location.Location;
+import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.user.User;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -47,6 +48,10 @@ public class Carwash{
     @JoinColumn(name="u_id",  nullable = false)
     private User user;
 
+    @OneToOne //일대일-소유측
+    @JoinColumn(name="o_id", nullable = false) //외래키
+    private Optime optime;
+
     @OneToMany(mappedBy = "carwash") //양방향 비소유측, 1:1 참조 - readOnly
     private List<CarwashKeyword> carwashKeywords = new ArrayList<>();
 
@@ -54,7 +59,7 @@ public class Carwash{
     private List<File> fileList = new ArrayList<>();
 
     @Builder
-    public Carwash(Long id, String name, double rate, String tel, String des, int price, Location location, User user) {
+    public Carwash(Long id, String name, double rate, String tel, String des, int price, Location location, User user, Optime optime) {
         this.id = id;
         this.name = name;
         this.rate = rate;
@@ -63,7 +68,9 @@ public class Carwash{
         this.price = price;
         this.location = location;
         this.user = user;
+        this.optime = optime;
     }
+
 
     public void updateRate(double rate) {
         this.rate = rate;
