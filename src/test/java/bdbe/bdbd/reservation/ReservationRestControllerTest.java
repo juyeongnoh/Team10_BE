@@ -111,7 +111,7 @@ public class ReservationRestControllerTest {
     @Test
     @DisplayName("예약 기능")
     public void save_test() throws Exception {
-//        // given
+        // given
         Carwash carwash = carwashJPARepository.findFirstBy();
         Long carwashId = carwash.getId();
         System.out.println("carwashId : "+ carwashId);
@@ -137,9 +137,11 @@ public class ReservationRestControllerTest {
         SaveDTO saveDTO = new SaveDTO();
         // SaveDTO 객체 생성 및 값 설정
         saveDTO.setBayId(bayId);
-        saveDTO.setBayId(1L);
         saveDTO.setStartTime(LocalDateTime.now());
         saveDTO.setEndTime(LocalDateTime.now().plusMinutes(30)); //30분 뒤로 설정
+//
+        String requestBody = om.writeValueAsString(saveDTO);
+        System.out.println("요청 데이터 : " + requestBody);
 //         when
 //        /carwashes/{carwash_id}/bays/{bay_id}/reservations
         ResultActions resultActions = mvc.perform(
@@ -147,18 +149,14 @@ public class ReservationRestControllerTest {
                         .content(om.writeValueAsString(saveDTO))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
-
-        // eye(1)
+//
+//        // eye(1)
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         System.out.println("응답 Body : " + responseBody);
 
         // verify
         resultActions.andExpect(jsonPath("$.success").value("true"));
         // eye(2)
-        List<Reservation> reservationList = reservationJPARepository.findAll();
-        for (Reservation reservation : reservationList) {
-            System.out.println(reservation.toString());
-        }
 
     }
 
