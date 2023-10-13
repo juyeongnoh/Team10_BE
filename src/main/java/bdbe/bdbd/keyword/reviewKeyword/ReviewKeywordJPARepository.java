@@ -1,6 +1,5 @@
-package bdbe.bdbd.rkeyword.reviewKeyword;
+package bdbe.bdbd.keyword.reviewKeyword;
 
-import bdbe.bdbd.review.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

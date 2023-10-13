@@ -17,8 +17,8 @@ public class Location { //지역
     @Column(columnDefinition = "BIGINT")
     private Long id;
 
-    @Column(name="place_name", length = 255, nullable = false)
-    private String placeName; //장소명
+    @Column(name="place", length = 255, nullable = false)
+    private String place; //장소명
 
     @Column(name="address", length = 255, nullable = false)
     private String address; //도로명 주소
@@ -31,9 +31,9 @@ public class Location { //지역
 
 
     @Builder
-    public Location(Long id, String placeName, String address, double latitude, double longitude) {
+    public Location(Long id, String place, String address, double latitude, double longitude) {
         this.id = id;
-        this.placeName = placeName;
+        this.place = place;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
