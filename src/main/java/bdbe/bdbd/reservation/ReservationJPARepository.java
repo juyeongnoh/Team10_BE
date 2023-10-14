@@ -27,4 +27,6 @@ public interface ReservationJPARepository extends JpaRepository<Reservation, Lon
     List<Reservation> findByUserIdJoinFetch(@Param("userId") Long userId, Pageable pageable);
 
     List<Reservation> findReservationByBayIdAndUserId(Long bayId, Long userId);
+
+    void deleteAllByBayId(Long bayId); // bayId로 모두 삭제
 }
