@@ -152,8 +152,8 @@ public class ReservationRestControllerTest {
         // SaveDTO 객체 생성 및 값 설정
         saveDTO.setBayId(bayId);
         LocalDate date = LocalDate.now();
-        saveDTO.setStartTime(LocalDateTime.of(date, LocalTime.of(6, 0))); // 오전 6시
-        saveDTO.setEndTime(LocalDateTime.of(date, LocalTime.of(6, 30))); // 30분 뒤
+        saveDTO.setStartTime(LocalDateTime.of(date, LocalTime.of(21, 30))); // 오전 6시
+        saveDTO.setEndTime(LocalDateTime.of(date, LocalTime.of(22, 00))); // 30분 뒤
         String s = saveDTO.toString();
         System.out.println(s);
         String requestBody = om.writeValueAsString(saveDTO);
@@ -197,14 +197,15 @@ public class ReservationRestControllerTest {
                 .build();
         reservationJPARepository.save(reservation);
         // 예약 2
-        Reservation reservation2 = Reservation.builder()
-                .price(5000)
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now().plusMinutes(60)) //60분 뒤로 설정
+        LocalDate date = LocalDate.now();
+        reservation = Reservation.builder()
+                .price(4000)
+                .startTime(LocalDateTime.of(date, LocalTime.of(20, 0))) // 오전 6시
+                .endTime(LocalDateTime.of(date, LocalTime.of(20, 30))) // 30분 뒤
                 .bay(bay)
                 .user(user)
                 .build();
-        reservationJPARepository.save(reservation2);
+        reservationJPARepository.save(reservation);
 
         //when
         ResultActions resultActions = mvc.perform(
@@ -250,7 +251,6 @@ public class ReservationRestControllerTest {
 
     }
 
-//    /reservations/current-status
     @WithUserDetails(value = "user@nate.com")
     @Test
     @DisplayName("현재 시간 기준 예약 내역 조회")
@@ -305,6 +305,78 @@ public class ReservationRestControllerTest {
         System.out.println("응답 Body : " + responseBody);
 
     }
+
+    @WithUserDetails(value = "user@nate.com")
+    @Test
+    @DisplayName("최근 예약 내역 조회")
+    public void fetchRecentReservation_test() throws Exception {
+        //given
+        User user = userJPARepository.findByEmail("user@nate.com")
+                .orElseThrow(()-> new IllegalArgumentException("user not found"));
+
+        Carwash carwash = carwashJPARepository.findFirstBy();
+        Carwash carwash1 = carwashJPARepository.findById(3L).get();
+//        Bay bay = bayJPARepository.findByCarwashId(carwash.getId()).get(0);
+
+        Bay bay = Bay.builder()
+                .bayNum(2)
+                .carwash(carwash)
+                .status(1)
+                .build();
+        Bay savedBay = bayJPARepository.save(bay);
+
+        bay = Bay.builder()
+                .bayNum(2)
+                .carwash(carwash1)
+                .status(1)
+                .build();
+        Bay savedBay1 = bayJPARepository.save(bay);
+
+        LocalDate date = LocalDate.now();
+        // 예약 1
+        Reservation reservation = Reservation.builder()
+                .price(4000)
+                .startTime(LocalDateTime.of(date, LocalTime.of(6, 0))) // 오전 6시
+                .endTime(LocalDateTime.of(date, LocalTime.of(6, 30))) // 30분 뒤
+                .bay(savedBay)
+                .user(user)
+                .build();
+        reservationJPARepository.save(reservation);
+
+        // 예약 2
+        reservation = Reservation.builder()
+                .price(4000)
+                .startTime(LocalDateTime.of(date, LocalTime.of(20, 0))) // 오전 6시
+                .endTime(LocalDateTime.of(date, LocalTime.of(20, 30))) // 30분 뒤
+                .bay(savedBay)
+                .user(user)
+                .build();
+        reservationJPARepository.save(reservation);
+
+        // 예약 3 (다른 세차장의 베이)
+        reservation = Reservation.builder()
+                .price(4000)
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusMinutes(30)) //30분 뒤로 설정
+                .bay(savedBay1)
+                .user(user)
+                .build();
+        reservationJPARepository.save(reservation);
+
+
+        //when
+        ResultActions resultActions = mvc.perform(
+                get("/reservations/recent")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+        //then
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+
+    }
+
+
 
 
 
