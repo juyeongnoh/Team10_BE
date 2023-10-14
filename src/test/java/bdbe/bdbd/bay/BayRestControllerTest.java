@@ -18,12 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Transactional
+//@Transactional
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class BayRestControllerTest {
@@ -93,16 +92,11 @@ public class BayRestControllerTest {
     public void changeStatusTest() throws Exception {
 
         Long bayId = bayJPARepository.findFirstBy().getId();
-
-        BayRequest.SaveDTO saveDTO = new BayRequest.SaveDTO();
-        saveDTO.setBayNum(saveDTO.getBayNum());
-
-        String requestBody = om.writeValueAsString(bayId);
-        System.out.println("요청 데이터:" +requestBody);
+        System.out.println("bayId = " + bayId);
 
         ResultActions resultActions = mvc.perform(
-                post("/owner/bays/%d/status", bayId)
-                        .content(requestBody)
+                put(String.format("/owner/bays/%d/status", bayId)) // String.format을 사용하여 URL 포맷팅
+                        .param("status", "1")  // 쿼리 파라미터 추가
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
 
