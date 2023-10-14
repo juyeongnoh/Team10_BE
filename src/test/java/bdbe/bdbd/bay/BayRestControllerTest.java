@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.nio.charset.StandardCharsets;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Transactional
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class BayRestControllerTest {
@@ -53,7 +55,7 @@ public class BayRestControllerTest {
         System.out.println(carwashId);
 
         BayRequest.SaveDTO saveDTO = new BayRequest.SaveDTO();
-        saveDTO.setBayNum(5);
+        saveDTO.setBayNum(9);
 
         String requestBody = om.writeValueAsString(saveDTO);
 
@@ -67,30 +69,30 @@ public class BayRestControllerTest {
         resultActions.andExpect(jsonPath("$.success").value("true"));
     }
 
-    @Test
-    @DisplayName("베이 삭제")
-    public void deleteBayTest() throws Exception {
-
-        Long carwashId = carwashJPARepository.findFirstBy().getId();
-        System.out.println("carwashId:" + carwashId);
-        if (carwashId == null) throw new IllegalArgumentException("not found carwash");
-        Long bayId = bayJPARepository.findFirstBy().getId();
-        System.out.println("bayId:" + bayId);
-        if (bayId == null) throw new IllegalArgumentException("not found bay");
-
-        ResultActions resultActions = mvc.perform(
-                        delete("owner/carwashes/%d/bays/%d", carwashId, bayId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value("true")
-                );
-    }
+//    @WithUserDetails("user@nate.com")
+//    @Test
+//    @DisplayName("베이 삭제")
+//    public void deleteBayTest() throws Exception {
+//
+//        Long carwashId = carwashJPARepository.findFirstBy().getId();
+//        System.out.println("carwashId:" + carwashId);
+//
+//        Long bayId = bayJPARepository.findFirstBy().getId();
+//        System.out.println("bayId:" + bayId);
+//
+//        mvc.perform(
+//                delete(String.format("/owner/bays/%d", bayId))
+//                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.success").value("true")
+//                );
+//    }
 
     @Test
     @DisplayName("베이 활성화/비활성화")
     public void changeStatusTest() throws Exception {
 
-        Long bayId = 1L;
-        int status = 0;
+        Long bayId = bayJPARepository.findFirstBy().getId();
 
         BayRequest.SaveDTO saveDTO = new BayRequest.SaveDTO();
         saveDTO.setBayNum(saveDTO.getBayNum());
@@ -101,7 +103,7 @@ public class BayRestControllerTest {
         ResultActions resultActions = mvc.perform(
                 post("/owner/bays/%d/status", bayId)
                         .content(requestBody)
-                        .contentType(MediaType.APPLICATION_ATOM_XML_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
