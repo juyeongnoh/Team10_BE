@@ -32,11 +32,17 @@ public class Optime{ // 영업시간
 
     @Column(name="end_time", nullable = false)
     private LocalTime endTime;
+
+    @ManyToOne(fetch = FetchType.LAZY) //외래키
+    @JoinColumn(name="c_id",  nullable = false)
+    private Carwash carwash;
+
     @Builder
-    public Optime(Long id, DayType dayType, LocalTime startTime, LocalTime endTime) {
+    public Optime(Long id, DayType dayType, LocalTime startTime, LocalTime endTime, Carwash carwash) {
         this.id = id;
         this.dayType = dayType;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.carwash = carwash;
     }
 }
