@@ -132,6 +132,39 @@ public class ReservationResponse {
 
     @Getter
     @Setter
+    @ToString
+    public static class fetchRecentReservationDTO {
+        private List<RecentReservation> recent;
+
+        public fetchRecentReservationDTO(List<Reservation> reservationList) {
+            this.recent = reservationList.stream()
+                    .map(RecentReservation::new)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class RecentReservation {
+        private Long carwashId;
+//        private String image;
+        private LocalDate date;
+        private String carwashName;
+
+        public RecentReservation(Reservation reservation) {
+            this.carwashId = reservation.getBay().getCarwash().getId();
+//            this.image = image;
+            this.date = reservation.getStartTime().toLocalDate();
+            this.carwashName = reservation.getBay().getCarwash().getName();
+        }
+    }
+
+
+
+
+    @Getter
+    @Setter
     public static class ReservationInfoDTO{
         private Long id; // 예약 id
         private TimeDTO time;

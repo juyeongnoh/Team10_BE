@@ -1,6 +1,9 @@
 package bdbe.bdbd.reservation;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,10 +13,12 @@ public interface ReservationJPARepository extends JpaRepository<Reservation, Lon
 
     Optional<Reservation> findTopByUserIdOrderByIdDesc(Long userId); // 해당 유저의 가장 최근 예약 id(가장 큰 예약 id) 하나 찾기
 
-    List<Reservation> findReservationsByBayId(Long bayId); // 베이의 예약 목록 찾기
+    List<Reservation> findByBay_Id(Long bayId); // 베이의 예약 목록 찾기
 
     List<Reservation> findByUserId(Long userId); // user의 예약 목록 찾기
 
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.bay b JOIN FETCH b.carwash WHERE r.user.id = :userId")
+    List<Reservation> findByUserIdJoinFetch(@Param("userId") Long userId, Pageable pageable);
 
     List<Reservation> findReservationByBayIdAndUserId(Long bayId, Long userId);
 }
