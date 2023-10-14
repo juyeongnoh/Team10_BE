@@ -257,61 +257,43 @@ public class ReservationRestControllerTest {
     public void fetchCurrentStatusReservation_test() throws Exception {
         //given
 
-        Location location = locationJPARepository.findFirstBy();
-
         User user = userJPARepository.findByEmail("user@nate.com")
-                .orElseThrow(() -> new IllegalArgumentException("user not found"));
-
-        Optime o = optimeJPARepository.findFirstBy();
-        Carwash carwash = Carwash.builder()
-                .price(100)
-                .name("세차장")
-                .des("좋은 세차장입니다.")
-                .tel("010-2222-3333")
-                .location(location)
-                .user(user)
-                .build();
-        Carwash savedCarwash = carwashJPARepository.save(carwash);
-
-        Bay bay = Bay.builder()
-                .bayNum(10)
-                .carwash(savedCarwash)
-                .status(1)
-                .build();
-        Bay savedBay = bayJPARepository.save(bay);
-
+                .orElseThrow(()-> new IllegalArgumentException("user not found"));
+        Bay savedBay = bayJPARepository.findFirstBy();
 
         LocalDate date = LocalDate.now();
-//         예약 1
+        // 예약 1
         Reservation reservation = Reservation.builder()
-                .id(20L)
-                .price(5000)
-                .startTime(LocalDateTime.of(date, LocalTime.of(21, 30))) // 오전 6시
-                .endTime(LocalDateTime.of(date, LocalTime.of(22, 0))) // 오후 10시
+                .price(4000)
+                .startTime(LocalDateTime.of(date, LocalTime.of(6, 0))) // 오전 6시
+                .endTime(LocalDateTime.of(date, LocalTime.of(6, 30))) // 30분 뒤
                 .bay(savedBay)
                 .user(user)
                 .build();
         reservationJPARepository.save(reservation);
 
-//        // 예약 2
-        Reservation reservation2 = Reservation.builder()
-                .price(4500)
-                .startTime(LocalDateTime.from(LocalTime.of(10, 0))) // 10:00 AM
-                .endTime(LocalDateTime.from(LocalTime.of(11, 30)))  // 11:00 AM
+        // 예약 2
+        reservation = Reservation.builder()
+                .price(4000)
+                .startTime(LocalDateTime.of(date, LocalTime.of(20, 0))) // 오전 6시
+                .endTime(LocalDateTime.of(date, LocalTime.of(20, 30))) // 30분 뒤
                 .bay(savedBay)
                 .user(user)
                 .build();
-        reservationJPARepository.save(reservation2);
-                // 예약 3
-        Reservation reservation3 = Reservation.builder()
-                .price(4500)
-                .startTime(LocalDateTime.from(LocalTime.of(10, 0))) // 10:00 AM
-                .endTime(LocalDateTime.from(LocalTime.of(11, 0)))  // 11:00 AM
+        reservationJPARepository.save(reservation);
+
+        // 예약 3
+        reservation = Reservation.builder()
+                .price(4000)
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusMinutes(30)) //30분 뒤로 설정
                 .bay(savedBay)
                 .user(user)
                 .build();
-        reservationJPARepository.save(reservation3);
-//
+        reservationJPARepository.save(reservation);
+
+
+
         //when
         ResultActions resultActions = mvc.perform(
                 get("/reservations/current-status")
