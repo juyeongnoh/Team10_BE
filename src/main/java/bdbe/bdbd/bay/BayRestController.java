@@ -15,7 +15,7 @@ public class BayRestController {
 
     private final BayService bayService;
 
-    @PostMapping("/owner/carwashes/{carwash_id}/bays")  //베이 추가
+    @PostMapping("/owner/carwashes/{carwash_id}/bays")
     public ResponseEntity<?> createBay(
             @PathVariable("carwash_id") Long carwashId,
             @RequestBody BayRequest.SaveDTO saveDTO, Errors errors)
