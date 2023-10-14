@@ -3,7 +3,6 @@ package bdbe.bdbd.review;
 import bdbe.bdbd._core.errors.security.CustomUserDetails;
 import bdbe.bdbd._core.errors.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
@@ -23,9 +22,19 @@ public class ReviewRestController {
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
-    @GetMapping("/carwashes/{carwash_id}/reviews")
-    public ResponseEntity<?> getReviewsByCarwashId(@PathVariable("carwash_id") Long carwashId) {
+    // 리뷰 조회 기능
+    @GetMapping("/carwashes/{carwashId}/reviews")
+    public ResponseEntity<?> getReviewsByCarwashId(@PathVariable("carwashId") Long carwashId) {
         ReviewResponse.ReviewResponseDTO dto = reviewService.getReviewsByCarwashId(carwashId);
+
+        return ResponseEntity.ok(ApiUtils.success(dto));
+    }
+
+    // 리뷰 키워드 불러오기
+    @GetMapping("/reviews")
+    public ResponseEntity<?> getReviewKeyword() {
+        ReviewResponse.ReviewKeywordResponseDTO dto = reviewService.getReviewKeyword();
+
         return ResponseEntity.ok(ApiUtils.success(dto));
     }
 
