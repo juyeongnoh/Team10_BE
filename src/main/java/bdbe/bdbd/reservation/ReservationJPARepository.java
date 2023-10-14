@@ -9,6 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReservationJPARepository extends JpaRepository<Reservation, Long> {
+    Reservation findFirstBy(); // 하나 찾기
+
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.bay b JOIN FETCH b.carwash WHERE r.user.id = :userId")
+    List<Reservation> findFirstByUserIdWithJoinFetch(@Param("userId") Long userId, Pageable pageable);
+
+
     List<Reservation> findByBayIdIn(List<Long> bayIds); // bay id 리스트로 관련된 모든 reservation 찾기
 
     Optional<Reservation> findTopByUserIdOrderByIdDesc(Long userId); // 해당 유저의 가장 최근 예약 id(가장 큰 예약 id) 하나 찾기
