@@ -16,7 +16,7 @@ public class BayService {
     private final BayJPARepository bayJPARepository;
     private final CarwashJPARepository carwashJPARepository;
 
-
+    @Transactional
     public void createBay(BayRequest.SaveDTO dto, Long carwashId) {
         Carwash carwash = carwashJPARepository.findById(carwashId)
                 .orElseThrow(() -> new IllegalArgumentException("Carwash not found"));
