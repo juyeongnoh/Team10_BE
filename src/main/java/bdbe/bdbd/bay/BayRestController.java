@@ -6,8 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 
 @RequiredArgsConstructor
 @RestController
@@ -30,8 +28,8 @@ public class BayRestController {
 //        return ResponseEntity.ok(ApiUtils.success(null));
 //    }
 
-    @PostMapping("/owner/bays/{bays_id}/status") //베이 활성화/비활성화
-    public ResponseEntity<?> statusBay(
+    @PutMapping("/owner/bays/{bay_id}/status") //베이 활성화/비활성화
+    public ResponseEntity<?> updateStatus(
             @PathVariable("bay_id") Long bayId,
             @RequestParam int status) {
         bayService.changeStatus(bayId, status);
