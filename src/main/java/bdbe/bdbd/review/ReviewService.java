@@ -99,7 +99,7 @@ public class ReviewService {
 
 
     public ReviewKeywordResponseDTO getReviewKeyword() {
-        List<Keyword> keywordList = keywordJPARepository.findByType(1);
+        List<Keyword> keywordList = keywordJPARepository.findByType(2);
 
         return new ReviewKeywordResponseDTO(keywordList);
     }

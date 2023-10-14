@@ -238,4 +238,34 @@ public class ReviewRestControllerTest {
 
         // verify
     }
+
+    @WithUserDetails("user@nate.com")
+    @Test
+    @DisplayName("리뷰 키워드 조회 기능")
+    public void find_reviewKeyword_test() throws Exception {
+        // given
+        // 키워드 만들기
+//        List<Keyword> keywordList = new ArrayList<>();
+//        Keyword keyword = Keyword.builder().name("에어컨").type(1).build();
+//        keywordList.add(keyword);
+//        Keyword keyword2 = Keyword.builder().name("하부 세차").type(1).build();
+//        keywordList.add(keyword2);
+//
+//        Keyword keyword3 = Keyword.builder().name("사장님이 친절해요").type(2).build();
+//        keywordList.add(keyword3);
+//        Keyword keyword4 = Keyword.builder().name("베이마다 에어컨이 있어요").type(2).build();
+//        keywordList.add(keyword4);
+//        keywordJPARepository.saveAll(keywordList);
+
+        // when
+        ResultActions resultActions = mvc.perform(
+                MockMvcRequestBuilders.get("/reviews")
+        );
+
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+
+        // verify
+    }
 }
