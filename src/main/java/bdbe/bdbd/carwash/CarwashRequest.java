@@ -57,19 +57,21 @@ public class CarwashRequest {
                     .build();
         }
 
-        public List<Optime> toOptimeEntities() {
+        public List<Optime> toOptimeEntities(Carwash carwash) {
             List<Optime> optimeList = new ArrayList<>();
 
             optimeList.add(Optime.builder()
                     .dayType(DayType.WEEKDAY)
                     .startTime(optime.getWeekday().getStart())
                     .endTime(optime.getWeekday().getEnd())
+                    .carwash(carwash)
                     .build());
 
             optimeList.add(Optime.builder()
                     .dayType(DayType.WEEKEND)
                     .startTime(optime.getWeekend().getStart())
                     .endTime(optime.getWeekend().getEnd())
+                    .carwash(carwash)
                     .build());
 
             return optimeList;
