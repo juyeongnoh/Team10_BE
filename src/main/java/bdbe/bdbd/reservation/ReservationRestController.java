@@ -60,4 +60,14 @@ public class ReservationRestController {
         return ResponseEntity.ok(ApiUtils.success(dto));
     }
 
+    // 최근 이용 내역 가져오기
+    @GetMapping("/reservations/recent")
+    public ResponseEntity<?> fetchRecentReservation(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    )
+    {
+        ReservationResponse.fetchRecentReservationDTO dto = reservationService.fetchRecentReservation(userDetails.getUser());
+        return ResponseEntity.ok(ApiUtils.success(dto));
+    }
+
 }

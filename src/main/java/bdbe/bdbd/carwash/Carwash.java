@@ -3,6 +3,7 @@ package bdbe.bdbd.carwash;
 import bdbe.bdbd.file.File;
 import bdbe.bdbd.keyword.carwashKeyword.CarwashKeyword;
 import bdbe.bdbd.location.Location;
+import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.user.User;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -64,6 +65,7 @@ public class Carwash{
         this.location = location;
         this.user = user;
     }
+
 
     public void updateRate(double rate) {
         this.rate = rate;
