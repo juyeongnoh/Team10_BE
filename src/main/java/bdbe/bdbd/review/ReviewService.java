@@ -84,10 +84,7 @@ public class ReviewService {
         List<ReviewByCarwashIdDTO> dto = reviewList.stream()
                 .map(r -> {
                     List<ReviewKeyword> reviewKeywordList = reviewKeywordJPARepository.findByReview_Id(r.getId());
-                    for (ReviewKeyword reviewKeyword : reviewKeywordList) {
-//                        System.out.println(reviewKeyword.getReview().getComment());
-//                        System.out.println("id:"+reviewKeyword.getKeyword().getId());
-                    }
+
 
                     return new ReviewByCarwashIdDTO(r, r.getUser(), reviewKeywordList);
                 })

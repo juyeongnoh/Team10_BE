@@ -95,13 +95,9 @@ public class ReviewRestControllerTest {
         carwashId = carwash.getId();
 
         // 키워드
-        List<Keyword> keywordList = new ArrayList<>();
-        Keyword keyword = Keyword.builder().name("하부세차").build();
-        keywordList.add(keyword);
-        Keyword keyword2 = Keyword.builder().name("야간 조명").build();
-        keywordList.add(keyword2);
-        List<Keyword> savedKeywordList = keywordJPARepository.saveAll(keywordList);
-        List<Long> keywordIds = savedKeywordList.stream()
+        List<Keyword> keywordList = keywordJPARepository.findByType(2);
+
+        List<Long> keywordIds = keywordList.stream()
                 .map(Keyword::getId)
                 .collect(Collectors.toList());
         System.out.println("idList:");
