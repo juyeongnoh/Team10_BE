@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-//@Transactional
+@Transactional
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class OwnerRestControllerTest {
@@ -42,7 +42,7 @@ public class OwnerRestControllerTest {
     public void setup() {
         MockUser = new User();
         MockUser.setUsername("mockowner");
-        MockUser.setEmail("mockowner@naver.com");
+        MockUser.setEmail("mockowner2@naver.com");
         MockUser.setPassword(passwordEncoder.encode("asdf1234!"));
         MockUser.setRole(UserRole.ROLE_OWNER);
         MockUser.setTel("010-1234-5678");
@@ -51,7 +51,7 @@ public class OwnerRestControllerTest {
 
         MockUserWithUserRole = new User();
         MockUserWithUserRole.setUsername("userRoleUser");
-        MockUserWithUserRole.setEmail("userRoleUser@naver.com");
+        MockUserWithUserRole.setEmail("userRoleUser2@naver.com");
         MockUserWithUserRole.setPassword(passwordEncoder.encode("aaaa1111!"));
         MockUserWithUserRole.setRole(UserRole.ROLE_USER);
         MockUserWithUserRole.setTel("010-1234-5678");
@@ -75,7 +75,7 @@ public class OwnerRestControllerTest {
     public void checkTest() throws Exception {
         //given
         UserRequest.EmailCheckDTO requestDTO = new UserRequest.EmailCheckDTO();
-        requestDTO.setEmail("newowner@naver.com");
+        requestDTO.setEmail("newowner2@naver.com");
         String requestBody = om.writeValueAsString(requestDTO);
         //when
         ResultActions resultActions = mvc.perform(
@@ -92,7 +92,7 @@ public class OwnerRestControllerTest {
     public void joinTest() throws Exception {
         UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
         requestDTO.setUsername("imnewowner");
-        requestDTO.setEmail("owner@nate.com");
+        requestDTO.setEmail("owner2@nate.com");
         requestDTO.setPassword("owner1234!");
         requestDTO.setRole(UserRole.ROLE_OWNER);
         requestDTO.setTel("010-1234-5678");
