@@ -134,12 +134,16 @@ public class CarwashRequest {
         private String name;
         private Location location;
         private double distance;
+        private double rate;
+        private int price;
 
-        public CarwashDistanceDTO(Long id, String name, Location location, double distance) {
+        public CarwashDistanceDTO(Long id, String name, Location location, double distance, double rate, int price) {
             this.id = id;
             this.name = name;
             this.location = location;
             this.distance = distance;
+            this.rate = rate;
+            this.price = price;
         }
     }
     @Getter
