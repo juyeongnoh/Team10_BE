@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Setter
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity

@@ -7,9 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 public class ReservationRequest {
@@ -21,16 +19,15 @@ public class ReservationRequest {
 
         private Long bayId;
 
-        private LocalDate selectedDate; //날짜만 포함함
+        private LocalDateTime startTime;
+        private LocalDateTime endTime;
 
-        private TimeDTO time; //시간만 포함
-
-        public Reservation toReservationEntity(Carwash carwash, Bay bay, User user){
+        public Reservation toReservationEntity(Carwash carwash, Bay bay, User user) {
             int perPrice = carwash.getPrice();
-            LocalDateTime startTime = time.getStart();
-            LocalDateTime endTime = time.getEnd();
+            LocalDateTime startTime = this.startTime;
+            LocalDateTime endTime = this.endTime;
 
-            int minutesDifference = (int)ChronoUnit.MINUTES.between(startTime, endTime); //시간 차 계산
+            int minutesDifference = (int) ChronoUnit.MINUTES.between(startTime, endTime); //시간 차 계산
             int blocksOf30Minutes = minutesDifference / 30; //30분 단위로 계산
             int price = perPrice * blocksOf30Minutes;
 
@@ -42,14 +39,5 @@ public class ReservationRequest {
                     .user(user)
                     .build();
         }
-        @Getter
-        @Setter
-        @ToString
-        public static class TimeDTO {
-            private LocalDateTime start; //시작 시간
-            private LocalDateTime end; // 끝 시간
-        }
     }
-
-
 }

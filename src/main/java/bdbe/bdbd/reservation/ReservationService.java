@@ -7,13 +7,19 @@ import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
+import bdbe.bdbd.optime.DayType;
+import bdbe.bdbd.optime.Optime;
+import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.reservation.ReservationResponse.ReservationInfoDTO;
 import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -29,20 +35,76 @@ public class ReservationService {
     private final CarwashJPARepository carwashJPARepository;
     private final BayJPARepository bayJPARepository;
     private final LocationJPARepository locationJPARepository;
-//    private final Fil
-
+    private final OptimeJPARepository optimeJPARepository;
 
     @Transactional
     public void save(ReservationRequest.SaveDTO dto, Long carwashId, Long bayId, User sessionUser) {
-        Carwash carwash = carwashJPARepository.findById(carwashId)
-                .orElseThrow(() -> new IllegalArgumentException("carwash not found"));
-        Bay bay = bayJPARepository.findById(bayId)
-                .orElseThrow(() -> new IllegalArgumentException("bay not found"));
-        //예약 생성
+        Carwash carwash = findCarwashById(carwashId);
+        Optime optime = findOptime(carwash, dto.getStartTime());
+
+        validateReservationTime(dto, optime, bayId);
+        Bay bay = findBayById(bayId);
+
         Reservation reservation = dto.toReservationEntity(carwash, bay, sessionUser);
         reservationJPARepository.save(reservation);
-    } //변경감지, 더티체킹, flush, 트랜잭션 종료
+    }
 
+    private Carwash findCarwashById(Long id) {
+        return carwashJPARepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("carwash not found"));
+    }
+
+    private Optime findOptime(Carwash carwash, LocalDateTime startTime) {
+        List<Optime> optimeList = optimeJPARepository.findByCarwash_Id(carwash.getId());
+        DayOfWeek dayOfWeek = startTime.getDayOfWeek();
+        return optimeList.stream()
+                .filter(o -> (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) ? o.getDayType() == DayType.WEEKEND : o.getDayType() == DayType.WEEKDAY)
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("carwash optime doesn't exist"));
+    }
+
+    private void validateReservationTime(ReservationRequest.SaveDTO dto, Optime optime, Long bayId) {
+        LocalTime opStartTime = optime.getStartTime();
+        LocalTime opEndTime = optime.getEndTime();
+        LocalTime dtoStartTimePart = dto.getStartTime().toLocalTime();
+        LocalTime dtoEndTimePart = dto.getEndTime().toLocalTime();
+
+        // 예약이 하루 넘어가지 않도록 함
+        LocalDate startDate = dto.getStartTime().toLocalDate();
+        LocalDate endDate = dto.getEndTime().toLocalDate();
+        if (!startDate.equals(endDate)) {
+            throw new IllegalArgumentException("Reservation cannot span multiple days");
+        }
+        // 예약이 운영시간을 넘지 않도록 함
+        if (!((opStartTime.isBefore(dtoStartTimePart) || opStartTime.equals(dtoStartTimePart)) &&
+                (opEndTime.isAfter(dtoEndTimePart) || opEndTime.equals(dtoEndTimePart)))) {
+            throw new IllegalArgumentException("Reservation time is out of operating hours");
+        }
+        // 이미 예약된 시간은 피하도록 함
+        List<Reservation> reservationList = reservationJPARepository.findByBay_Id(bayId);
+
+        boolean isOverlapping = reservationList.stream()
+                .anyMatch(existingReservation -> {
+                    LocalDateTime existingStartTime = existingReservation.getStartTime();
+                    LocalDateTime existingEndTime = existingReservation.getEndTime();
+                    return !(
+                            (dto.getEndTime().isBefore(existingStartTime) || dto.getEndTime().isEqual(existingStartTime)) ||
+                                    (dto.getStartTime().isAfter(existingEndTime) || dto.getStartTime().isEqual(existingEndTime))
+                    );
+                });
+
+        if (isOverlapping) {
+            throw new IllegalArgumentException("Reservation time overlaps with an existing reservation.");
+        }
+
+    }
+
+    private Bay findBayById(Long id) {
+        return bayJPARepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("bay not found"));
+    }
+
+    //
     public ReservationResponse.findAllResponseDTO findAllByCarwash(Long carwashId, User sessionUser) {
         //베이에서 해당 세차장 id와 관련된 베이 객체 모두 찾기
         List<Bay> bayList = bayJPARepository.findByCarwashId(carwashId);
@@ -108,4 +170,13 @@ public class ReservationService {
         }
         return new ReservationResponse.fetchCurrentStatusReservationDTO(current, upcoming, completed);
     }
+
+    public ReservationResponse.fetchRecentReservationDTO fetchRecentReservation(User sessionUser) {
+        // 유저의 예약내역 모두 조회
+        Pageable pageable = PageRequest.of(0, 5); // 최대 5개까지만 가져오기
+        List<Reservation> reservationList = reservationJPARepository.findByUserIdJoinFetch(sessionUser.getId(), pageable);
+
+        return new ReservationResponse.fetchRecentReservationDTO(reservationList);
+    }
+
 }

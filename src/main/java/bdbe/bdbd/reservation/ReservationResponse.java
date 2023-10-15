@@ -9,7 +9,6 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,7 +88,6 @@ public class ReservationResponse {
     @Setter
     @ToString
     public static class ReservationDTO {
-        private LocalDate date;
         private TimeDTO time;
         private int price;
         private int bayNo; // 예약된 베이 번호
@@ -131,6 +129,39 @@ public class ReservationResponse {
             this.completed = completed;
         }
     }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class fetchRecentReservationDTO {
+        private List<RecentReservation> recent;
+
+        public fetchRecentReservationDTO(List<Reservation> reservationList) {
+            this.recent = reservationList.stream()
+                    .map(RecentReservation::new)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class RecentReservation {
+        private Long carwashId;
+//        private String image;
+        private LocalDate date;
+        private String carwashName;
+
+        public RecentReservation(Reservation reservation) {
+            this.carwashId = reservation.getBay().getCarwash().getId();
+//            this.image = image;
+            this.date = reservation.getStartTime().toLocalDate();
+            this.carwashName = reservation.getBay().getCarwash().getName();
+        }
+    }
+
+
+
 
     @Getter
     @Setter

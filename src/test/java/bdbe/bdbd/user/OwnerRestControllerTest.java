@@ -33,49 +33,42 @@ public class OwnerRestControllerTest {
     @Autowired
     UserJPARepository userJPARepository;
 
-    private User MockUser;
-
-    private User MockUserWithUserRole;
+    @Autowired
+    private ObjectMapper om;
 
 
     @BeforeEach
     public void setup() {
-        MockUser = new User();
-        MockUser.setUsername("mockowner");
-        MockUser.setEmail("mockowner@naver.com");
-        MockUser.setPassword(passwordEncoder.encode("asdf1234!"));
-        MockUser.setRole(UserRole.ROLE_OWNER);
-        MockUser.setTel("010-1234-5678");
+        UserRequest.JoinDTO mockOwnerDTO = new UserRequest.JoinDTO();
+        mockOwnerDTO.setUsername("aaamockowner");
+        mockOwnerDTO.setEmail("aaamockowner@naver.com");
+        mockOwnerDTO.setPassword("asdf1234!");
+        mockOwnerDTO.setRole(UserRole.ROLE_OWNER);
+        mockOwnerDTO.setTel("010-1234-5678");
 
-        userJPARepository.save(MockUser);
+        User mockOwner = mockOwnerDTO.toEntity(passwordEncoder.encode(mockOwnerDTO.getPassword()));
 
-        MockUserWithUserRole = new User();
-        MockUserWithUserRole.setUsername("userRoleUser");
-        MockUserWithUserRole.setEmail("userRoleUser@naver.com");
-        MockUserWithUserRole.setPassword(passwordEncoder.encode("aaaa1111!"));
-        MockUserWithUserRole.setRole(UserRole.ROLE_USER);
-        MockUserWithUserRole.setTel("010-1234-5678");
+        userJPARepository.save(mockOwner);
 
-        userJPARepository.save(MockUserWithUserRole);
-        //권한 검사를 위한 userrole객체
-    }
+        UserRequest.JoinDTO mockUserDTO = new UserRequest.JoinDTO();
+        mockUserDTO.setUsername("aaauserRoleUser");
+        mockUserDTO.setEmail("aaauserRoleUser@naver.com");
+        mockUserDTO.setPassword("aaaa1111!");
+        mockUserDTO.setRole(UserRole.ROLE_USER);
+        mockUserDTO.setTel("010-1234-5678");
 
-    @AfterEach
-    public void cleanup() {
-        userJPARepository.delete(MockUser);
-        userJPARepository.delete(MockUserWithUserRole);
+        User mockUserWithUserRole = mockUserDTO.toEntity(passwordEncoder.encode(mockUserDTO.getPassword()));
+
+        userJPARepository.save(mockUserWithUserRole);
     }
 
 
-
-    @Autowired
-    private ObjectMapper om;
 
     @Test
     public void checkTest() throws Exception {
         //given
         UserRequest.EmailCheckDTO requestDTO = new UserRequest.EmailCheckDTO();
-        requestDTO.setEmail("newowner@naver.com");
+        requestDTO.setEmail("bdbd@naver.com");
         String requestBody = om.writeValueAsString(requestDTO);
         //when
         ResultActions resultActions = mvc.perform(
@@ -91,11 +84,10 @@ public class OwnerRestControllerTest {
     @Test
     public void joinTest() throws Exception {
         UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
-        requestDTO.setUsername("imnewowner");
-        requestDTO.setEmail("newowner@naver.com");
+        requestDTO.setUsername("aaamockowner");
+        requestDTO.setEmail("aaamockowner@nate.com");
         requestDTO.setPassword("asdf1234!");
         requestDTO.setRole(UserRole.ROLE_OWNER);
-//        requestDTO.setCredit(0);
         requestDTO.setTel("010-1234-5678");
 
 
@@ -113,15 +105,15 @@ public class OwnerRestControllerTest {
     @Test
     public void loginTest() throws Exception {
         UserRequest.LoginDTO requestDTO = new UserRequest.LoginDTO();
-        requestDTO.setEmail("mockowner@naver.com");
+        requestDTO.setEmail("aaamockowner@naver.com");
         requestDTO.setPassword("asdf1234!");
 
         String requestBody = om.writeValueAsString(requestDTO);
 
         mvc.perform(
-                        post("/owner/login")
-                                .content(requestBody)
-                                .contentType(MediaType.APPLICATION_JSON)
+                    post("/owner/login")
+                            .content(requestBody)
+                            .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andExpect(header().exists(JWTProvider.HEADER))
@@ -135,7 +127,7 @@ public class OwnerRestControllerTest {
     @Test
     public void loginAsUserOnOwnerPageTest() throws Exception {
         UserRequest.LoginDTO requestDTO = new UserRequest.LoginDTO();
-        requestDTO.setEmail("userRoleUser@naver.com");
+        requestDTO.setEmail("aaauserRoleUser@naver.com");
         requestDTO.setPassword("aaaa1111!");
 
         String requestBody = om.writeValueAsString(requestDTO);
