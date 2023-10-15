@@ -52,7 +52,6 @@ public class Reservation {
 
 
     @Builder
-
     public Reservation(Long id, int price, LocalDateTime startTime, LocalDateTime endTime, Bay bay, User user) {
         this.id = id;
         this.price = price;
