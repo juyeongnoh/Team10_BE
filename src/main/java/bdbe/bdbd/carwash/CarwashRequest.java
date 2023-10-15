@@ -125,4 +125,37 @@ public class CarwashRequest {
 
         }
     }
+
+    @Getter
+    @Setter
+    public static class CarwashDistanceDTO {
+
+        private Long id;
+        private String name;
+        private Location location;
+        private double distance;
+
+        public CarwashDistanceDTO(Long id, String name, Location location, double distance) {
+            this.id = id;
+            this.name = name;
+            this.location = location;
+            this.distance = distance;
+        }
+    }
+    @Getter
+    @Setter
+    @ToString
+    public static class UserLocationDTO {
+        private double latitude;
+        private double longitude;
+    }
+
+    @Getter
+    @Setter
+    public static class SearchRequestDTO {
+        private List<String> keywords;
+        private double latitude;
+        private double longitude;
+    }
+
 }
