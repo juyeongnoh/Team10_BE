@@ -1,5 +1,6 @@
 package bdbe.bdbd.review;
 
+import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.keyword.reviewKeyword.ReviewKeyword;
 import bdbe.bdbd.user.User;
@@ -58,6 +59,30 @@ public class ReviewResponse {
 
         public ReviewResponseDTO(List<ReviewByCarwashIdDTO> reviews) {
             this.reviews = reviews;
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class ReviewKeywordResponseDTO {
+        private List<ReviewKeywordDTO> reviewKeyword;
+
+        public ReviewKeywordResponseDTO(List<Keyword> keywordList) {
+            this.reviewKeyword = keywordList.stream()
+                    .map(ReviewKeywordDTO::new)
+                    .collect(Collectors.toList());
+        }
+
+        @Getter
+        @Setter
+        public static class ReviewKeywordDTO {
+            private Long id;
+            private String keyword;
+
+            public ReviewKeywordDTO(Keyword keyword) {
+                this.id = keyword.getId();
+                this.keyword = keyword.getName();
+            }
         }
     }
 

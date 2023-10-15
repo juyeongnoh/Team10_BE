@@ -16,7 +16,7 @@ public class ReviewRequest {
     public static class SaveDTO {
         private Long carwashId;
         private Long reservationId;
-        private List<Long> KeywordList;
+        private List<Long> keywordList;
         private double rate;
         private String comment;
 
@@ -30,6 +30,5 @@ public class ReviewRequest {
                     .rate(rate)
                     .build();
         }
-
     }
 }

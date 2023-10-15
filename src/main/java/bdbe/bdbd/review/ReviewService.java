@@ -7,6 +7,7 @@ import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
 import bdbe.bdbd.review.ReviewResponse.ReviewByCarwashIdDTO;
+import bdbe.bdbd.review.ReviewResponse.ReviewKeywordResponseDTO;
 import bdbe.bdbd.review.ReviewResponse.ReviewResponseDTO;
 import bdbe.bdbd.keyword.reviewKeyword.ReviewKeyword;
 import bdbe.bdbd.keyword.reviewKeyword.ReviewKeywordJPARepository;
@@ -83,15 +84,21 @@ public class ReviewService {
         List<ReviewByCarwashIdDTO> dto = reviewList.stream()
                 .map(r -> {
                     List<ReviewKeyword> reviewKeywordList = reviewKeywordJPARepository.findByReview_Id(r.getId());
-                    for (ReviewKeyword reviewKeyword : reviewKeywordList) {
-                        System.out.println(reviewKeyword.getReview().getComment());
-                        System.out.println("id:"+reviewKeyword.getKeyword().getId());
-                    }
+
+
                     return new ReviewByCarwashIdDTO(r, r.getUser(), reviewKeywordList);
                 })
                 .collect(Collectors.toList());
 
         return new ReviewResponseDTO(dto);
+
+    }
+
+
+    public ReviewKeywordResponseDTO getReviewKeyword() {
+        List<Keyword> keywordList = keywordJPARepository.findByType(2);
+
+        return new ReviewKeywordResponseDTO(keywordList);
     }
 
 }
