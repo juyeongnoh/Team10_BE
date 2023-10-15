@@ -23,6 +23,7 @@ import java.util.Arrays;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //@ActiveProfiles("test") //test profile 사용
 @Transactional
@@ -199,6 +200,26 @@ public class CarwashRestControllerTest {
 
         // verify
         resultActions.andExpect(jsonPath("$").isArray());
+    }
+
+    @Test
+    @DisplayName("세차장 상세 정보 조회 기능")
+    public void findByIdTest() throws Exception {
+
+        Long carwashId = carwashJPARepository.findFirstBy().getId();
+        System.out.println("carwashId:" + carwashId);
+
+        ResultActions resultActions = mvc.perform(
+                get(String.format("/carwashes/%d/introduction", carwashId))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        resultActions.andExpect(status().isOk());
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body:" + responseBody);
+
+        resultActions.andExpect(jsonPath("$.success").value("true"));
     }
 
 
