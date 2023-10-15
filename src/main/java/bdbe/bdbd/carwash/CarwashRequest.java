@@ -21,6 +21,7 @@ public class CarwashRequest {
     @Setter
     @ToString
     public static class SaveDTO {
+
         @NotEmpty
         private String name;
         @NotNull
@@ -38,6 +39,7 @@ public class CarwashRequest {
         public Carwash toCarwashEntity(Location location, User user) {
             return Carwash.builder()
                     .name(name)
+                    .rate(0)
                     .tel(tel)
                     .des(description)
                     .price(Integer.parseInt(price))  // 문자열 price를 int로 변환
@@ -48,10 +50,10 @@ public class CarwashRequest {
 
         public Location toLocationEntity() {
             return Location.builder()
-                    .place(toLocationEntity().getPlace())
-                    .address(toLocationEntity().getAddress())
-                    .latitude(toLocationEntity().getLatitude())
-                    .longitude(toLocationEntity().getLongitude())
+                    .place(location.placeName)
+                    .address(location.address)
+                    .latitude(location.latitude)
+                    .longitude(location.longitude)
                     .build();
         }
 
@@ -123,4 +125,41 @@ public class CarwashRequest {
 
         }
     }
+
+    @Getter
+    @Setter
+    public static class CarwashDistanceDTO {
+
+        private Long id;
+        private String name;
+        private Location location;
+        private double distance;
+        private double rate;
+        private int price;
+
+        public CarwashDistanceDTO(Long id, String name, Location location, double distance, double rate, int price) {
+            this.id = id;
+            this.name = name;
+            this.location = location;
+            this.distance = distance;
+            this.rate = rate;
+            this.price = price;
+        }
+    }
+    @Getter
+    @Setter
+    @ToString
+    public static class UserLocationDTO {
+        private double latitude;
+        private double longitude;
+    }
+
+    @Getter
+    @Setter
+    public static class SearchRequestDTO {
+        private List<String> keywords;
+        private double latitude;
+        private double longitude;
+    }
+
 }
