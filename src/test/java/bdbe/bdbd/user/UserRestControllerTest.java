@@ -32,23 +32,18 @@ public class UserRestControllerTest {
     @Autowired
     UserJPARepository userJPARepository;
 
-    private User MockUser;
-
     @BeforeEach
     public void setup() {
-        MockUser = new User();
-        MockUser.setUsername("mockuser");
-        MockUser.setEmail("mock@naver.com");
-        MockUser.setPassword(passwordEncoder.encode("asdf1234!"));
-        MockUser.setRole(UserRole.ROLE_USER);
-        MockUser.setTel("010-1234-5678");
+        UserRequest.JoinDTO mockUserDTO = new UserRequest.JoinDTO();
+        mockUserDTO.setUsername("mockuser");
+        mockUserDTO.setEmail("mock@naver.com");
+        mockUserDTO.setPassword("asdf1234!");
+        mockUserDTO.setRole(UserRole.ROLE_USER);
+        mockUserDTO.setTel("010-1234-5678");
 
-        userJPARepository.save(MockUser);
-    }
+        User mockUser = mockUserDTO.toEntity(passwordEncoder.encode(mockUserDTO.getPassword()));
 
-    @AfterEach
-    public void cleanup() {
-        userJPARepository.delete(MockUser);
+        userJPARepository.save(mockUser);
     }
 
 
