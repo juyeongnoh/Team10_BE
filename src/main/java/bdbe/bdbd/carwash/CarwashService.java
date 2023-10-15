@@ -122,9 +122,7 @@ public class CarwashService {
     public List<CarwashRequest.CarwashDistanceDTO> findCarwashesByKeywords(CarwashRequest.SearchRequestDTO searchRequest) {
         List<Carwash> carwashesWithin10Km = carwashJPARepository.findCarwashesWithin10Kilometers(searchRequest.getLatitude(), searchRequest.getLongitude());
 
-        List<Keyword> selectedKeywords = keywordJPARepository.findByType(1).stream()
-                .filter(keyword -> searchRequest.getKeywords().contains(keyword.getName()))
-                .collect(Collectors.toList());
+        List<Keyword> selectedKeywords = keywordJPARepository.findAllById(searchRequest.getKeywordIds());
 
         List<CarwashKeyword> carwashKeywords = carwashKeywordJPARepository.findByKeywordIn(selectedKeywords);
 
