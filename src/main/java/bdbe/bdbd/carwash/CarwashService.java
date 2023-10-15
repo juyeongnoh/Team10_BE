@@ -84,7 +84,7 @@ public class CarwashService {
         carwashKeywordJPARepository.saveAll(carwashKeywordList);
     } //변경감지, 더티체킹, flush, 트랜잭션 종료
 
-    
+
     public List<CarwashRequest.CarwashDistanceDTO> findNearbyCarwashesByUserLocation(CarwashRequest.UserLocationDTO userLocation) {
         List<Carwash> carwashes = carwashJPARepository.findCarwashesWithin10Kilometers(userLocation.getLatitude(), userLocation.getLongitude());
 
@@ -92,8 +92,10 @@ public class CarwashService {
                 .map(carwash -> {
                     double distance = Haversine.distance(userLocation.getLatitude(), userLocation.getLongitude(),
                             carwash.getLocation().getLatitude(), carwash.getLocation().getLongitude());
+                    double rate = carwash.getRate();
+                    int price = carwash.getPrice();
 
-                    CarwashRequest.CarwashDistanceDTO dto = new CarwashRequest.CarwashDistanceDTO(carwash.getId(), carwash.getName(), carwash.getLocation(), distance);
+                    CarwashRequest.CarwashDistanceDTO dto = new CarwashRequest.CarwashDistanceDTO(carwash.getId(), carwash.getName(), carwash.getLocation(), distance, rate, price);
                     return dto;
                 })
                 .sorted(Comparator.comparingDouble(CarwashRequest.CarwashDistanceDTO::getDistance))
@@ -107,8 +109,10 @@ public class CarwashService {
                 .map(carwash -> {
                     double distance = Haversine.distance(userLocation.getLatitude(), userLocation.getLongitude(),
                             carwash.getLocation().getLatitude(), carwash.getLocation().getLongitude());
+                    double rate = carwash.getRate();
+                    int price = carwash.getPrice();
 
-                    CarwashRequest.CarwashDistanceDTO dto = new CarwashRequest.CarwashDistanceDTO(carwash.getId(), carwash.getName(), carwash.getLocation(), distance);
+                    CarwashRequest.CarwashDistanceDTO dto = new CarwashRequest.CarwashDistanceDTO(carwash.getId(), carwash.getName(), carwash.getLocation(), distance, rate, price);
                     return dto;
                 })
                 .min(Comparator.comparingDouble(CarwashRequest.CarwashDistanceDTO::getDistance))
@@ -135,7 +139,10 @@ public class CarwashService {
                             searchRequest.getLatitude(), searchRequest.getLongitude(),
                             carwash.getLocation().getLatitude(), carwash.getLocation().getLongitude()
                     );
-                    return new CarwashRequest.CarwashDistanceDTO(carwash.getId(), carwash.getName(), carwash.getLocation(), distance);
+                    double rate = carwash.getRate();
+                    int price = carwash.getPrice();
+
+                    return new CarwashRequest.CarwashDistanceDTO(carwash.getId(), carwash.getName(), carwash.getLocation(), distance, rate, price);
                 })
                 .sorted(Comparator.comparingDouble(CarwashRequest.CarwashDistanceDTO::getDistance))
                 .collect(Collectors.toList());
