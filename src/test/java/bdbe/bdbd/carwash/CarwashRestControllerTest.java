@@ -58,7 +58,7 @@ public class CarwashRestControllerTest {
 
         // when
         ResultActions resultActions = mvc.perform(
-                get("/carwashes/recommended")
+                get("/carwashes")
         );
 
         // eye
@@ -127,4 +127,82 @@ public class CarwashRestControllerTest {
 
     }
 
+
+    @WithUserDetails(value = "user@nate.com")
+    @Test
+    @DisplayName("주변 세차장 검색")
+    public void findNearbyCarwashes_test() throws Exception {
+        // given
+        double testLatitude = 1.23;
+        double testLongitude = 2.34;
+
+        // when
+        ResultActions resultActions = mvc.perform(
+                get("/carwashes/nearby")
+                        .param("latitude", String.valueOf(testLatitude))
+                        .param("longitude", String.valueOf(testLongitude))
+        );
+
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+
+        // verify
+        resultActions.andExpect(jsonPath("$").isArray());
+    }
+
+    @WithUserDetails(value = "user@nate.com")
+    @Test
+    @DisplayName("가장 가까운 세차장 검색(추천세차장)")
+    public void findNearestCarwash_test() throws Exception {
+        // given
+        double testLatitude = 1.23;
+        double testLongitude = 2.34;
+
+        // when
+        ResultActions resultActions = mvc.perform(
+                get("/carwashes/recommended")
+                        .param("latitude", String.valueOf(testLatitude))
+                        .param("longitude", String.valueOf(testLongitude))
+        );
+
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+
+        // verify
+        resultActions.andExpect(jsonPath("$").isMap());
+    }
+
+    @WithUserDetails(value = "user@nate.com")
+    @Test
+    @DisplayName("키워드로 세차장 검색")
+    public void findCarwashesByKeywords_test() throws Exception {
+        // given
+        CarwashRequest.SearchRequestDTO searchRequest = new CarwashRequest.SearchRequestDTO();
+        searchRequest.setKeywords(Arrays.asList("하부세차"));
+        searchRequest.setLatitude(1.23);
+        searchRequest.setLongitude(2.34);
+
+        String requestBody = om.writeValueAsString(searchRequest);
+
+        // when
+        ResultActions resultActions = mvc.perform(
+                post("/carwashes/search")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+
+        // verify
+        resultActions.andExpect(jsonPath("$").isArray());
+    }
+
+
+
 }
+
+
