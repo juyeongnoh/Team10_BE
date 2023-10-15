@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "Long")
+    @Column(columnDefinition = "BIGINT")
     private Long id;
 
     @Column(nullable = false)
@@ -52,7 +52,6 @@ public class Reservation {
 
 
     @Builder
-
     public Reservation(Long id, int price, LocalDateTime startTime, LocalDateTime endTime, Bay bay, User user) {
         this.id = id;
         this.price = price;
