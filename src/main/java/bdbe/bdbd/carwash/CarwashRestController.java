@@ -9,6 +9,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -19,7 +20,7 @@ public class CarwashRestController {
     private final CarwashService carwashService;
 
     // 전체 세차장 목록 조회, 10개씩 페이징
-    @GetMapping("/carwashes/recommended")
+    @GetMapping("/carwashes")
     public ResponseEntity<?> findAll(@RequestParam(value = "page", defaultValue = "0") Integer page) {
         List<CarwashResponse.FindAllDTO> dtos = carwashService.findAll(page);
         ApiUtils.ApiResult<?> apiResult = ApiUtils.success(dtos);
@@ -32,5 +33,34 @@ public class CarwashRestController {
         carwashService.save(saveDTOs, userDetails.getUser());
         return ResponseEntity.ok(ApiUtils.success(null));
     }
+
+    @GetMapping("/carwashes/nearby")
+    public ResponseEntity<List<CarwashRequest.CarwashDistanceDTO>> findNearestCarwashesByUserLocation(@RequestParam double latitude, @RequestParam double longitude) {
+        CarwashRequest.UserLocationDTO userLocation = new CarwashRequest.UserLocationDTO();
+        userLocation.setLatitude(latitude);
+        userLocation.setLongitude(longitude);
+        List<CarwashRequest.CarwashDistanceDTO> carwashes = carwashService.findNearbyCarwashesByUserLocation(userLocation);
+        return ResponseEntity.ok(carwashes);
+    }
+
+    @GetMapping("/carwashes/recommended")
+    public ResponseEntity<CarwashRequest.CarwashDistanceDTO> findNearestCarwash(@RequestParam double latitude, @RequestParam double longitude) {
+        CarwashRequest.UserLocationDTO userLocation = new CarwashRequest.UserLocationDTO();
+        userLocation.setLatitude(latitude);
+        userLocation.setLongitude(longitude);
+        CarwashRequest.CarwashDistanceDTO carwash = carwashService.findNearestCarwashByUserLocation(userLocation);
+        if (carwash != null) {
+            return ResponseEntity.ok(carwash);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/carwashes/search")
+    public ResponseEntity<List<CarwashRequest.CarwashDistanceDTO>> findCarwashesByKeywords(@RequestBody CarwashRequest.SearchRequestDTO searchRequest) {
+        List<CarwashRequest.CarwashDistanceDTO> carwashes = carwashService.findCarwashesByKeywords(searchRequest);
+        return ResponseEntity.ok(carwashes);
+    }
+
 
 }
