@@ -2,14 +2,17 @@ package bdbe.bdbd.carwash;
 
 
 import bdbe.bdbd._core.errors.utils.Haversine;
+import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.keyword.carwashKeyword.CarwashKeyword;
 import bdbe.bdbd.keyword.carwashKeyword.CarwashKeywordJPARepository;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
+import bdbe.bdbd.optime.DayType;
 import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.optime.OptimeJPARepository;
+import bdbe.bdbd.review.ReviewJPARepository;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +34,8 @@ public class CarwashService {
     private final LocationJPARepository locationJPARepository;
     private final OptimeJPARepository optimeJPARepository;
     private final CarwashKeywordJPARepository carwashKeywordJPARepository;
-    private final UserJPARepository userJPARepository;
+    private final ReviewJPARepository reviewJPARepository;
+    private final BayJPARepository bayJPARepository;
 
     public List<CarwashResponse.FindAllDTO> findAll(int page) {
         // Pageable 검증
@@ -146,5 +150,25 @@ public class CarwashService {
                 .collect(Collectors.toList());
 
         return result;
+    }
+
+    public CarwashResponse.findByIdDTO getfindById(Long carwashId) {
+
+        Carwash carwash = carwashJPARepository.findById(carwashId)
+                .orElseThrow(() -> new IllegalArgumentException("not found carwash"));
+        int reviewCnt = reviewJPARepository.findByCarwash_Id(carwashId).size();
+        int bayCnt = bayJPARepository.findByCarwashId(carwashId).size();
+        Location location = locationJPARepository.findById(carwash.getLocation().getId())
+                .orElseThrow(() -> new NoSuchElementException("location not found"));
+        List<Long> keywordIds = carwashKeywordJPARepository.findKeywordIdsByCarwashId(carwashId);
+
+        List<Optime> optimeList = optimeJPARepository.findByCarwash_Id(carwashId);
+        Map<DayType, Optime> optimeByDayType = new EnumMap<>(DayType.class);
+        optimeList.forEach(ol -> optimeByDayType.put(ol.getDayType(), ol));
+
+        Optime weekOptime = optimeByDayType.get(DayType.WEEKDAY);
+        Optime endOptime = optimeByDayType.get(DayType.WEEKEND);
+
+        return new CarwashResponse.findByIdDTO(carwash, reviewCnt, bayCnt, location, keywordIds, weekOptime, endOptime);
     }
 }
