@@ -214,7 +214,7 @@ public class ReservationRestControllerTest {
 
 
         //when
-        Long reservationId = 136L;
+        Long reservationId = reservation.getId();
         System.out.println("reservation id: " +reservationId);
         ResultActions resultActions = mvc.perform(
                 delete(String.format("/reservations/%d", reservationId))
