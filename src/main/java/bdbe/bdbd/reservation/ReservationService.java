@@ -5,12 +5,15 @@ import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
+import bdbe.bdbd.keyword.reviewKeyword.ReviewKeywordJPARepository;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.optime.DayType;
 import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.reservation.ReservationResponse.ReservationInfoDTO;
+import bdbe.bdbd.review.Review;
+import bdbe.bdbd.review.ReviewJPARepository;
 import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +39,8 @@ public class ReservationService {
     private final BayJPARepository bayJPARepository;
     private final LocationJPARepository locationJPARepository;
     private final OptimeJPARepository optimeJPARepository;
+    private final ReviewJPARepository reviewJPARepository;
+    private final ReviewKeywordJPARepository reviewKeywordJPARepository;
 
     @Transactional
     public void save(ReservationRequest.SaveDTO dto, Long carwashId, Long bayId, User sessionUser) {
@@ -58,6 +63,23 @@ public class ReservationService {
 
         reservation.updateReservation(dto.getStartTime(), dto.getEndTime(), carwash);
 
+    }
+    @Transactional
+    public void delete(Long reservationId) {
+        Reservation reservation = reservationJPARepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("Reservation with id " + reservationId + " not found"));
+        // 자식들은 다 삭제
+        // 연관된 리뷰 키워드도 삭제
+        List<Review> reviewList = reviewJPARepository.findByReservation_Id(reservationId);
+        for (Review review : reviewList) {
+            reviewKeywordJPARepository.deleteByReview_Id(review.getId());
+        }
+
+        // 연관된 모든 리뷰 삭제
+        reviewJPARepository.deleteByReservation_Id(reservationId);
+
+        // 예약 삭제
+        reservationJPARepository.delete(reservation);
     }
 
 

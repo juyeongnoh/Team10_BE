@@ -32,9 +32,6 @@ public class Bay {
     @Column(name="status", nullable = false)
     private int status; //상태
 
-    @OneToMany(mappedBy = "bay") //읽기 전용, 양방향
-    private List<Reservation> reservationList = new ArrayList<>();
-
     @Builder
     public Bay(Long id, int bayNum, Carwash carwash, int status) {
         this.id = id;

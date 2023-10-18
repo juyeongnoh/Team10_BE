@@ -30,10 +30,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-//@Transactional
+@Transactional
 @AutoConfigureMockMvc //MockMvc 사용
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 //통합테스트(SF-F-DS(Handler, ExHandler)-C-S-R-PC-DB) 다 뜬다.
@@ -174,7 +176,6 @@ public class ReservationRestControllerTest {
     public void updateReservation_test() throws Exception {
         //given
         Reservation reservation = reservationJPARepository.findFirstBy();
-//        System.out.println("reservation:"+reservation.toString());
 
         UpdateDTO updateDTO = new UpdateDTO();
         LocalDate date = LocalDate.now();
@@ -197,9 +198,43 @@ public class ReservationRestControllerTest {
         System.out.println("응답 Body : " + responseBody);
         reservation = reservationJPARepository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("reservation id : " + reservationId + "not found"));
-//        System.out.println("modified reservation:"+reservation.toString());
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+
 
     }
+    @WithUserDetails(value = "user@nate.com")
+    @Test
+    @DisplayName("예약 취소 기능")
+    public void deleteReservation_test() throws Exception {
+        //given
+        Reservation reservation = reservationJPARepository.findFirstBy();
+        System.out.println(reservation.getId());
+        System.out.println(reservation.getBay().getId());
+        System.out.println(reservation.getUser().getId());
+
+
+        //when
+        Long reservationId = 136L;
+        System.out.println("reservation id: " +reservationId);
+        ResultActions resultActions = mvc.perform(
+                delete(String.format("/reservations/%d", reservationId))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+//        then
+//         eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+
+//        IllegalArgumentException thrown = assertThrows(
+//                IllegalArgumentException.class,
+//                () -> reservationJPARepository.findById(reservationId)
+//                        .orElseThrow(() -> new IllegalArgumentException("reservation id : " + reservationId + " not found"))
+//        );
+//        assertEquals("reservation id : " + reservationId + " not found", thrown.getMessage());
+
+    }
+
 
     @WithUserDetails(value = "user@nate.com")
     @Test
@@ -241,7 +276,7 @@ public class ReservationRestControllerTest {
         // eye
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         System.out.println("응답 Body : " + responseBody);
-
+        resultActions.andExpect(jsonPath("$.success").value("true"));
 
     }
 
