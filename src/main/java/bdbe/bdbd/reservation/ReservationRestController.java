@@ -39,6 +39,16 @@ public class ReservationRestController {
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
+    // 예약 취소하기
+    @DeleteMapping("/reservations/{reservation_id}")
+    public ResponseEntity<?> deleteReservation(
+            @PathVariable("reservation_id") Long reservationId
+    )
+    {
+        reservationService.delete(reservationId);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
     // 세차장별 예약 내역 조회
     @GetMapping("/carwashes/{carwash_id}/bays")
     public ResponseEntity<?> findAllByCarwash(
