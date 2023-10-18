@@ -5,15 +5,12 @@ import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.keyword.KeywordJPARepository;
-import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
-import bdbe.bdbd.optime.DayType;
-import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.reservation.ReservationRequest.SaveDTO;
+import bdbe.bdbd.reservation.ReservationRequest.UpdateDTO;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
-import bdbe.bdbd.user.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,11 +29,10 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 
-import static bdbe.bdbd.optime.DayType.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @Transactional
@@ -172,9 +168,73 @@ public class ReservationRestControllerTest {
 
         // verify
         resultActions.andExpect(jsonPath("$.success").value("true"));
+    }
+
+    @WithUserDetails(value = "user@nate.com")
+    @Test
+    @DisplayName("예약 수정 기능")
+    public void updateReservation_test() throws Exception {
+        //given
+        Reservation reservation = reservationJPARepository.findFirstBy();
+
+        UpdateDTO updateDTO = new UpdateDTO();
+        LocalDate date = LocalDate.now();
+        updateDTO.setStartTime(LocalDateTime.of(date, LocalTime.of(21, 30))); // 21시
+        updateDTO.setEndTime(LocalDateTime.of(date, LocalTime.of(22, 0))); // 30분 뒤
+
+        String requestBody = om.writeValueAsString(updateDTO);
+        System.out.println("요청 데이터 : " + requestBody);
+
+        //when
+        Long reservationId = reservation.getId();
+        ResultActions resultActions = mvc.perform(
+                put(String.format("/reservations/%d", reservationId))
+                        .content(om.writeValueAsString(updateDTO))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+        //then
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+        reservation = reservationJPARepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("reservation id : " + reservationId + "not found"));
+        resultActions.andExpect(jsonPath("$.success").value("true"));
 
 
     }
+    @WithUserDetails(value = "user@nate.com")
+    @Test
+    @DisplayName("예약 취소 기능")
+    public void deleteReservation_test() throws Exception {
+        //given
+        Reservation reservation = reservationJPARepository.findFirstBy();
+        System.out.println(reservation.getId());
+        System.out.println(reservation.getBay().getId());
+        System.out.println(reservation.getUser().getId());
+
+
+        //when
+        Long reservationId = reservation.getId();
+        System.out.println("reservation id: " +reservationId);
+        ResultActions resultActions = mvc.perform(
+                delete(String.format("/reservations/%d", reservationId))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+//        then
+//         eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+
+//        IllegalArgumentException thrown = assertThrows(
+//                IllegalArgumentException.class,
+//                () -> reservationJPARepository.findById(reservationId)
+//                        .orElseThrow(() -> new IllegalArgumentException("reservation id : " + reservationId + " not found"))
+//        );
+//        assertEquals("reservation id : " + reservationId + " not found", thrown.getMessage());
+
+    }
+
 
     @WithUserDetails(value = "user@nate.com")
     @Test
@@ -216,7 +276,7 @@ public class ReservationRestControllerTest {
         // eye
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         System.out.println("응답 Body : " + responseBody);
-
+        resultActions.andExpect(jsonPath("$.success").value("true"));
 
     }
 
