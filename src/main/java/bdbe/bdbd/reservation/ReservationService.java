@@ -48,6 +48,18 @@ public class ReservationService {
         Reservation reservation = dto.toReservationEntity(carwash, bay, sessionUser);
         reservationJPARepository.save(reservation);
     }
+    @Transactional
+    public void update(ReservationRequest.UpdateDTO dto, Long reservationId) {
+        Reservation reservation = reservationJPARepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("Reservation with id " + reservationId + " not found"));
+        Long carwashId = reservation.getBay().getCarwash().getId();
+        Carwash carwash = carwashJPARepository.findById(carwashId)
+                .orElseThrow(() -> new IllegalArgumentException("Carwash with id " + carwashId + " not found"));
+
+        reservation.updateReservation(dto.getStartTime(), dto.getEndTime(), carwash);
+
+    }
+
 
     private Carwash findCarwashById(Long id) {
         return carwashJPARepository.findById(id)
@@ -165,7 +177,7 @@ public class ReservationService {
             } else if (reservationDate.isAfter(today)) {
                 upcoming.add(new ReservationInfoDTO(reservation, bay, carwash));
             } else {
-                throw new IllegalStateException("reservation id: " + reservation.getId() + " 예약 상태가 올바르지 않습니다");
+                throw new IllegalStateException("reservation id: " + reservation.getId() + " not found");
             }
         }
         return new ReservationResponse.fetchCurrentStatusReservationDTO(current, upcoming, completed);
