@@ -5,12 +5,15 @@ import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
+import bdbe.bdbd.keyword.reviewKeyword.ReviewKeywordJPARepository;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.optime.DayType;
 import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.reservation.ReservationResponse.ReservationInfoDTO;
+import bdbe.bdbd.review.Review;
+import bdbe.bdbd.review.ReviewJPARepository;
 import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +39,8 @@ public class ReservationService {
     private final BayJPARepository bayJPARepository;
     private final LocationJPARepository locationJPARepository;
     private final OptimeJPARepository optimeJPARepository;
+    private final ReviewJPARepository reviewJPARepository;
+    private final ReviewKeywordJPARepository reviewKeywordJPARepository;
 
     @Transactional
     public void save(ReservationRequest.SaveDTO dto, Long carwashId, Long bayId, User sessionUser) {
@@ -48,6 +53,35 @@ public class ReservationService {
         Reservation reservation = dto.toReservationEntity(carwash, bay, sessionUser);
         reservationJPARepository.save(reservation);
     }
+    @Transactional
+    public void update(ReservationRequest.UpdateDTO dto, Long reservationId) {
+        Reservation reservation = reservationJPARepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("Reservation with id " + reservationId + " not found"));
+        Long carwashId = reservation.getBay().getCarwash().getId();
+        Carwash carwash = carwashJPARepository.findById(carwashId)
+                .orElseThrow(() -> new IllegalArgumentException("Carwash with id " + carwashId + " not found"));
+
+        reservation.updateReservation(dto.getStartTime(), dto.getEndTime(), carwash);
+
+    }
+    @Transactional
+    public void delete(Long reservationId) {
+        Reservation reservation = reservationJPARepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("Reservation with id " + reservationId + " not found"));
+        // 자식들은 다 삭제
+        // 연관된 리뷰 키워드도 삭제
+        List<Review> reviewList = reviewJPARepository.findByReservation_Id(reservationId);
+        for (Review review : reviewList) {
+            reviewKeywordJPARepository.deleteByReview_Id(review.getId());
+        }
+
+        // 연관된 모든 리뷰 삭제
+        reviewJPARepository.deleteByReservation_Id(reservationId);
+
+        // 예약 삭제
+        reservationJPARepository.delete(reservation);
+    }
+
 
     private Carwash findCarwashById(Long id) {
         return carwashJPARepository.findById(id)
@@ -69,12 +103,12 @@ public class ReservationService {
         LocalTime dtoStartTimePart = dto.getStartTime().toLocalTime();
         LocalTime dtoEndTimePart = dto.getEndTime().toLocalTime();
 
-        // 예약이 하루 넘어가지 않도록 함
-        LocalDate startDate = dto.getStartTime().toLocalDate();
-        LocalDate endDate = dto.getEndTime().toLocalDate();
-        if (!startDate.equals(endDate)) {
-            throw new IllegalArgumentException("Reservation cannot span multiple days");
-        }
+//        // 예약이 하루 넘어가지 않도록 함
+//        LocalDate startDate = dto.getStartTime().toLocalDate();
+//        LocalDate endDate = dto.getEndTime().toLocalDate();
+//        if (!startDate.equals(endDate)) {
+//            throw new IllegalArgumentException("Reservation cannot span multiple days");
+//        }
         // 예약이 운영시간을 넘지 않도록 함
         if (!((opStartTime.isBefore(dtoStartTimePart) || opStartTime.equals(dtoStartTimePart)) &&
                 (opEndTime.isAfter(dtoEndTimePart) || opEndTime.equals(dtoEndTimePart)))) {
@@ -165,7 +199,7 @@ public class ReservationService {
             } else if (reservationDate.isAfter(today)) {
                 upcoming.add(new ReservationInfoDTO(reservation, bay, carwash));
             } else {
-                throw new IllegalStateException("reservation id: " + reservation.getId() + " 예약 상태가 올바르지 않습니다");
+                throw new IllegalStateException("reservation id: " + reservation.getId() + " not found");
             }
         }
         return new ReservationResponse.fetchCurrentStatusReservationDTO(current, upcoming, completed);

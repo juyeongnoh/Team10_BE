@@ -77,8 +77,6 @@ public class ReviewRestControllerTest {
 
     Long carwashId;
 
-
-
     @WithUserDetails(value = "user@nate.com")
     @Test
     @DisplayName("리뷰 등록 기능")
