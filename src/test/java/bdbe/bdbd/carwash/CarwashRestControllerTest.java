@@ -181,7 +181,9 @@ public class CarwashRestControllerTest {
     public void findCarwashesByKeywords_test() throws Exception {
         // given
         CarwashRequest.SearchRequestDTO searchRequest = new CarwashRequest.SearchRequestDTO();
-        searchRequest.setKeywords(Arrays.asList("하부세차"));
+        Keyword keyword = keywordJPARepository.findAll().get(0);
+        searchRequest.setKeywordIds(Arrays.asList(keyword.getId()));
+
         searchRequest.setLatitude(1.23);
         searchRequest.setLongitude(2.34);
 
