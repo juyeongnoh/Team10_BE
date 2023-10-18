@@ -69,12 +69,12 @@ public class ReservationService {
         LocalTime dtoStartTimePart = dto.getStartTime().toLocalTime();
         LocalTime dtoEndTimePart = dto.getEndTime().toLocalTime();
 
-        // 예약이 하루 넘어가지 않도록 함
-        LocalDate startDate = dto.getStartTime().toLocalDate();
-        LocalDate endDate = dto.getEndTime().toLocalDate();
-        if (!startDate.equals(endDate)) {
-            throw new IllegalArgumentException("Reservation cannot span multiple days");
-        }
+//        // 예약이 하루 넘어가지 않도록 함
+//        LocalDate startDate = dto.getStartTime().toLocalDate();
+//        LocalDate endDate = dto.getEndTime().toLocalDate();
+//        if (!startDate.equals(endDate)) {
+//            throw new IllegalArgumentException("Reservation cannot span multiple days");
+//        }
         // 예약이 운영시간을 넘지 않도록 함
         if (!((opStartTime.isBefore(dtoStartTimePart) || opStartTime.equals(dtoStartTimePart)) &&
                 (opEndTime.isAfter(dtoEndTimePart) || opEndTime.equals(dtoEndTimePart)))) {
