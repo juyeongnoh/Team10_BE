@@ -29,6 +29,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -53,9 +54,11 @@ public class ReservationService {
         Reservation reservation = dto.toReservationEntity(carwash, bay, sessionUser);
         reservationJPARepository.save(reservation);
     }
+
     @Transactional
     public void update(ReservationRequest.UpdateDTO dto, Long reservationId) {
         Reservation reservation = reservationJPARepository.findById(reservationId)
+                .filter(r -> !r.isDeleted())
                 .orElseThrow(() -> new IllegalArgumentException("Reservation with id " + reservationId + " not found"));
         Long carwashId = reservation.getBay().getCarwash().getId();
         Carwash carwash = carwashJPARepository.findById(carwashId)
@@ -64,22 +67,13 @@ public class ReservationService {
         reservation.updateReservation(dto.getStartTime(), dto.getEndTime(), carwash);
 
     }
+
     @Transactional
     public void delete(Long reservationId) {
         Reservation reservation = reservationJPARepository.findById(reservationId)
+                .filter(r -> !r.isDeleted())
                 .orElseThrow(() -> new IllegalArgumentException("Reservation with id " + reservationId + " not found"));
-        // 자식들은 다 삭제
-        // 연관된 리뷰 키워드도 삭제
-        List<Review> reviewList = reviewJPARepository.findByReservation_Id(reservationId);
-        for (Review review : reviewList) {
-            reviewKeywordJPARepository.deleteByReview_Id(review.getId());
-        }
-
-        // 연관된 모든 리뷰 삭제
-        reviewJPARepository.deleteByReservation_Id(reservationId);
-
-        // 예약 삭제
-        reservationJPARepository.delete(reservation);
+        reservation.changeDeletedFlag(true);
     }
 
 
@@ -145,13 +139,17 @@ public class ReservationService {
         // id만 추출하기
         List<Long> bayIdList = bayJPARepository.findIdsByCarwashId(carwashId);
         //예약에서 베이 id 리스트로 모두 찾기
-        List<Reservation> reservationList = reservationJPARepository.findByBayIdIn(bayIdList);
+        List<Reservation> reservationList = reservationJPARepository.findByBayIdIn(bayIdList)
+                .stream()
+                .filter(r -> !r.isDeleted())
+                .collect(Collectors.toList());
         return new ReservationResponse.findAllResponseDTO(bayList, reservationList);
     }
 
     public ReservationResponse.findLatestOneResponseDTO fetchLatestReservation(User sessionUser) {
         // 가장 최근의 예약 찾기
         Reservation reservation = reservationJPARepository.findTopByUserIdOrderByIdDesc(sessionUser.getId())
+                .filter(r -> !r.isDeleted())
                 .orElseThrow(() -> new NoSuchElementException("no reservation found"));
         // 예약과 관련된 베이 찾기
         Bay bay = bayJPARepository.findById(reservation.getBay().getId())
@@ -167,7 +165,10 @@ public class ReservationService {
 
     public ReservationResponse.fetchCurrentStatusReservationDTO fetchCurrentStatusReservation(User sessionUser) {
         // 유저의 예약내역 모두 조회
-        List<Reservation> reservationList = reservationJPARepository.findByUserId(sessionUser.getId());
+        List<Reservation> reservationList = reservationJPARepository.findByUserId(sessionUser.getId())
+                .stream()
+                .filter(r -> !r.isDeleted())
+                .collect(Collectors.toList());
         // 현재, 다가오는, 완료된 예약 찾기
         List<ReservationInfoDTO> current = new ArrayList<>();
         List<ReservationInfoDTO> upcoming = new ArrayList<>();
@@ -208,7 +209,10 @@ public class ReservationService {
     public ReservationResponse.fetchRecentReservationDTO fetchRecentReservation(User sessionUser) {
         // 유저의 예약내역 모두 조회
         Pageable pageable = PageRequest.of(0, 5); // 최대 5개까지만 가져오기
-        List<Reservation> reservationList = reservationJPARepository.findByUserIdJoinFetch(sessionUser.getId(), pageable);
+        List<Reservation> reservationList = reservationJPARepository.findByUserIdJoinFetch(sessionUser.getId(), pageable)
+                .stream()
+                .filter(r -> !r.isDeleted())
+                .collect(Collectors.toList());
 
         return new ReservationResponse.fetchRecentReservationDTO(reservationList);
     }
