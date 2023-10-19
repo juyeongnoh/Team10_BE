@@ -68,4 +68,10 @@ public class CarwashRestController {
         return ResponseEntity.ok(ApiUtils.success(findByIdDTO));
     }
 
+    @GetMapping("/owner/carwashes/{carwash_id}/details") //세차장 정보 수정_세차장 기존 정보 불러오기
+    public ResponseEntity<?> findCarwashByDetails(@PathVariable("carwash_id") Long carwashId) {
+        CarwashResponse.carwashDetailsDTO carwashDetailsDTO = carwashService.findCarwashByDetails(carwashId);
+        return ResponseEntity.ok(ApiUtils.success(carwashDetailsDTO));
+    }
+
 }

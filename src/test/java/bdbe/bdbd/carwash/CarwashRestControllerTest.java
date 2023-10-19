@@ -3,6 +3,7 @@ package bdbe.bdbd.carwash;
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.location.LocationJPARepository;
+import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,6 +46,9 @@ public class CarwashRestControllerTest {
 
     @Autowired
     KeywordJPARepository keywordJPARepository;
+
+    @Autowired
+    OptimeJPARepository optimeJPARepository;
 
     @Autowired
     private ObjectMapper om;
@@ -214,6 +218,29 @@ public class CarwashRestControllerTest {
         ResultActions resultActions = mvc.perform(
                 get(String.format("/carwashes/%d/introduction", carwashId))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        resultActions.andExpect(status().isOk());
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body:" + responseBody);
+
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+    }
+
+    @WithUserDetails(value = "owner@nate.com")
+    @Test
+    @DisplayName("세차장 기존 정보 불러오기")
+    public void findCarwashByDetailsTest() throws Exception {
+
+        Long carwashId = carwashJPARepository.findFirstBy().getId();
+        System.out.println("carwashId: " + carwashId);
+
+        ResultActions resultActions = mvc.perform(
+                get(String.format("/owner/carwashes/%d/details", carwashId))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+
+
         );
 
         resultActions.andExpect(status().isOk());
