@@ -226,12 +226,6 @@ public class ReservationRestControllerTest {
         System.out.println("응답 Body : " + responseBody);
         resultActions.andExpect(jsonPath("$.success").value("true"));
 
-//        IllegalArgumentException thrown = assertThrows(
-//                IllegalArgumentException.class,
-//                () -> reservationJPARepository.findById(reservationId)
-//                        .orElseThrow(() -> new IllegalArgumentException("reservation id : " + reservationId + " not found"))
-//        );
-//        assertEquals("reservation id : " + reservationId + " not found", thrown.getMessage());
 
     }
 

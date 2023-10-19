@@ -68,18 +68,7 @@ public class ReservationService {
     public void delete(Long reservationId) {
         Reservation reservation = reservationJPARepository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("Reservation with id " + reservationId + " not found"));
-        // 자식들은 다 삭제
-        // 연관된 리뷰 키워드도 삭제
-        List<Review> reviewList = reviewJPARepository.findByReservation_Id(reservationId);
-        for (Review review : reviewList) {
-            reviewKeywordJPARepository.deleteByReview_Id(review.getId());
-        }
-
-        // 연관된 모든 리뷰 삭제
-        reviewJPARepository.deleteByReservation_Id(reservationId);
-
-        // 예약 삭제
-        reservationJPARepository.delete(reservation);
+        reservation.changeDeletedFlag(true);
     }
 
 
