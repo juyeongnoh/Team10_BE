@@ -155,8 +155,8 @@ public class OwnerRestControllerTest {
 
     @WithUserDetails(value = "owner@nate.com")
     @Test
-    @DisplayName("세차장 owner별 예약 조회 내역 기능")
-    public void findAllByCarwash_test() throws Exception {
+    @DisplayName("owner가 운영하는 모든 세차장 조회 기능")
+    public void findAllReservationByOwner_test() throws Exception {
         //given
 
         //when
@@ -170,8 +170,27 @@ public class OwnerRestControllerTest {
         // eye
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         System.out.println("응답 Body : " + responseBody);
-//        resultActions.andExpect(jsonPath("$.success").value("true"));
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+    }
 
+    @WithUserDetails(value = "owner@nate.com")
+    @Test
+    @DisplayName("세차장들의 한달 매출 조회 기능")
+    public void findRevenueByOwner_test() throws Exception {
+        //given
+
+        //when
+        ResultActions resultActions = mvc.perform(
+                get("/owner/revenue")
+                        .param("carwash-id",  "3")
+                        .param("selected-date", "2023-10-01")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+        //then
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+        resultActions.andExpect(jsonPath("$.success").value("true"));
     }
 
 }

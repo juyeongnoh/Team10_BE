@@ -32,4 +32,7 @@ public interface ReservationJPARepository extends JpaRepository<Reservation, Lon
     List<Reservation> findReservationByBayIdAndUserId(Long bayId, Long userId);
 
     void deleteAllByBayId(Long bayId); // bayId로 모두 삭제
+    @Query("SELECT COALESCE(SUM(r.price), 0) FROM Reservation r WHERE r.bay.carwash.id IN :carwashIds AND FUNCTION('YEAR', r.startTime) = FUNCTION('YEAR', :selectedDate) AND FUNCTION('MONTH', r.startTime) = FUNCTION('MONTH', :selectedDate) AND r.isDeleted = false")
+    Long findTotalRevenueByCarwashIdsAndDate(@Param("carwashIds") List<Long> carwashIds, @Param("selectedDate") LocalDate selectedDate);
+
 }
