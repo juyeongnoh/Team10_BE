@@ -36,6 +36,9 @@ public class Reservation {
     @Column(name="end_time", nullable = false)
     private LocalDateTime endTime;
 
+    @Column(name="is_deleted", nullable = false)
+    private boolean isDeleted; // boolean 기본값은 false
+
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
@@ -74,4 +77,10 @@ public class Reservation {
         this.price = price;
 
     }
+
+    public void changeDeletedFlag(boolean flag) {
+        this.isDeleted = flag;
+    }
+
+
 }
