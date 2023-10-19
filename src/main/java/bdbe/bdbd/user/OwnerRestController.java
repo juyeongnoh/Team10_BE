@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -48,7 +49,6 @@ public class OwnerRestController {
     }
     // 로그아웃 사용안함 - 프론트에서 JWT 토큰을 브라우저의 localstorage에서 삭제하면 됨.
 
-
     @GetMapping("/sales")
     public ResponseEntity<?> findAllOwnerReservation(
             @RequestParam("carwash-id") List<Long> carwashIds,
@@ -59,7 +59,17 @@ public class OwnerRestController {
         ownerService.findSales(carwashIds, selectedDate, userDetails.getUser());
         OwnerResponse.SaleResponseDTO saleResponseDTO = ownerService.findSales(carwashIds, selectedDate, userDetails.getUser());
         return ResponseEntity.ok(ApiUtils.success(saleResponseDTO));
+    }
 
+    @GetMapping("/revenue")
+    public ResponseEntity<?> findMonthRevenueByCarwash(
+            @RequestParam("carwash-id") List<Long> carwashIds,
+            @RequestParam("selected-date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate selectedDate,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    )
+    {
+        Map<String, Long> map = ownerService.findMonthRevenue(carwashIds, selectedDate, userDetails.getUser());
+        return ResponseEntity.ok(ApiUtils.success(map));
     }
 }
 

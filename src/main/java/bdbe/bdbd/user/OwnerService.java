@@ -11,6 +11,7 @@ import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
 import bdbe.bdbd.reservation.ReservationResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -93,4 +91,20 @@ public class OwnerService {
         return new OwnerResponse.SaleResponseDTO(reservationList);
 
     }
+
+    public Map<String, Long> findMonthRevenue(List<Long> carwashIds, LocalDate selectedDate, User sessionUser) {
+        // 해당 유저가 운영하는 세차장의 id인지 확인
+        List<Carwash> carwashList = carwashJPARepository.findAllByIdInAndUser_Id(carwashIds, sessionUser.getId());
+        if (carwashIds.size() != carwashList.size())
+            throw new IllegalArgumentException("User is not the owner of the carwash.");
+        // 매출 구하기
+        Map<String, Long> response = new HashMap<>();
+        Long revenue = reservationJPARepository.findTotalRevenueByCarwashIdsAndDate(carwashIds, selectedDate);
+
+        response.put("revenue", revenue);
+
+        return response;
+    }
+
+
 }
