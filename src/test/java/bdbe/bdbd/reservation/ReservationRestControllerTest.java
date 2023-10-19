@@ -175,7 +175,10 @@ public class ReservationRestControllerTest {
     @DisplayName("예약 수정 기능")
     public void updateReservation_test() throws Exception {
         //given
-        Reservation reservation = reservationJPARepository.findFirstBy();
+        Reservation reservation = reservationJPARepository.findAll()
+                .stream()
+                .filter(r -> !r.isDeleted())
+                .findFirst().get();
 
         UpdateDTO updateDTO = new UpdateDTO();
         LocalDate date = LocalDate.now();
@@ -207,7 +210,10 @@ public class ReservationRestControllerTest {
     @DisplayName("예약 취소 기능")
     public void deleteReservation_test() throws Exception {
         //given
-        Reservation reservation = reservationJPARepository.findFirstBy();
+        Reservation reservation = reservationJPARepository.findAll()
+                .stream()
+                .filter(r -> !r.isDeleted())
+                .findFirst().get();
         System.out.println(reservation.getId());
         System.out.println(reservation.getBay().getId());
         System.out.println(reservation.getUser().getId());
