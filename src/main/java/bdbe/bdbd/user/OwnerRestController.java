@@ -1,17 +1,20 @@
 package bdbe.bdbd.user;
 
 import bdbe.bdbd._core.errors.exception.BadRequestError;
+import bdbe.bdbd._core.errors.security.CustomUserDetails;
 import bdbe.bdbd._core.errors.security.JWTProvider;
 import bdbe.bdbd._core.errors.utils.ApiUtils;
+import bdbe.bdbd.reservation.ReservationResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -44,5 +47,19 @@ public class OwnerRestController {
         return ResponseEntity.ok().header(JWTProvider.HEADER, response.getJwtToken()).body(ApiUtils.success(response));
     }
     // 로그아웃 사용안함 - 프론트에서 JWT 토큰을 브라우저의 localstorage에서 삭제하면 됨.
+
+
+    @GetMapping("/sales")
+    public ResponseEntity<?> findAllOwnerReservation(
+            @RequestParam("carwash-id") List<Long> carwashIds,
+            @RequestParam("selected-date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate selectedDate,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    )
+    {
+        ownerService.findSales(carwashIds, selectedDate, userDetails.getUser());
+        OwnerResponse.SaleResponseDTO saleResponseDTO = ownerService.findSales(carwashIds, selectedDate, userDetails.getUser());
+        return ResponseEntity.ok(ApiUtils.success(saleResponseDTO));
+
+    }
 }
 

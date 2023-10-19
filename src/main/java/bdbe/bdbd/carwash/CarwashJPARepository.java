@@ -16,4 +16,7 @@ public interface CarwashJPARepository extends JpaRepository<Carwash, Long> {
 
     Optional<Carwash> findById(Long carwashId);
 
+    List<Carwash> findAllByIdInAndUser_Id(List<Long> carwashIds, Long userId);
+
+
 }

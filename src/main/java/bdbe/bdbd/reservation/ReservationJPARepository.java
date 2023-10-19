@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +14,6 @@ public interface ReservationJPARepository extends JpaRepository<Reservation, Lon
 
     @Query("SELECT r FROM Reservation r JOIN FETCH r.bay b JOIN FETCH b.carwash WHERE r.user.id = :userId")
     List<Reservation> findFirstByUserIdWithJoinFetch(@Param("userId") Long userId, Pageable pageable);
-
 
     List<Reservation> findByBayIdIn(List<Long> bayIds); // bay id 리스트로 관련된 모든 reservation 찾기
 
@@ -25,6 +25,9 @@ public interface ReservationJPARepository extends JpaRepository<Reservation, Lon
 
     @Query("SELECT r FROM Reservation r JOIN FETCH r.bay b JOIN FETCH b.carwash WHERE r.user.id = :userId")
     List<Reservation> findByUserIdJoinFetch(@Param("userId") Long userId, Pageable pageable);
+
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.bay b JOIN FETCH b.carwash c JOIN FETCH r.user u WHERE c.id IN :carwashIds AND FUNCTION('YEAR', r.startTime) = FUNCTION('YEAR', :selectedDate) AND FUNCTION('MONTH', r.startTime) = FUNCTION('MONTH', :selectedDate) ORDER BY r.startTime DESC")
+    List<Reservation> findAllByCarwash_IdInOrderByStartTimeDesc(@Param("carwashIds") List<Long> carwashIds, @Param("selectedDate") LocalDate selectedDate);
 
     List<Reservation> findReservationByBayIdAndUserId(Long bayId, Long userId);
 
