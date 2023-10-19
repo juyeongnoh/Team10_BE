@@ -171,4 +171,24 @@ public class CarwashService {
 
         return new CarwashResponse.findByIdDTO(carwash, reviewCnt, bayCnt, location, keywordIds, weekOptime, endOptime);
     }
+
+    public CarwashResponse.carwashDetailsDTO findCarwashByDetails(Long carwashId) {
+
+        Carwash carwash = carwashJPARepository.findById(carwashId)
+                .orElseThrow(() -> new IllegalArgumentException("not found carwash"));
+        Location location = locationJPARepository.findById(carwash.getLocation().getId())
+                .orElseThrow(() -> new NoSuchElementException("location not found"));
+        int bayCnt = bayJPARepository.findByCarwashId(carwashId).size();
+        List<Long> keywordIds = carwashKeywordJPARepository.findKeywordIdsByCarwashId(carwashId);
+
+        List<Optime> optimeList = optimeJPARepository.findByCarwash_Id(carwashId);
+        Map<DayType, Optime> optimeByDayType = new EnumMap<>(DayType.class);
+        optimeList.forEach(ol -> optimeByDayType.put(ol.getDayType(), ol));
+
+        Optime weekOptime = optimeByDayType.get(DayType.WEEKDAY);
+        Optime endOptime = optimeByDayType.get(DayType.WEEKEND);
+
+        return new CarwashResponse.carwashDetailsDTO(carwash, location, bayCnt, keywordIds, weekOptime, endOptime);
+
+    }
 }
