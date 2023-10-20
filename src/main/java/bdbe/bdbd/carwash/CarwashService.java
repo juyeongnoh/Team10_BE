@@ -182,7 +182,6 @@ public class CarwashService {
                 .orElseThrow(() -> new IllegalArgumentException("not found carwash"));
         Location location = locationJPARepository.findById(carwash.getLocation().getId())
                 .orElseThrow(() -> new NoSuchElementException("location not found"));
-        int bayCnt = bayJPARepository.findByCarwashId(carwashId).size();
         List<Long> keywordIds = carwashKeywordJPARepository.findKeywordIdsByCarwashId(carwashId);
 
         List<Optime> optimeList = optimeJPARepository.findByCarwash_Id(carwashId);
@@ -192,7 +191,7 @@ public class CarwashService {
         Optime weekOptime = optimeByDayType.get(DayType.WEEKDAY);
         Optime endOptime = optimeByDayType.get(DayType.WEEKEND);
 
-        return new CarwashResponse.carwashDetailsDTO(carwash, location, bayCnt, keywordIds, weekOptime, endOptime);
+        return new CarwashResponse.carwashDetailsDTO(carwash, location, keywordIds, weekOptime, endOptime);
 
 
     }
@@ -201,7 +200,6 @@ public class CarwashService {
     public CarwashRequest.updateCarwashDetailsDTO updateCarwashDetails(Long carwashId, CarwashRequest.updateCarwashDetailsDTO updatedto) {
 
         try {
-            CarwashRequest.updateLocationDTO updateLocationDTO = updatedto.getLocationDTO();
 
             Carwash carwash = carwashJPARepository.findById(carwashId)
                     .orElseThrow(() -> new IllegalArgumentException("not found carwash"));
@@ -211,6 +209,7 @@ public class CarwashService {
             carwash.setDes(updatedto.getDescription());
             carwash.setPrice(updatedto.getPrice());
 
+            CarwashRequest.updateLocationDTO updateLocationDTO = updatedto.getLocationDTO();
             Location location = locationJPARepository.findById(carwash.getLocation().getId())
                     .orElseThrow(() -> new NoSuchElementException("location not found"));
 
@@ -218,12 +217,24 @@ public class CarwashService {
             location.setAddress(updateLocationDTO.getAddress());
             location.setPlace(updateLocationDTO.getPlaceName());
 
-
             CarwashRequest.updateOperatingTimeDTO updateOperatingTimeDTO = updatedto.getOptime();
 
-//            updateOperatingTimeDTO.setWeekday(updateOperatingTimeDTO.getWeekday());
-//            updateOperatingTimeDTO.setWeekend(updateOperatingTimeDTO.getWeekend());
+            Optime weekOptime = optimeJPARepository.findFirstBy();
+            Optime endOptime = optimeJPARepository.findFirstBy();
 
+            weekOptime.setStartTime(LocalTime.parse(updateOperatingTimeDTO.getWeekday().getStart()));
+            weekOptime.setEndTime(LocalTime.parse(updateOperatingTimeDTO.getWeekday().getEnd()));
+            endOptime.setStartTime(LocalTime.parse(updateOperatingTimeDTO.getWeekend().getStart()));
+            endOptime.setEndTime(LocalTime.parse(updateOperatingTimeDTO.getWeekend().getEnd()));
+
+
+//            List<Long> keywordIds = carwashKeywordJPARepository.findKeywordIdsByCarwashId(carwashId);
+//            updatedto.setCarwashKeywords(keywordIds);
+
+
+
+            optimeJPARepository.save(weekOptime);
+            optimeJPARepository.save(endOptime);
             carwashJPARepository.save(carwash);
             locationJPARepository.save(location);
 

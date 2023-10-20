@@ -131,21 +131,19 @@ public class CarwashResponse {
         private int price;
         private String tel;
         private detailLocationDTO locationDTO;
-        private int bayCnt; // 예약 가능한 갯수
         private detailsOperatingTimeDTO optime; //
         private List<Long> keywordId;
         private String description;
 //        private List<String> image;
 
 
-        public carwashDetailsDTO(Carwash carwash, Location location, int bayCnt, List<Long> keywordId, Optime weekOptime, Optime endOptime) {
+        public carwashDetailsDTO(Carwash carwash, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime) {
 //            this.image = image;
             this.id = carwash.getId();
             this.name = carwash.getName();
             this.price = carwash.getPrice();
             this.tel = carwash.getTel();
             this.locationDTO = toLocationDTO(location);
-            this.bayCnt = bayCnt;
             this.optime = toOptimeListDTO(weekOptime, endOptime);
             this.keywordId = keywordId;
             this.description = carwash.getDes();
@@ -170,7 +168,6 @@ public class CarwashResponse {
         public detailLocationDTO toLocationDTO(Location location) {
             detailLocationDTO detailLocationDTO = new detailLocationDTO();
             detailLocationDTO.setAddress(location.getAddress());
-            detailLocationDTO.setPlaceName(location.getPlace());
             return detailLocationDTO;
         }
     }
@@ -192,7 +189,6 @@ public class CarwashResponse {
     @Getter
     @Setter
     public static class detailLocationDTO {
-        private String placeName;
         private String address;
 
     }
