@@ -7,6 +7,8 @@ import bdbe.bdbd._core.errors.security.JWTProvider;
 import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
+import bdbe.bdbd.optime.Optime;
+import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
 import bdbe.bdbd.reservation.ReservationResponse;
@@ -32,6 +34,7 @@ public class OwnerService {
     private final UserJPARepository userJPARepository;
     private final CarwashJPARepository carwashJPARepository;
     private final ReservationJPARepository reservationJPARepository;
+    private final OptimeJPARepository optimeJPARepository;
 
     @Transactional
     public void join(UserRequest.JoinDTO requestDTO) {
@@ -105,6 +108,19 @@ public class OwnerService {
 
         return response;
     }
+
+    public OwnerResponse.ReservationOverviewResponseDTO fetchOwnerReservationOverview(User sessionUser) {
+        List<Carwash> carwashList = carwashJPARepository.findByUser_Id(sessionUser.getId());
+        OwnerResponse.ReservationOverviewResponseDTO response = new OwnerResponse.ReservationOverviewResponseDTO();
+        for (Carwash carwash : carwashList) {
+            List<Optime> optimeList = optimeJPARepository.findByCarwash_Id(carwash.getId());
+            List<Reservation> reservationList = reservationJPARepository.findTodaysReservationsByCarwashId(carwash.getId(), LocalDate.now());
+            OwnerResponse.CarwashManageDTO dto = new OwnerResponse.CarwashManageDTO(optimeList, reservationList);
+            response.addCarwashManageDTO(dto);
+        }
+        return response;
+    }
+
 
 
 }
