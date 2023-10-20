@@ -13,6 +13,11 @@ public interface CarwashJPARepository extends JpaRepository<Carwash, Long> {
     List<Carwash> findCarwashesWithin10Kilometers(@Param("latitude") double latitude, @Param("longitude") double longitude);
 
     Optional<Carwash> findById(Long carwashId);
+    // user의 id로 세차장 id 리스트 찾기
+    @Query("SELECT c.id FROM Carwash c WHERE c.user.id = :userId")
+    List<Long> findCarwashIdsByUserId(@Param("userId") Long userId);
+
+    Optional<Carwash> findByIdAndUser_Id(Long carwashId, Long userId);
 
     List<Carwash> findAllByIdInAndUser_Id(List<Long> carwashIds, Long userId);
 
