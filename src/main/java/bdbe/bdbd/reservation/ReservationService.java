@@ -133,7 +133,7 @@ public class ReservationService {
     }
 
     //
-    public ReservationResponse.findAllResponseDTO findAllByCarwash(Long carwashId, User sessionUser) {
+    public ReservationResponse.findAllResponseDTO findAllByCarwash(Long carwashId) {
         //베이에서 해당 세차장 id와 관련된 베이 객체 모두 찾기
         List<Bay> bayList = bayJPARepository.findByCarwashId(carwashId);
         // id만 추출하기

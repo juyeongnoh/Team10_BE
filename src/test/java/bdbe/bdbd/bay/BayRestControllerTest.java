@@ -42,10 +42,7 @@ public class BayRestControllerTest {
     @Autowired
     private ObjectMapper om;
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @WithUserDetails("user@nate.com")
+    @WithUserDetails("owner@nate.com")
     @Test
     @DisplayName("베이 추가")
     public void createBayTest() throws Exception{
@@ -86,7 +83,7 @@ public class BayRestControllerTest {
 //                .andExpect(jsonPath("$.success").value("true")
 //                );
 //    }
-
+    @WithUserDetails("owner@nate.com")
     @Test
     @DisplayName("베이 활성화/비활성화")
     public void changeStatusTest() throws Exception {
