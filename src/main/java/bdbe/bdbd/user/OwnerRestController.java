@@ -61,16 +61,7 @@ public class OwnerRestController {
         return ResponseEntity.ok(ApiUtils.success(saleResponseDTO));
     }
 
-    @GetMapping("/carwashes")
-    public ResponseEntity<?> fetchOwnerReservationOverview(
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    )
-    {
-         ownerService.fetchOwnerReservationOverview(userDetails.getUser());
-        return ResponseEntity.ok(ApiUtils.success(map));
-    }
-
-    @GetMapping("/carwashes")
+    @GetMapping("/revenue")
     public ResponseEntity<?> findMonthRevenueByCarwash(
             @RequestParam("carwash-id") List<Long> carwashIds,
             @RequestParam("selected-date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate selectedDate,
@@ -79,6 +70,15 @@ public class OwnerRestController {
     {
         Map<String, Long> map = ownerService.findMonthRevenue(carwashIds, selectedDate, userDetails.getUser());
         return ResponseEntity.ok(ApiUtils.success(map));
+    }
+
+    @GetMapping("/carwashes")
+    public ResponseEntity<?> fetchOwnerReservationOverview(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    )
+    {
+        OwnerResponse.ReservationOverviewResponseDTO dto = ownerService.fetchOwnerReservationOverview(userDetails.getUser());
+        return ResponseEntity.ok(ApiUtils.success(dto));
     }
 }
 
