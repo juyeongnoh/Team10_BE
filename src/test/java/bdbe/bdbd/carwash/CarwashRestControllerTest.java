@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //@ActiveProfiles("test") //test profile 사용
-@Transactional
+//@Transactional
 @AutoConfigureMockMvc //MockMvc 사용
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 //통합테스트(SF-F-DS(Handler, ExHandler)-C-S-R-PC-DB) 다 뜬다.
@@ -266,7 +266,6 @@ public class CarwashRestControllerTest {
         updateCarwashDetailsDTO.setName("하이세차장");
         updateCarwashDetailsDTO.setPrice(2000);
         updateCarwashDetailsDTO.setTel("010-3333-2222");
-        updateCarwashDetailsDTO.setBayCnt(5);
         updateCarwashDetailsDTO.setDescription("안녕하세요");
 
         CarwashRequest.updateLocationDTO updateLocationDTO = new CarwashRequest.updateLocationDTO();
@@ -288,7 +287,7 @@ public class CarwashRestControllerTest {
         updateCarwashDetailsDTO.setOptime(optimeDTO);
 
 
-        updateCarwashDetailsDTO.setKeywordId(Arrays.asList(1L, 3L, 5L));
+        updateCarwashDetailsDTO.setKeywordId(Arrays.asList(1L));
 
         ObjectMapper objectMapper = new ObjectMapper();
 
