@@ -1,7 +1,5 @@
 package bdbe.bdbd.carwash;
 
-import bdbe.bdbd.keyword.Keyword;
-import bdbe.bdbd.keyword.carwashKeyword.CarwashKeyword;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,5 +16,5 @@ public interface CarwashJPARepository extends JpaRepository<Carwash, Long> {
 
     List<Carwash> findAllByIdInAndUser_Id(List<Long> carwashIds, Long userId);
 
-
+    List<Carwash> findByUser_Id(Long userId);
 }
