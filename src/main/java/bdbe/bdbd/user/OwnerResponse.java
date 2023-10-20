@@ -1,5 +1,6 @@
 package bdbe.bdbd.user;
 
+import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.optime.DayType;
 import bdbe.bdbd.optime.Optime;
@@ -96,23 +97,14 @@ public class OwnerResponse {
 //        private String image;
         private String name;
         private OperationTimeDTO optime;
-        private List<BayReservationDTO> bays;
+        private List<BayReservationDTO> bays = new ArrayList<>();
 
-        public CarwashManageDTO(List<Optime> optimeList, List<Reservation> reservationList) {
-            if (!reservationList.isEmpty()) {
-                Carwash carwash = reservationList.get(0).getBay().getCarwash();
-                this.id = carwash.getId();
-                this.name = carwash.getName();
-            }
+        public CarwashManageDTO(Carwash carwash, List<Bay> bayList, List<Optime> optimeList, List<Reservation> reservationList) {
+            this.id = carwash.getId();
+            this.name = carwash.getName();
             this.optime = new OperationTimeDTO(optimeList);
-            // Bay의 id별로 Reservation 리스트를 그룹화
-            Map<Long, List<Reservation>> bayReservationsMap = reservationList.stream()
-                    .collect(Collectors.groupingBy(reservation -> reservation.getBay().getId()));
-
-            // 각 Bay에 대해 BayReservationDTO 객체를 생성하고 bays 리스트에 추가
-            this.bays = new ArrayList<>();
-            for (Map.Entry<Long, List<Reservation>> entry : bayReservationsMap.entrySet()) {
-                BayReservationDTO bayReservationDTO = new BayReservationDTO(entry.getValue());
+            for (Bay bay : bayList) {
+                BayReservationDTO bayReservationDTO = new BayReservationDTO(bay, reservationList);
                 this.bays.add(bayReservationDTO);
             }
         }
@@ -156,24 +148,28 @@ public class OwnerResponse {
         private int bayNo;
         private List<BookedTimeDTO> bayBookedTime;
 
-        public BayReservationDTO(List<Reservation> reservationList) {
-            this.bayNo = reservationList.get(0).getBay().getBayNum();
-            this.bayBookedTime = reservationList.stream().map(BookedTimeDTO::new).collect(Collectors.toList());
+        public BayReservationDTO(Bay bay, List<Reservation> reservationList) {
+            this.bayNo = bay.getBayNum();
+            this.bayBookedTime = reservationList.stream()
+                    .filter(reservation -> reservation.getBay() != null && reservation.getBay().getId().equals(bay.getId()))
+                    .map(BookedTimeDTO::new)
+                    .collect(Collectors.toList());
+
         }
-    }
 
-    @Getter
-    @Setter
-    @ToString
-    public static class BookedTimeDTO {
-        private LocalDateTime start;
-        private LocalDateTime end;
 
-        public BookedTimeDTO(Reservation reservation) {
-            this.start = reservation.getStartTime();
-            this.end = reservation.getEndTime();
+        @Getter
+        @Setter
+        @ToString
+        public static class BookedTimeDTO {
+            private LocalDateTime start;
+            private LocalDateTime end;
+
+            public BookedTimeDTO(Reservation reservation) {
+                this.start = reservation.getStartTime();
+                this.end = reservation.getEndTime();
+            }
         }
+
     }
-
-
 }
