@@ -9,7 +9,6 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -74,4 +73,15 @@ public class CarwashRestController {
         return ResponseEntity.ok(ApiUtils.success(carwashDetailsDTO));
     }
 
+    @PutMapping("/owner/carwashes/{carwash_id}/details") //세차장 정보 수정_세차장 정보 수정 적용
+    public ResponseEntity<?> updateCarwashDetails(@PathVariable("carwash_id") Long carwashId, @RequestBody CarwashRequest.updateCarwashDetailsDTO updatedto ) {
+
+        CarwashRequest.updateCarwashDetailsDTO updateCarwashDetailsDTO = carwashService.updateCarwashDetails(carwashId, updatedto);
+        return ResponseEntity.ok(ApiUtils.success(updateCarwashDetailsDTO));
+
+    }
+
 }
+
+
+

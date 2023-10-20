@@ -14,16 +14,20 @@ import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.review.ReviewJPARepository;
 import bdbe.bdbd.user.User;
-import bdbe.bdbd.user.UserJPARepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 //@Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -190,5 +194,50 @@ public class CarwashService {
 
         return new CarwashResponse.carwashDetailsDTO(carwash, location, bayCnt, keywordIds, weekOptime, endOptime);
 
+
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(CarwashService.class);
+    public CarwashRequest.updateCarwashDetailsDTO updateCarwashDetails(Long carwashId, CarwashRequest.updateCarwashDetailsDTO updatedto) {
+
+        try {
+            CarwashRequest.updateLocationDTO updateLocationDTO = updatedto.getLocationDTO();
+
+            Carwash carwash = carwashJPARepository.findById(carwashId)
+                    .orElseThrow(() -> new IllegalArgumentException("not found carwash"));
+
+            carwash.setName(updatedto.getName());
+            carwash.setTel(updatedto.getTel());
+            carwash.setDes(updatedto.getDescription());
+            carwash.setPrice(updatedto.getPrice());
+
+            Location location = locationJPARepository.findById(carwash.getLocation().getId())
+                    .orElseThrow(() -> new NoSuchElementException("location not found"));
+
+
+            location.setAddress(updateLocationDTO.getAddress());
+            location.setPlace(updateLocationDTO.getPlaceName());
+
+
+            CarwashRequest.updateOperatingTimeDTO updateOperatingTimeDTO = updatedto.getOptime();
+
+//            updateOperatingTimeDTO.setWeekday(updateOperatingTimeDTO.getWeekday());
+//            updateOperatingTimeDTO.setWeekend(updateOperatingTimeDTO.getWeekend());
+
+            carwashJPARepository.save(carwash);
+            locationJPARepository.save(location);
+
+
+            updatedto.setOptime(updateOperatingTimeDTO);
+            updatedto.setupdateLocationDTO(updatedto.toLocationDTO(location));
+
+            return updatedto;
+
+        } catch (Exception e) {
+            logger.error("Error in updateCarwashDetails", e);
+            throw e;
+        }
+
+    }
+
 }
