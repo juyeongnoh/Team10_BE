@@ -69,4 +69,20 @@ public class Carwash{
     public void updateRate(double rate) {
         this.rate = rate;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    public void setDes(String des) {
+        this.des = des;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
 }
