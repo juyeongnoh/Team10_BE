@@ -80,5 +80,24 @@ public class OwnerRestController {
         OwnerResponse.ReservationOverviewResponseDTO dto = ownerService.fetchOwnerReservationOverview(userDetails.getUser());
         return ResponseEntity.ok(ApiUtils.success(dto));
     }
+
+    @GetMapping("/carwashes/{carwash_id}")
+    public ResponseEntity<?> fetchCarwashReservationOverview(
+            @PathVariable("carwash_id") Long carwashId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    )
+    {
+        OwnerResponse.CarwashManageDTO dto = ownerService.fetchCarwashReservationOverview(carwashId, userDetails.getUser());
+        return ResponseEntity.ok(ApiUtils.success(dto));
+    }
+
+    @GetMapping("/home")
+    public ResponseEntity<?> fetchOwnerHomepage(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    )
+    {
+        OwnerResponse.OwnerDashboardDTO dto = ownerService.fetchOwnerHomepage(userDetails.getUser());
+        return ResponseEntity.ok(ApiUtils.success(dto));
+    }
 }
 

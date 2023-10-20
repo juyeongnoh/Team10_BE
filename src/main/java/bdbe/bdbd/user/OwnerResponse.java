@@ -92,7 +92,7 @@ public class OwnerResponse {
     @Getter
     @Setter
     @ToString
-    public static class CarwashManageDTO {
+    public static class CarwashManageDTO { // 매장 관리 (owner별, 세차장별 )
         private Long id;
 //        private String image;
         private String name;
@@ -170,6 +170,41 @@ public class OwnerResponse {
                 this.end = reservation.getEndTime();
             }
         }
+    }
 
+    @Getter
+    @Setter
+    public static class OwnerDashboardDTO {
+        private Long monthlySales;
+        private double salesGrowthPercentage;
+        private Long monthlyReservations;
+        private double reservationGrowthPercentage;
+        private List<CarwashInfoDTO> myStores = new ArrayList<>();
+
+        public OwnerDashboardDTO(Long monthlySales, double salesGrowthPercentage, Long monthlyReservations, double reservationGrowthPercentage, List<CarwashInfoDTO> myStores) {
+            this.monthlySales = monthlySales;
+            this.salesGrowthPercentage = salesGrowthPercentage;
+            this.monthlyReservations = monthlyReservations;
+            this.reservationGrowthPercentage = reservationGrowthPercentage;
+            this.myStores = myStores;
+        }
+        public void addCarwashInfoDTO(CarwashInfoDTO carwashInfoDTO) {
+            this.myStores.add(carwashInfoDTO);
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class CarwashInfoDTO {
+//        private String imageUrl;
+        private String name;
+        private Long monthlySales;
+        private Long monthlyReservations;
+
+        public CarwashInfoDTO(Carwash carwash, Long monthlySales, Long monthlyReservations) {
+            this.name = carwash.getName();
+            this.monthlySales = monthlySales;
+            this.monthlyReservations = monthlyReservations;
+        }
     }
 }

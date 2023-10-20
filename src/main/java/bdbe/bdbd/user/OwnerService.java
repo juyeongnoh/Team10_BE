@@ -13,6 +13,7 @@ import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
 import bdbe.bdbd.reservation.ReservationResponse;
+import bdbe.bdbd.user.OwnerResponse.OwnerDashboardDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -125,6 +127,55 @@ public class OwnerService {
         return response;
     }
 
+    public OwnerResponse.CarwashManageDTO fetchCarwashReservationOverview(Long carwashId, User sessionUser) {
+        // 세차장의 주인이 맞는지 확인하며 조회
+        Carwash carwash = carwashJPARepository.findByIdAndUser_Id(carwashId, sessionUser.getId())
+                .orElseThrow(() -> new IllegalArgumentException("carwash id :" + carwashId + " not found"));
 
+            List<Bay> bayList = bayJPARepository.findByCarwashId(carwash.getId());
+            List<Optime> optimeList = optimeJPARepository.findByCarwash_Id(carwash.getId());
 
+            Date today = java.sql.Date.valueOf(LocalDate.now());
+            List<Reservation> reservationList = reservationJPARepository.findTodaysReservationsByCarwashId(carwash.getId(), today);
+
+            OwnerResponse.CarwashManageDTO dto = new OwnerResponse.CarwashManageDTO(carwash, bayList, optimeList, reservationList);
+
+            return dto;
+    }
+
+    public double calculateGrowthPercentage(Long currentValue, Long previousValue) {
+        if (previousValue == 0 && currentValue == 0) {
+            return 0;  // 이전 값과 현재 값이 모두 0인 경우 성장률은 0%로 간주
+        } else if (previousValue == 0) {
+            return 100;  // 이전 값이 0이고 현재 값이 0이 아닌 경우 성장률은 100%로 간주
+        }
+        return ((double)(currentValue - previousValue) / previousValue) * 100;
+    }
+
+    public OwnerDashboardDTO fetchOwnerHomepage(User sessionUser) {
+        List<Long> carwashIds = carwashJPARepository.findCarwashIdsByUserId(sessionUser.getId());
+        LocalDate firstDayOfCurrentMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate firstDayOfPreviousMonth = LocalDate.now().minusMonths(1).withDayOfMonth(1);
+
+        Long currentMonthSales = reservationJPARepository.findTotalRevenueByCarwashIdsAndDate(carwashIds, firstDayOfCurrentMonth);
+        Long previousMonthSales = reservationJPARepository.findTotalRevenueByCarwashIdsAndDate(carwashIds, firstDayOfPreviousMonth);
+        Long currentMonthReservations = reservationJPARepository.findMonthlyReservationCountByCarwashIdsAndDate(carwashIds, firstDayOfCurrentMonth);
+        Long previousMonthReservations = reservationJPARepository.findMonthlyReservationCountByCarwashIdsAndDate(carwashIds, firstDayOfPreviousMonth);
+
+        double salesGrowthPercentage = calculateGrowthPercentage(currentMonthSales, previousMonthSales); // 전월대비 판매 성장률 (단위: %)
+        double reservationGrowthPercentage = calculateGrowthPercentage(currentMonthReservations, previousMonthReservations); // 전월대비 예약 성장률 (단위: %)
+
+        List<OwnerResponse.CarwashInfoDTO> carwashInfoDTOList = new ArrayList<>();
+        for (Long carwashId : carwashIds) {
+            Carwash carwash = carwashJPARepository.findById(carwashId)
+                    .orElseThrow(() -> new EntityNotFoundException("Carwash not found with id: " + carwashId));
+            // 판매 수익
+            Long monthlySales = reservationJPARepository.findTotalRevenueByCarwashIdAndDate(carwashId, firstDayOfCurrentMonth);
+            // 예약 수
+            Long monthlyReservations = reservationJPARepository.findMonthlyReservationCountByCarwashIdAndDate(carwashId, firstDayOfCurrentMonth);
+            OwnerResponse.CarwashInfoDTO dto = new OwnerResponse.CarwashInfoDTO(carwash, monthlySales, monthlyReservations);
+            carwashInfoDTOList.add(dto);
+        }
+        return new OwnerDashboardDTO(currentMonthSales, salesGrowthPercentage, currentMonthReservations, reservationGrowthPercentage, carwashInfoDTOList);
+    }
 }

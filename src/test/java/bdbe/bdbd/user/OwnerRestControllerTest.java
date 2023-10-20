@@ -3,6 +3,7 @@ package bdbe.bdbd.user;
 import bdbe.bdbd._core.errors.security.JWTProvider;
 import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.carwash.Carwash;
+import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.reservation.Reservation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -43,6 +44,9 @@ public class OwnerRestControllerTest {
 
     @Autowired
     UserJPARepository userJPARepository;
+
+    @Autowired
+    CarwashJPARepository carwashJPARepository;
 
     @Autowired
     private ObjectMapper om;
@@ -202,6 +206,39 @@ public class OwnerRestControllerTest {
         //when
         ResultActions resultActions = mvc.perform(
                 get("/owner/carwashes"));
+        //then
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+    }
+
+    @WithUserDetails(value = "owner@nate.com")
+    @Test
+    @DisplayName("매장 관리 - 세차장별")
+    public void fetchCarwashReservationOverview_test() throws Exception {
+        //given
+        Long carwashId = carwashJPARepository.findFirstBy().getId();
+        System.out.println("carwash id :" + carwashId);
+        //when
+        ResultActions resultActions = mvc.perform(
+                get(String.format("/owner/carwashes/%d", carwashId)));
+        //then
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+    }
+
+    @WithUserDetails(value = "owner@nate.com")
+    @Test
+    @DisplayName("세차장 홈")
+    public void OwnerHome_test() throws Exception {
+        //given
+
+        //when
+        ResultActions resultActions = mvc.perform(
+                get("/owner/home"));
         //then
         // eye
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
