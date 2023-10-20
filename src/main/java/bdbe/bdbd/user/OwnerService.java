@@ -5,6 +5,7 @@ import bdbe.bdbd._core.errors.exception.InternalServerError;
 import bdbe.bdbd._core.errors.exception.UnAuthorizedError;
 import bdbe.bdbd._core.errors.security.JWTProvider;
 import bdbe.bdbd.bay.Bay;
+import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.optime.Optime;
@@ -35,6 +36,7 @@ public class OwnerService {
     private final CarwashJPARepository carwashJPARepository;
     private final ReservationJPARepository reservationJPARepository;
     private final OptimeJPARepository optimeJPARepository;
+    private final BayJPARepository bayJPARepository;
 
     @Transactional
     public void join(UserRequest.JoinDTO requestDTO) {
@@ -83,12 +85,9 @@ public class OwnerService {
         List<Carwash> carwashList = carwashJPARepository.findAllByIdInAndUser_Id(carwashIds, sessionUser.getId());
         if (carwashIds.size() != carwashList.size())
             throw new IllegalArgumentException("User is not the owner of the carwash. ");
-        // 예약을 시간순으로(가장 최근 예약부터) 정렬
+        // 예약을 시간순으로(가장 최근 예약부터) 정렬 - 삭제된 것 제외
         // 세차장 id로 제시된 것들만 가져오기
-        List<Reservation> reservationList = reservationJPARepository.findAllByCarwash_IdInOrderByStartTimeDesc(carwashIds, selectedDate)
-                .stream()
-                .filter(r -> !r.isDeleted())
-                .collect(Collectors.toList());
+        List<Reservation> reservationList = reservationJPARepository.findAllByCarwash_IdInOrderByStartTimeDesc(carwashIds, selectedDate);
         if (reservationList.isEmpty()) return new OwnerResponse.SaleResponseDTO(new ArrayList<>());
         // 예약과 예약에 대한 세차장 정보 보여주기
         return new OwnerResponse.SaleResponseDTO(reservationList);
@@ -100,7 +99,7 @@ public class OwnerService {
         List<Carwash> carwashList = carwashJPARepository.findAllByIdInAndUser_Id(carwashIds, sessionUser.getId());
         if (carwashIds.size() != carwashList.size())
             throw new IllegalArgumentException("User is not the owner of the carwash.");
-        // 매출 구하기
+        // 매출 구하기 - 예약 삭제된 것 제외
         Map<String, Long> response = new HashMap<>();
         Long revenue = reservationJPARepository.findTotalRevenueByCarwashIdsAndDate(carwashIds, selectedDate);
 
@@ -113,11 +112,16 @@ public class OwnerService {
         List<Carwash> carwashList = carwashJPARepository.findByUser_Id(sessionUser.getId());
         OwnerResponse.ReservationOverviewResponseDTO response = new OwnerResponse.ReservationOverviewResponseDTO();
         for (Carwash carwash : carwashList) {
+            List<Bay> bayList = bayJPARepository.findByCarwashId(carwash.getId());
             List<Optime> optimeList = optimeJPARepository.findByCarwash_Id(carwash.getId());
-            List<Reservation> reservationList = reservationJPARepository.findTodaysReservationsByCarwashId(carwash.getId(), LocalDate.now());
-            OwnerResponse.CarwashManageDTO dto = new OwnerResponse.CarwashManageDTO(optimeList, reservationList);
+
+            Date today = java.sql.Date.valueOf(LocalDate.now());
+            List<Reservation> reservationList = reservationJPARepository.findTodaysReservationsByCarwashId(carwash.getId(), today);
+
+            OwnerResponse.CarwashManageDTO dto = new OwnerResponse.CarwashManageDTO(carwash, bayList, optimeList, reservationList);
             response.addCarwashManageDTO(dto);
         }
+
         return response;
     }
 

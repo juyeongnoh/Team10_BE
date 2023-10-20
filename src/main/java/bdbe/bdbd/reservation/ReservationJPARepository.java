@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,12 +28,12 @@ public interface ReservationJPARepository extends JpaRepository<Reservation, Lon
     List<Reservation> findByUserIdJoinFetch(@Param("userId") Long userId, Pageable pageable);
 
     // 이번 달 예약 가져오기
-    @Query("SELECT r FROM Reservation r JOIN FETCH r.bay b JOIN FETCH b.carwash c JOIN FETCH r.user u WHERE c.id IN :carwashIds AND FUNCTION('YEAR', r.startTime) = FUNCTION('YEAR', :selectedDate) AND FUNCTION('MONTH', r.startTime) = FUNCTION('MONTH', :selectedDate) ORDER BY r.startTime DESC")
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.bay b JOIN FETCH b.carwash c JOIN FETCH r.user u WHERE c.id IN :carwashIds AND FUNCTION('YEAR', r.startTime) = FUNCTION('YEAR', :selectedDate) AND FUNCTION('MONTH', r.startTime) = FUNCTION('MONTH', :selectedDate) AND r.isDeleted = false ORDER BY r.startTime DESC")
     List<Reservation> findAllByCarwash_IdInOrderByStartTimeDesc(@Param("carwashIds") List<Long> carwashIds, @Param("selectedDate") LocalDate selectedDate);
 
     // 오늘 날짜 예약 가져오기
-    @Query("SELECT r FROM Reservation r JOIN FETCH r.bay b JOIN FETCH b.carwash c WHERE c.id = :carwashId AND FUNCTION('DATE', r.startTime) = :today ORDER BY r.startTime DESC")
-    List<Reservation> findTodaysReservationsByCarwashId(@Param("carwashId") Long carwashId, @Param("today") LocalDate today);
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.bay b JOIN FETCH b.carwash c WHERE c.id = :carwashId AND FUNCTION('DATE', r.startTime) = :today AND r.isDeleted = false ORDER BY r.startTime DESC")
+    List<Reservation> findTodaysReservationsByCarwashId(@Param("carwashId") Long carwashId, @Param("today") Date today);
 
 
     List<Reservation> findReservationByBayIdAndUserId(Long bayId, Long userId);

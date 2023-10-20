@@ -193,6 +193,21 @@ public class OwnerRestControllerTest {
         resultActions.andExpect(jsonPath("$.success").value("true"));
     }
 
+    @WithUserDetails(value = "owner@nate.com")
+    @Test
+    @DisplayName("매장 관리 - owner별")
+    public void fetchOwnerReservationOverview_test() throws Exception {
+        //given
+
+        //when
+        ResultActions resultActions = mvc.perform(
+                get("/owner/carwashes"));
+        //then
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+    }
 }
 
 
