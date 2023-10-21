@@ -1,8 +1,10 @@
 package bdbe.bdbd.bay;
 
+import bdbe.bdbd._core.errors.security.CustomUserDetails;
 import bdbe.bdbd._core.errors.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +18,8 @@ public class BayRestController {
     @PostMapping("/owner/carwashes/{carwash_id}/bays")
     public ResponseEntity<?> createBay(
             @PathVariable("carwash_id") Long carwashId,
-            @RequestBody BayRequest.SaveDTO saveDTO, Errors errors)
+            @RequestBody BayRequest.SaveDTO saveDTO, Errors errors,
+            @AuthenticationPrincipal CustomUserDetails userDetails)
     {
         bayService.createBay(saveDTO, carwashId);
         return ResponseEntity.ok(ApiUtils.success(null));

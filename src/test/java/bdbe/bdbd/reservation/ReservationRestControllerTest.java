@@ -5,15 +5,12 @@ import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.keyword.KeywordJPARepository;
-import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
-import bdbe.bdbd.optime.DayType;
-import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.reservation.ReservationRequest.SaveDTO;
+import bdbe.bdbd.reservation.ReservationRequest.UpdateDTO;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
-import bdbe.bdbd.user.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,11 +29,11 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 
-import static bdbe.bdbd.optime.DayType.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @Transactional
@@ -151,9 +148,21 @@ public class ReservationRestControllerTest {
         SaveDTO saveDTO = new SaveDTO();
         // SaveDTO 객체 생성 및 값 설정
         saveDTO.setBayId(bayId);
+
+        // 현재 날짜와 시간을 가져오기
+        LocalDateTime now = LocalDateTime.now();
+
+        // 원하는 형식의 포맷터를 생성
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+
+        // 날짜와 시간을 문자열로 포맷
+        String formattedDateTime = now.format(formatter);
+
         LocalDate date = LocalDate.now();
-        saveDTO.setStartTime(LocalDateTime.of(date, LocalTime.of(21, 30))); // 오전 6시
-        saveDTO.setEndTime(LocalDateTime.of(date, LocalTime.of(22, 00))); // 30분 뒤
+        saveDTO.setStartTime(LocalDateTime.of(date, LocalTime.of(12, 30))); // 오전 6시
+        saveDTO.setEndTime(LocalDateTime.of(date, LocalTime.of(13, 00))); // 30분 뒤
+
+
         String s = saveDTO.toString();
         System.out.println(s);
         String requestBody = om.writeValueAsString(saveDTO);
@@ -172,9 +181,73 @@ public class ReservationRestControllerTest {
 
         // verify
         resultActions.andExpect(jsonPath("$.success").value("true"));
+    }
+
+    @WithUserDetails(value = "user@nate.com")
+    @Test
+    @DisplayName("예약 수정 기능")
+    public void updateReservation_test() throws Exception {
+        //given
+        Reservation reservation = reservationJPARepository.findAll()
+                .stream()
+                .filter(r -> !r.isDeleted())
+                .findFirst().get();
+
+        UpdateDTO updateDTO = new UpdateDTO();
+        LocalDate date = LocalDate.now();
+        updateDTO.setStartTime(LocalDateTime.of(date, LocalTime.of(21, 30))); // 21시
+        updateDTO.setEndTime(LocalDateTime.of(date, LocalTime.of(22, 0))); // 30분 뒤
+
+        String requestBody = om.writeValueAsString(updateDTO);
+        System.out.println("요청 데이터 : " + requestBody);
+
+        //when
+        Long reservationId = reservation.getId();
+        ResultActions resultActions = mvc.perform(
+                put(String.format("/reservations/%d", reservationId))
+                        .content(om.writeValueAsString(updateDTO))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+        //then
+        // eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+        reservation = reservationJPARepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("reservation id : " + reservationId + "not found"));
+        resultActions.andExpect(jsonPath("$.success").value("true"));
 
 
     }
+    @WithUserDetails(value = "user@nate.com")
+    @Test
+    @DisplayName("예약 취소 기능")
+    public void deleteReservation_test() throws Exception {
+        //given
+        Reservation reservation = reservationJPARepository.findAll()
+                .stream()
+                .filter(r -> !r.isDeleted())
+                .findFirst().get();
+        System.out.println(reservation.getId());
+        System.out.println(reservation.getBay().getId());
+        System.out.println(reservation.getUser().getId());
+
+
+        //when
+        Long reservationId = reservation.getId();
+        System.out.println("reservation id: " +reservationId);
+        ResultActions resultActions = mvc.perform(
+                delete(String.format("/reservations/%d", reservationId))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+//        then
+//         eye
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body : " + responseBody);
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+
+
+    }
+
 
     @WithUserDetails(value = "user@nate.com")
     @Test
@@ -216,7 +289,7 @@ public class ReservationRestControllerTest {
         // eye
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         System.out.println("응답 Body : " + responseBody);
-
+        resultActions.andExpect(jsonPath("$.success").value("true"));
 
     }
 
@@ -263,34 +336,34 @@ public class ReservationRestControllerTest {
 
         LocalDate date = LocalDate.now();
         // 예약 1
-        Reservation reservation = Reservation.builder()
-                .price(4000)
-                .startTime(LocalDateTime.of(date, LocalTime.of(6, 0))) // 오전 6시
-                .endTime(LocalDateTime.of(date, LocalTime.of(6, 30))) // 30분 뒤
-                .bay(savedBay)
-                .user(user)
-                .build();
-        reservationJPARepository.save(reservation);
-
-        // 예약 2
-        reservation = Reservation.builder()
-                .price(4000)
-                .startTime(LocalDateTime.of(date, LocalTime.of(20, 0))) // 오전 6시
-                .endTime(LocalDateTime.of(date, LocalTime.of(20, 30))) // 30분 뒤
-                .bay(savedBay)
-                .user(user)
-                .build();
-        reservationJPARepository.save(reservation);
-
-        // 예약 3
-        reservation = Reservation.builder()
-                .price(4000)
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now().plusMinutes(30)) //30분 뒤로 설정
-                .bay(savedBay)
-                .user(user)
-                .build();
-        reservationJPARepository.save(reservation);
+//        Reservation reservation = Reservation.builder()
+//                .price(4000)
+//                .startTime(LocalDateTime.of(date, LocalTime.of(6, 0))) // 오전 6시
+//                .endTime(LocalDateTime.of(date, LocalTime.of(6, 30))) // 30분 뒤
+//                .bay(savedBay)
+//                .user(user)
+//                .build();
+//        reservationJPARepository.save(reservation);
+//
+//        // 예약 2
+//        reservation = Reservation.builder()
+//                .price(4000)
+//                .startTime(LocalDateTime.of(date, LocalTime.of(20, 0))) // 오전 6시
+//                .endTime(LocalDateTime.of(date, LocalTime.of(20, 30))) // 30분 뒤
+//                .bay(savedBay)
+//                .user(user)
+//                .build();
+//        reservationJPARepository.save(reservation);
+//
+//        // 예약 3
+//        reservation = Reservation.builder()
+//                .price(4000)
+//                .startTime(LocalDateTime.now())
+//                .endTime(LocalDateTime.now().plusMinutes(30)) //30분 뒤로 설정
+//                .bay(savedBay)
+//                .user(user)
+//                .build();
+//        reservationJPARepository.save(reservation);
 
 
 
@@ -315,53 +388,53 @@ public class ReservationRestControllerTest {
                 .orElseThrow(()-> new IllegalArgumentException("user not found"));
 
         Carwash carwash = carwashJPARepository.findFirstBy();
-        Carwash carwash1 = carwashJPARepository.findById(3L).get();
-//        Bay bay = bayJPARepository.findByCarwashId(carwash.getId()).get(0);
-
-        Bay bay = Bay.builder()
-                .bayNum(2)
-                .carwash(carwash)
-                .status(1)
-                .build();
-        Bay savedBay = bayJPARepository.save(bay);
-
-        bay = Bay.builder()
-                .bayNum(2)
-                .carwash(carwash1)
-                .status(1)
-                .build();
-        Bay savedBay1 = bayJPARepository.save(bay);
-
-        LocalDate date = LocalDate.now();
-        // 예약 1
-        Reservation reservation = Reservation.builder()
-                .price(4000)
-                .startTime(LocalDateTime.of(date, LocalTime.of(6, 0))) // 오전 6시
-                .endTime(LocalDateTime.of(date, LocalTime.of(6, 30))) // 30분 뒤
-                .bay(savedBay)
-                .user(user)
-                .build();
-        reservationJPARepository.save(reservation);
-
-        // 예약 2
-        reservation = Reservation.builder()
-                .price(4000)
-                .startTime(LocalDateTime.of(date, LocalTime.of(20, 0))) // 오전 6시
-                .endTime(LocalDateTime.of(date, LocalTime.of(20, 30))) // 30분 뒤
-                .bay(savedBay)
-                .user(user)
-                .build();
-        reservationJPARepository.save(reservation);
-
-        // 예약 3 (다른 세차장의 베이)
-        reservation = Reservation.builder()
-                .price(4000)
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now().plusMinutes(30)) //30분 뒤로 설정
-                .bay(savedBay1)
-                .user(user)
-                .build();
-        reservationJPARepository.save(reservation);
+//        Carwash carwash1 = carwashJPARepository.findById(3L).get();
+////        Bay bay = bayJPARepository.findByCarwashId(carwash.getId()).get(0);
+//
+//        Bay bay = Bay.builder()
+//                .bayNum(2)
+//                .carwash(carwash)
+//                .status(1)
+//                .build();
+//        Bay savedBay = bayJPARepository.save(bay);
+//
+//        bay = Bay.builder()
+//                .bayNum(2)
+//                .carwash(carwash1)
+//                .status(1)
+//                .build();
+//        Bay savedBay1 = bayJPARepository.save(bay);
+//
+//        LocalDate date = LocalDate.now();
+//        // 예약 1
+//        Reservation reservation = Reservation.builder()
+//                .price(4000)
+//                .startTime(LocalDateTime.of(date, LocalTime.of(6, 0))) // 오전 6시
+//                .endTime(LocalDateTime.of(date, LocalTime.of(6, 30))) // 30분 뒤
+//                .bay(savedBay)
+//                .user(user)
+//                .build();
+//        reservationJPARepository.save(reservation);
+//
+//        // 예약 2
+//        reservation = Reservation.builder()
+//                .price(4000)
+//                .startTime(LocalDateTime.of(date, LocalTime.of(20, 0))) // 오전 6시
+//                .endTime(LocalDateTime.of(date, LocalTime.of(20, 30))) // 30분 뒤
+//                .bay(savedBay)
+//                .user(user)
+//                .build();
+//        reservationJPARepository.save(reservation);
+//
+//        // 예약 3 (다른 세차장의 베이)
+//        reservation = Reservation.builder()
+//                .price(4000)
+//                .startTime(LocalDateTime.now())
+//                .endTime(LocalDateTime.now().plusMinutes(30)) //30분 뒤로 설정
+//                .bay(savedBay1)
+//                .user(user)
+//                .build();
+//        reservationJPARepository.save(reservation);
 
 
         //when

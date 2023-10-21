@@ -2,7 +2,10 @@ package bdbe.bdbd.carwash;
 
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
+import bdbe.bdbd.keyword.KeywordType;
 import bdbe.bdbd.location.LocationJPARepository;
+import bdbe.bdbd.optime.OptimeJPARepository;
+import bdbe.bdbd.reservation.ReservationRequest;
 import bdbe.bdbd.user.User;
 import bdbe.bdbd.user.UserJPARepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,16 +20,17 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //@ActiveProfiles("test") //test profile 사용
-@Transactional
+//@Transactional
 @AutoConfigureMockMvc //MockMvc 사용
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 //통합테스트(SF-F-DS(Handler, ExHandler)-C-S-R-PC-DB) 다 뜬다.
@@ -45,6 +49,9 @@ public class CarwashRestControllerTest {
 
     @Autowired
     KeywordJPARepository keywordJPARepository;
+
+    @Autowired
+    OptimeJPARepository optimeJPARepository;
 
     @Autowired
     private ObjectMapper om;
@@ -105,6 +112,7 @@ public class CarwashRestControllerTest {
 //        dto.setImage(Arrays.asList("image1.jpg", "image2.jpg"));
         Keyword keyword = Keyword.builder()
                 .name("하부세차")
+                .type(KeywordType.CARWASH)
                 .build();
         Keyword savedKeyword = keywordJPARepository.save(keyword);
         dto.setKeywordId(Arrays.asList(savedKeyword.getId()));
@@ -181,7 +189,9 @@ public class CarwashRestControllerTest {
     public void findCarwashesByKeywords_test() throws Exception {
         // given
         CarwashRequest.SearchRequestDTO searchRequest = new CarwashRequest.SearchRequestDTO();
-        searchRequest.setKeywords(Arrays.asList("하부세차"));
+        Keyword keyword = keywordJPARepository.findByType(KeywordType.CARWASH).get(0);
+        searchRequest.setKeywordIds(Arrays.asList(keyword.getId()));
+
         searchRequest.setLatitude(1.23);
         searchRequest.setLongitude(2.34);
 
@@ -210,7 +220,7 @@ public class CarwashRestControllerTest {
         System.out.println("carwashId:" + carwashId);
 
         ResultActions resultActions = mvc.perform(
-                get(String.format("/carwashes/%d/introduction", carwashId))
+                get(String.format("/carwashes/%d/info", carwashId))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
 
@@ -221,6 +231,87 @@ public class CarwashRestControllerTest {
 
         resultActions.andExpect(jsonPath("$.success").value("true"));
     }
+
+    @WithUserDetails(value = "owner@nate.com")
+    @Test
+    @DisplayName("세차장 기존 정보 불러오기")
+    public void findCarwashByDetailsTest() throws Exception {
+
+        Long carwashId = carwashJPARepository.findFirstBy().getId();
+        System.out.println("carwashId: " + carwashId);
+
+        ResultActions resultActions = mvc.perform(
+                get(String.format("/owner/carwashes/%d/details", carwashId))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+
+
+        );
+
+        resultActions.andExpect(status().isOk());
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body:" + responseBody);
+
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+    }
+
+    @WithUserDetails(value = "owner@nate.com")
+    @Test
+    @DisplayName("세차장 세부 정보 수정")
+    public void updateCarwashDetailsTest() throws Exception {
+
+        Long carwashId = carwashJPARepository.findFirstBy().getId();
+        System.out.println("carwashId:" + carwashId);
+
+        CarwashRequest.updateCarwashDetailsDTO updateCarwashDetailsDTO = new CarwashRequest.updateCarwashDetailsDTO();
+        updateCarwashDetailsDTO.setId(2L);
+        updateCarwashDetailsDTO.setName("하이세차장");
+        updateCarwashDetailsDTO.setPrice(2000);
+        updateCarwashDetailsDTO.setTel("010-3333-2222");
+        updateCarwashDetailsDTO.setDescription("안녕하세요");
+
+        CarwashRequest.updateLocationDTO updateLocationDTO = new CarwashRequest.updateLocationDTO();
+        updateLocationDTO.setAddress("새로운 주소");
+        updateLocationDTO.setPlaceName("새로운 이름");
+        updateCarwashDetailsDTO.setLocationDTO(updateLocationDTO);
+
+        CarwashRequest.updateOperatingTimeDTO optimeDTO = new CarwashRequest.updateOperatingTimeDTO();
+
+        CarwashRequest.updateOperatingTimeDTO.updateTimeSlot weekday = new CarwashRequest.updateOperatingTimeDTO.updateTimeSlot();
+        weekday.setStart(LocalTime.of(10, 0).toString());
+        weekday.setEnd(LocalTime.of(18, 0).toString());
+        optimeDTO.setWeekday(weekday);
+
+        CarwashRequest.updateOperatingTimeDTO.updateTimeSlot weekend = new CarwashRequest.updateOperatingTimeDTO.updateTimeSlot();
+        weekend.setStart(LocalTime.of(9, 0).toString());
+        weekend.setEnd(LocalTime.of(15, 0).toString());
+        optimeDTO.setWeekend(weekend);
+        updateCarwashDetailsDTO.setOptime(optimeDTO);
+
+
+        updateCarwashDetailsDTO.setKeywordId(Arrays.asList(1L));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+
+        ResultActions resultActions = mvc.perform(
+                put(String.format("/owner/carwashes/%d/details", carwashId))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(updateCarwashDetailsDTO))
+
+        );
+
+        resultActions.andExpect(status().isOk());
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("응답 Body:" + responseBody);
+
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+
+
+
+    }
+
 
 
 

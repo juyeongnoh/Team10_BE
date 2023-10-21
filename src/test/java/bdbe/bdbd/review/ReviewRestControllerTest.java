@@ -6,6 +6,7 @@ import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
+import bdbe.bdbd.keyword.KeywordType;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.reservation.Reservation;
@@ -77,8 +78,6 @@ public class ReviewRestControllerTest {
 
     Long carwashId;
 
-
-
     @WithUserDetails(value = "user@nate.com")
     @Test
     @DisplayName("리뷰 등록 기능")
@@ -95,7 +94,7 @@ public class ReviewRestControllerTest {
         carwashId = carwash.getId();
 
         // 키워드
-        List<Keyword> keywordList = keywordJPARepository.findByType(2);
+        List<Keyword> keywordList = keywordJPARepository.findByType(KeywordType.REVIEW);
 
         List<Long> keywordIds = keywordList.stream()
                 .map(Keyword::getId)
@@ -221,9 +220,10 @@ public class ReviewRestControllerTest {
     public void find_review_test() throws Exception {
         // given
         this.createReviewTest(); // 이것으로 인해 userDetails가 필요하다. (테스트코드에서만 필요)
+        // NOTE: carwashId 확인하기
+        System.out.println("carwash id : " + carwashId);
 
         // when
-        // NOTE: carwashId 확인하기
         ResultActions resultActions = mvc.perform(
                 MockMvcRequestBuilders.get(String.format("/carwashes/%d/reviews", carwashId))
         );

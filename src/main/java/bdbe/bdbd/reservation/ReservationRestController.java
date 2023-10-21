@@ -24,18 +24,38 @@ public class ReservationRestController {
             )
     {
         reservationService.save(dto, carwashId, bayId, userDetails.getUser());
-        return ResponseEntity.ok(ApiUtils.success(null));
 
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    // 예약 수정하기
+    @PutMapping("/reservations/{reservation_id}")
+    public ResponseEntity<?> updateReservation(
+            @PathVariable("reservation_id") Long reservationId,
+            @RequestBody ReservationRequest.UpdateDTO dto
+    )
+    {
+        reservationService.update(dto, reservationId);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    // 예약 취소하기
+    @DeleteMapping("/reservations/{reservation_id}")
+    public ResponseEntity<?> deleteReservation(
+            @PathVariable("reservation_id") Long reservationId
+    )
+    {
+        reservationService.delete(reservationId);
+        return ResponseEntity.ok(ApiUtils.success(null));
     }
 
     // 세차장별 예약 내역 조회
     @GetMapping("/carwashes/{carwash_id}/bays")
     public ResponseEntity<?> findAllByCarwash(
-            @PathVariable("carwash_id") Long carwashId,
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @PathVariable("carwash_id") Long carwashId
     )
     {
-        ReservationResponse.findAllResponseDTO dto = reservationService.findAllByCarwash(carwashId, userDetails.getUser());
+        ReservationResponse.findAllResponseDTO dto = reservationService.findAllByCarwash(carwashId);
         return ResponseEntity.ok(ApiUtils.success(dto));
 
     }
@@ -62,7 +82,7 @@ public class ReservationRestController {
 
     // 최근 이용 내역 가져오기
     @GetMapping("/reservations/recent")
-    public ResponseEntity<?> fetchRecentReservation(
+    public ResponseEntity<?> updateReservation(
             @AuthenticationPrincipal CustomUserDetails userDetails
     )
     {
