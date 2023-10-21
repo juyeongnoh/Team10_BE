@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -147,9 +148,21 @@ public class ReservationRestControllerTest {
         SaveDTO saveDTO = new SaveDTO();
         // SaveDTO 객체 생성 및 값 설정
         saveDTO.setBayId(bayId);
+
+        // 현재 날짜와 시간을 가져오기
+        LocalDateTime now = LocalDateTime.now();
+
+        // 원하는 형식의 포맷터를 생성
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+
+        // 날짜와 시간을 문자열로 포맷
+        String formattedDateTime = now.format(formatter);
+
         LocalDate date = LocalDate.now();
         saveDTO.setStartTime(LocalDateTime.of(date, LocalTime.of(12, 30))); // 오전 6시
         saveDTO.setEndTime(LocalDateTime.of(date, LocalTime.of(13, 00))); // 30분 뒤
+
+
         String s = saveDTO.toString();
         System.out.println(s);
         String requestBody = om.writeValueAsString(saveDTO);

@@ -2,6 +2,7 @@ package bdbe.bdbd.carwash;
 
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
+import bdbe.bdbd.keyword.KeywordType;
 import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.reservation.ReservationRequest;
@@ -111,6 +112,7 @@ public class CarwashRestControllerTest {
 //        dto.setImage(Arrays.asList("image1.jpg", "image2.jpg"));
         Keyword keyword = Keyword.builder()
                 .name("하부세차")
+                .type(KeywordType.CARWASH)
                 .build();
         Keyword savedKeyword = keywordJPARepository.save(keyword);
         dto.setKeywordId(Arrays.asList(savedKeyword.getId()));
@@ -187,7 +189,7 @@ public class CarwashRestControllerTest {
     public void findCarwashesByKeywords_test() throws Exception {
         // given
         CarwashRequest.SearchRequestDTO searchRequest = new CarwashRequest.SearchRequestDTO();
-        Keyword keyword = keywordJPARepository.findAll().get(0);
+        Keyword keyword = keywordJPARepository.findByType(KeywordType.CARWASH).get(0);
         searchRequest.setKeywordIds(Arrays.asList(keyword.getId()));
 
         searchRequest.setLatitude(1.23);
@@ -218,7 +220,7 @@ public class CarwashRestControllerTest {
         System.out.println("carwashId:" + carwashId);
 
         ResultActions resultActions = mvc.perform(
-                get(String.format("/carwashes/%d/introduction", carwashId))
+                get(String.format("/carwashes/%d/info", carwashId))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
 

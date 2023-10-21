@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReservationJPARepository extends JpaRepository<Reservation, Long> {
-    Reservation findFirstBy(); // 하나 찾기
+    Reservation findFirstBy();  // 테스트시에 사용
 
     @Query("SELECT r FROM Reservation r JOIN FETCH r.bay b JOIN FETCH b.carwash WHERE r.user.id = :userId")
     List<Reservation> findFirstByUserIdWithJoinFetch(@Param("userId") Long userId, Pageable pageable);

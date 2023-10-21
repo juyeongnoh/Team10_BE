@@ -159,14 +159,14 @@ public class OwnerRestControllerTest {
 
     @WithUserDetails(value = "owner@nate.com")
     @Test
-    @DisplayName("owner가 운영하는 모든 세차장 조회 기능")
+    @DisplayName("매출관리")
     public void findAllReservationByOwner_test() throws Exception {
         //given
 
         //when
         ResultActions resultActions = mvc.perform(
                 get("/owner/sales")
-                        .param("carwash-id",  "2", "3")
+                        .param("carwash-id",   "3")
                         .param("selected-date", "2023-10-01")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
