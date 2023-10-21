@@ -17,6 +17,9 @@ public interface CarwashJPARepository extends JpaRepository<Carwash, Long> {
     @Query("SELECT c.id FROM Carwash c WHERE c.user.id = :userId")
     List<Long> findCarwashIdsByUserId(@Param("userId") Long userId);
 
+    @Query("SELECT c FROM Carwash c WHERE c.user.id = :userId")
+    List<Carwash> findCarwashesByUserId(@Param("userId") Long userId);
+
     Optional<Carwash> findByIdAndUser_Id(Long carwashId, Long userId);
 
     List<Carwash> findAllByIdInAndUser_Id(List<Long> carwashIds, Long userId);
