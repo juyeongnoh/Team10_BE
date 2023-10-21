@@ -6,6 +6,7 @@ import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
+import bdbe.bdbd.keyword.KeywordType;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.reservation.Reservation;
@@ -93,7 +94,7 @@ public class ReviewRestControllerTest {
         carwashId = carwash.getId();
 
         // 키워드
-        List<Keyword> keywordList = keywordJPARepository.findByType(2);
+        List<Keyword> keywordList = keywordJPARepository.findByType(KeywordType.REVIEW);
 
         List<Long> keywordIds = keywordList.stream()
                 .map(Keyword::getId)

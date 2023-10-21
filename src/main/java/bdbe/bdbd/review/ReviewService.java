@@ -4,6 +4,7 @@ import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
+import bdbe.bdbd.keyword.KeywordType;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
 import bdbe.bdbd.review.ReviewResponse.ReviewByCarwashIdDTO;
@@ -96,7 +97,7 @@ public class ReviewService {
 
 
     public ReviewKeywordResponseDTO getReviewKeyword() {
-        List<Keyword> keywordList = keywordJPARepository.findByType(2);
+        List<Keyword> keywordList = keywordJPARepository.findByType(KeywordType.REVIEW);
 
         return new ReviewKeywordResponseDTO(keywordList);
     }
