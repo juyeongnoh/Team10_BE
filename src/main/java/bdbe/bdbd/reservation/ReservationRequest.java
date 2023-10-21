@@ -40,4 +40,14 @@ public class ReservationRequest {
                     .build();
         }
     }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class UpdateDTO {
+
+        private LocalDateTime startTime;
+        private LocalDateTime endTime;
+
+    }
 }

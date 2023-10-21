@@ -43,23 +43,23 @@ public class BayResponse {
         // getters, setters
     }
 
-    @Getter
-    @Setter
-    public static class getBayById{
-
-        private Long id;
-        private Long cid;
-        private int bayNum;
-        private int bayType;
-        private int status;
-        private List<Reservation> reservation;
-
-        public getBayById(Bay bay) {
-            this.id = bay.getId();
-            this.cid = bay.getCarwash().getId();
-            this.bayNum = bay.getBayNum();
-            this.status = bay.getStatus();
-            this.reservation = bay.getReservationList();
-        }
-    }
+//    @Getter
+//    @Setter
+//    public static class getBayById{
+//
+//        private Long id;
+//        private Long cid;
+//        private int bayNum;
+//        private int bayType;
+//        private int status;
+//        private List<Reservation> reservation;
+//
+//        public getBayById(Bay bay) {
+//            this.id = bay.getId();
+//            this.cid = bay.getCarwash().getId();
+//            this.bayNum = bay.getBayNum();
+//            this.status = bay.getStatus();
+//            this.reservation = bay.getReservationList();
+//        }
+//    }
 }

@@ -1,7 +1,6 @@
 package bdbe.bdbd.file;
 
 import bdbe.bdbd.carwash.Carwash;
-import bdbe.bdbd.user.User;
 import lombok.Builder;
 import lombok.Getter;
 
