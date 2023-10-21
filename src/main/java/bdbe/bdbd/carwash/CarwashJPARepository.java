@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CarwashJPARepository extends JpaRepository<Carwash, Long> {
-    Carwash findFirstBy(); // 맨 처음 하나 찾기
+    Carwash findFirstBy(); // 테스트시에 사용
     @Query(value = "SELECT cw.* FROM carwash cw JOIN location l ON cw.l_id = l.id WHERE ST_Distance_Sphere(point(l.longitude, l.latitude), point(:longitude, :latitude)) <= 10000", nativeQuery = true)
     List<Carwash> findCarwashesWithin10Kilometers(@Param("latitude") double latitude, @Param("longitude") double longitude);
 
