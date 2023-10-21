@@ -1,5 +1,6 @@
 package bdbe.bdbd.user;
 
+import bdbe.bdbd._core.errors.utils.DateUtils;
 import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.optime.DayType;
@@ -22,12 +23,29 @@ public class OwnerResponse {
     @Setter
     @ToString
     public static class SaleResponseDTO {
-        private List<ReservationCarwashDTO> response;
+        private List<CarwashListDTO> carwashList;  // 세차장 목록
+        private List<ReservationCarwashDTO> response; // 매출 정보
 
-        public SaleResponseDTO(List<Reservation> reservationList) {
+        public SaleResponseDTO(List<Carwash> carwashList, List<Reservation> reservationList) {
+            this.carwashList = carwashList.stream()
+                    .map(CarwashListDTO::new)
+                    .collect(Collectors.toList());
             this.response = reservationList.stream()
                     .map(ReservationCarwashDTO::new)
                     .collect(Collectors.toList());
+        }
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class CarwashListDTO {
+        private Long carwashId;
+        private String name;
+
+        public CarwashListDTO(Carwash carwash) {
+            this.carwashId = carwash.getId();
+            this.name = carwash.getName();
         }
     }
 
@@ -52,16 +70,16 @@ public class OwnerResponse {
         private int bayNo;
         private String nickname;
         private int totalPrice;
-        private LocalDateTime startTime;
-        private LocalDateTime endTime;
+        private String startTime;
+        private String endTime;
 
         public ReservationDTO(Reservation reservation) {
             this.reservationId = reservation.getId();
             this.bayNo = reservation.getBay().getBayNum();
             this.nickname = reservation.getUser().getUsername();
             this.totalPrice = reservation.getPrice();
-            this.startTime = reservation.getStartTime();
-            this.endTime = reservation.getEndTime();
+            this.startTime = DateUtils.formatDateTime(reservation.getStartTime());
+            this.endTime = DateUtils.formatDateTime(reservation.getEndTime());
         }
     }
 
@@ -162,12 +180,12 @@ public class OwnerResponse {
         @Setter
         @ToString
         public static class BookedTimeDTO {
-            private LocalDateTime start;
-            private LocalDateTime end;
+            private String start;
+            private String end;
 
             public BookedTimeDTO(Reservation reservation) {
-                this.start = reservation.getStartTime();
-                this.end = reservation.getEndTime();
+                this.start = DateUtils.formatDateTime(reservation.getStartTime());
+                this.end = DateUtils.formatDateTime(reservation.getEndTime());
             }
         }
     }

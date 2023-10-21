@@ -1,6 +1,7 @@
 package bdbe.bdbd.reservation;
 
 
+import bdbe.bdbd._core.errors.utils.DateUtils;
 import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
@@ -85,8 +86,9 @@ public class ReservationService {
     private Optime findOptime(Carwash carwash, LocalDateTime startTime) {
         List<Optime> optimeList = optimeJPARepository.findByCarwash_Id(carwash.getId());
         DayOfWeek dayOfWeek = startTime.getDayOfWeek();
+        DayType dayType = DateUtils.getDayType(dayOfWeek);
         return optimeList.stream()
-                .filter(o -> (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) ? o.getDayType() == DayType.WEEKEND : o.getDayType() == DayType.WEEKDAY)
+                .filter(o -> o.getDayType() == dayType)
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("carwash optime doesn't exist"));
     }
@@ -97,12 +99,6 @@ public class ReservationService {
         LocalTime dtoStartTimePart = dto.getStartTime().toLocalTime();
         LocalTime dtoEndTimePart = dto.getEndTime().toLocalTime();
 
-//        // 예약이 하루 넘어가지 않도록 함
-//        LocalDate startDate = dto.getStartTime().toLocalDate();
-//        LocalDate endDate = dto.getEndTime().toLocalDate();
-//        if (!startDate.equals(endDate)) {
-//            throw new IllegalArgumentException("Reservation cannot span multiple days");
-//        }
         // 예약이 운영시간을 넘지 않도록 함
         if (!((opStartTime.isBefore(dtoStartTimePart) || opStartTime.equals(dtoStartTimePart)) &&
                 (opEndTime.isAfter(dtoEndTimePart) || opEndTime.equals(dtoEndTimePart)))) {

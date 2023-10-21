@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BayJPARepository extends JpaRepository<Bay, Long> {
-    Bay findFirstBy(); // 하나 찾기
+    Bay findFirstBy();  // 테스트시에 사용
 
     @Query("SELECT b.id FROM Bay b WHERE b.carwash.id = :carwashId")
     List<Long> findIdsByCarwashId(@Param("carwashId") Long carwashId); // 세차장 id로 베이 찾고 id 리스트 생성
