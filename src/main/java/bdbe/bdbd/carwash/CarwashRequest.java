@@ -164,4 +164,111 @@ public class CarwashRequest {
         private double longitude;
     }
 
+    @Getter
+    @Setter
+    @ToString
+    public static class updateCarwashDetailsDTO {
+
+
+        private Long id;
+        private String name;
+        private int price;
+        private String tel;
+        private updateLocationDTO locationDTO;
+        private int bayCnt;
+        private updateOperatingTimeDTO optime;
+        private List<Long> keywordId;
+        private String description;
+
+//        private List<String> images;
+
+        public updateCarwashDetailsDTO(Carwash carwash, Location location, int bayCnt, List<Long> keywordId, Optime weekOptime, Optime endOptime) {
+            //this.image = image;
+            this.id = carwash.getId();
+            this.name = carwash.getName();
+            this.price = carwash.getPrice();
+            this.tel = carwash.getTel();
+            this.locationDTO = toLocationDTO(location);
+            this.bayCnt = bayCnt;
+            this.optime = toOptimeListDTO(weekOptime,endOptime);
+            this.keywordId = keywordId;
+            this.description = carwash.getDes();
+        }
+
+        public updateCarwashDetailsDTO() {
+
+        }
+
+//        public updateOperatingTimeDTO toOptimeListDTO(updateOperatingTimeDTO optime) {
+//            updateOperatingTimeDTO dto = new updateOperatingTimeDTO();
+//            updateOperatingTimeDTO.updateTimeSlot weekSlot= new updateOperatingTimeDTO.updateTimeSlot();
+//            weekSlot.setStart(optime.getWeekday().getStart());
+//            weekSlot.setEnd(optime.getWeekday().getEnd());
+//            dto.setWeekday(weekSlot);
+//
+//            updateOperatingTimeDTO.updateTimeSlot endSlot= new updateOperatingTimeDTO.updateTimeSlot();
+//            endSlot.setStart(optime.getWeekend().getStart());
+//            endSlot.setEnd(optime.getWeekend().getEnd());
+//            dto.setWeekend(endSlot);
+//
+//            return dto;
+
+//        }
+
+        public updateOperatingTimeDTO toOptimeListDTO(Optime weekdayOptime, Optime weekendOptime) {
+            updateOperatingTimeDTO dto = new updateOperatingTimeDTO();
+
+            updateOperatingTimeDTO.updateTimeSlot weekSlot = new updateOperatingTimeDTO.updateTimeSlot();
+            weekSlot.setStart(weekdayOptime.getStartTime().toString());
+            weekSlot.setEnd(weekdayOptime.getEndTime().toString());
+            dto.setWeekday(weekSlot);
+
+            updateOperatingTimeDTO.updateTimeSlot endSlot = new updateOperatingTimeDTO.updateTimeSlot();
+            endSlot.setStart(weekendOptime.getStartTime().toString());
+            endSlot.setEnd(weekendOptime.getEndTime().toString());
+            dto.setWeekend(endSlot);
+
+            return dto;
+        }
+
+        public updateLocationDTO toLocationDTO(Location location) {
+            updateLocationDTO updateLocationDTO = new updateLocationDTO();
+            updateLocationDTO.setAddress(location.getAddress());
+            updateLocationDTO.setPlaceName(location.getPlace());
+            return updateLocationDTO;
+        }
+
+        public updateLocationDTO setupdateLocationDTO(updateLocationDTO updateLocationDto) {
+            updateLocationDTO updateLocationDTO = new updateLocationDTO();
+            updateLocationDTO.setAddress(updateLocationDto.getAddress());
+            updateLocationDTO.setPlaceName(updateLocationDto.getPlaceName());
+            return updateLocationDTO;
+
+        }
+    }
+    @Getter
+    @Setter
+    public static class updateOperatingTimeDTO {
+        private CarwashRequest.updateOperatingTimeDTO.updateTimeSlot weekday;
+        private CarwashRequest.updateOperatingTimeDTO.updateTimeSlot weekend;
+
+        @Getter
+        @Setter
+        public static class updateTimeSlot {
+            private String start;
+            private String end;
+
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class updateLocationDTO {
+        private String placeName;
+        private String address;
+
+    }
+
+
+
 }
