@@ -157,9 +157,9 @@ public class CarwashResponse {
             dto.setWeekday(weekSlot);
 
             detailsOperatingTimeDTO.detailsTimeSlot endSlot= new detailsOperatingTimeDTO.detailsTimeSlot();
-            weekSlot.setStart(endOptime.getStartTime());
-            weekSlot.setEnd(endOptime.getEndTime());
-            dto.setWeekday(weekSlot);
+            endSlot.setStart(endOptime.getStartTime());
+            endSlot.setEnd(endOptime.getEndTime());
+            dto.setWeekend(endSlot);
 
             return dto;
 
