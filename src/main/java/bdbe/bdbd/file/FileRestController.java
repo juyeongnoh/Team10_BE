@@ -26,7 +26,7 @@ public class FileRestController {
         }
 
         try {
-            FileResponse.FileResponseDTO response = fileService.uploadFile(file, carwashId);
+            FileResponse.SimpleFileResponseDTO response = fileService.uploadFile(file, carwashId);
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
