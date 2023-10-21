@@ -122,4 +122,74 @@ public class CarwashResponse {
         private String address;
 
     }
+
+    @Getter
+    @Setter
+    public static class carwashDetailsDTO {
+        private Long id;
+        private String name;
+        private int price;
+        private String tel;
+        private detailLocationDTO locationDTO;
+        private detailsOperatingTimeDTO optime; //
+        private List<Long> keywordId;
+        private String description;
+//        private List<String> image;
+
+
+        public carwashDetailsDTO(Carwash carwash, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime) {
+//            this.image = image;
+            this.id = carwash.getId();
+            this.name = carwash.getName();
+            this.price = carwash.getPrice();
+            this.tel = carwash.getTel();
+            this.locationDTO = toLocationDTO(location);
+            this.optime = toOptimeListDTO(weekOptime, endOptime);
+            this.keywordId = keywordId;
+            this.description = carwash.getDes();
+        }
+
+        public detailsOperatingTimeDTO toOptimeListDTO(Optime weekOptime, Optime endOptime) {
+            detailsOperatingTimeDTO dto = new detailsOperatingTimeDTO();
+            detailsOperatingTimeDTO.detailsTimeSlot weekSlot= new detailsOperatingTimeDTO.detailsTimeSlot();
+            weekSlot.setStart(weekOptime.getStartTime());
+            weekSlot.setEnd(weekOptime.getEndTime());
+            dto.setWeekday(weekSlot);
+
+            detailsOperatingTimeDTO.detailsTimeSlot endSlot= new detailsOperatingTimeDTO.detailsTimeSlot();
+            weekSlot.setStart(endOptime.getStartTime());
+            weekSlot.setEnd(endOptime.getEndTime());
+            dto.setWeekday(weekSlot);
+
+            return dto;
+
+        }
+
+        public detailLocationDTO toLocationDTO(Location location) {
+            detailLocationDTO detailLocationDTO = new detailLocationDTO();
+            detailLocationDTO.setAddress(location.getAddress());
+            return detailLocationDTO;
+        }
+    }
+    @Getter
+    @Setter
+    public static class detailsOperatingTimeDTO {
+        private detailsTimeSlot weekday;
+        private detailsTimeSlot weekend;
+
+        @Getter
+        @Setter
+        public static class detailsTimeSlot {
+            private LocalTime start;
+            private LocalTime end;
+
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class detailLocationDTO {
+        private String address;
+
+    }
 }
