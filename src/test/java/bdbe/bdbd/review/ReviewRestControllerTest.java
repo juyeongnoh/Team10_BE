@@ -220,9 +220,10 @@ public class ReviewRestControllerTest {
     public void find_review_test() throws Exception {
         // given
         this.createReviewTest(); // 이것으로 인해 userDetails가 필요하다. (테스트코드에서만 필요)
+        // NOTE: carwashId 확인하기
+        System.out.println("carwash id : " + carwashId);
 
         // when
-        // NOTE: carwashId 확인하기
         ResultActions resultActions = mvc.perform(
                 MockMvcRequestBuilders.get(String.format("/carwashes/%d/reviews", carwashId))
         );

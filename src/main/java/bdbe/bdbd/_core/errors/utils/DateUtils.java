@@ -3,6 +3,8 @@ package bdbe.bdbd._core.errors.utils;
 import bdbe.bdbd.optime.DayType;
 
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class DateUtils {
 
@@ -12,5 +14,11 @@ public class DateUtils {
         } else {
             return DayType.WEEKDAY;
         }
+    }
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+
+    public static String formatDateTime(LocalDateTime dateTime) {
+        return dateTime.format(formatter);
     }
 }

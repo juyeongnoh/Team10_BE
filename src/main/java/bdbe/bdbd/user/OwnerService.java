@@ -82,18 +82,27 @@ public class OwnerService {
             throw new BadRequestError("duplicate email exist : " + email);
         }
     }
-    public OwnerResponse.SaleResponseDTO findSales(List<Long> carwashIds, LocalDate selectedDate, User sessionUser) {
-        // 해당 유저가 운영하는 세차장의 id인지 확인
-        List<Carwash> carwashList = carwashJPARepository.findAllByIdInAndUser_Id(carwashIds, sessionUser.getId());
-        if (carwashIds.size() != carwashList.size())
-            throw new IllegalArgumentException("User is not the owner of the carwash. ");
-        // 예약을 시간순으로(가장 최근 예약부터) 정렬 - 삭제된 것 제외
-        // 세차장 id로 제시된 것들만 가져오기
-        List<Reservation> reservationList = reservationJPARepository.findAllByCarwash_IdInOrderByStartTimeDesc(carwashIds, selectedDate);
-        if (reservationList.isEmpty()) return new OwnerResponse.SaleResponseDTO(new ArrayList<>());
-        // 예약과 예약에 대한 세차장 정보 보여주기
-        return new OwnerResponse.SaleResponseDTO(reservationList);
 
+    public OwnerResponse.SaleResponseDTO findSales(List<Long> carwashIds, LocalDate selectedDate, User sessionUser) {
+        validateCarwashOwnership(carwashIds, sessionUser);
+
+        List<Carwash> carwashList = carwashJPARepository.findCarwashesByUserId(sessionUser.getId()); // 유저가 가진 모든 세차장 (dto에서 사용)
+
+        List<Reservation> reservationList = reservationJPARepository.findAllByCarwash_IdInOrderByStartTimeDesc(carwashIds, selectedDate);
+        if (reservationList.isEmpty()) return new OwnerResponse.SaleResponseDTO(carwashList, new ArrayList<>());
+
+        return new OwnerResponse.SaleResponseDTO(carwashList, reservationList);
+    }
+
+    /*
+     owner가 해당 세차장의 주인인지 확인
+     */
+    private void validateCarwashOwnership(List<Long> carwashIds, User sessionUser) {
+        List<Long> userCarwashIds = carwashJPARepository.findCarwashIdsByUserId(sessionUser.getId());
+
+        if (!userCarwashIds.containsAll(carwashIds)) {
+            throw new IllegalArgumentException("User is not the owner of the carwash. ");
+        }
     }
 
     public Map<String, Long> findMonthRevenue(List<Long> carwashIds, LocalDate selectedDate, User sessionUser) {
@@ -132,15 +141,15 @@ public class OwnerService {
         Carwash carwash = carwashJPARepository.findByIdAndUser_Id(carwashId, sessionUser.getId())
                 .orElseThrow(() -> new IllegalArgumentException("carwash id :" + carwashId + " not found"));
 
-            List<Bay> bayList = bayJPARepository.findByCarwashId(carwash.getId());
-            List<Optime> optimeList = optimeJPARepository.findByCarwash_Id(carwash.getId());
+        List<Bay> bayList = bayJPARepository.findByCarwashId(carwash.getId());
+        List<Optime> optimeList = optimeJPARepository.findByCarwash_Id(carwash.getId());
 
-            Date today = java.sql.Date.valueOf(LocalDate.now());
-            List<Reservation> reservationList = reservationJPARepository.findTodaysReservationsByCarwashId(carwash.getId(), today);
+        Date today = java.sql.Date.valueOf(LocalDate.now());
+        List<Reservation> reservationList = reservationJPARepository.findTodaysReservationsByCarwashId(carwash.getId(), today);
 
-            OwnerResponse.CarwashManageDTO dto = new OwnerResponse.CarwashManageDTO(carwash, bayList, optimeList, reservationList);
+        OwnerResponse.CarwashManageDTO dto = new OwnerResponse.CarwashManageDTO(carwash, bayList, optimeList, reservationList);
 
-            return dto;
+        return dto;
     }
 
     public double calculateGrowthPercentage(Long currentValue, Long previousValue) {
@@ -149,7 +158,7 @@ public class OwnerService {
         } else if (previousValue == 0) {
             return 100;  // 이전 값이 0이고 현재 값이 0이 아닌 경우 성장률은 100%로 간주
         }
-        return ((double)(currentValue - previousValue) / previousValue) * 100;
+        return ((double) (currentValue - previousValue) / previousValue) * 100;
     }
 
     public OwnerDashboardDTO fetchOwnerHomepage(User sessionUser) {
