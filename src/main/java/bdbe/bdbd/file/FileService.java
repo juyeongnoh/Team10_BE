@@ -1,6 +1,5 @@
 package bdbe.bdbd.file;
 
-import bdbe.bdbd._core.errors.exception.FileStorageException;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import com.amazonaws.HttpMethod;
@@ -11,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +27,7 @@ public class FileService {
 
     private final AmazonS3 amazonS3;
     private final FileJPARepository fileRepository;
-    private final CarwashJPARepository carwashRepository; // CarwashRepository를 주입 받습니다.
+    private final CarwashJPARepository carwashRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(FileService.class);
 
@@ -43,9 +41,9 @@ public class FileService {
         this.carwashRepository = carwashRepository;
     }
 
-    public FileResponse.FileResponseDTO uploadFile(MultipartFile multipartFile, Long carwashId) throws IOException { // carwashId 파라미터 추가
+    public FileResponse.SimpleFileResponseDTO uploadFile(MultipartFile multipartFile, Long carwashId) throws IOException {
         Carwash carwash = carwashRepository.findById(carwashId)
-                .orElseThrow(() -> new RuntimeException("Carwash not found")); // carwashId로 Carwash 엔티티를 조회합니다.
+                .orElseThrow(() -> new RuntimeException("Carwash not found"));
 
         File file = convertMultiPartToFile(multipartFile);
         String fileName = multipartFile.getOriginalFilename();
@@ -58,20 +56,20 @@ public class FileService {
         fileSaveRequestDTO.setUrl(presignedUrl.toString());
         fileSaveRequestDTO.setPath(file.getPath());
         fileSaveRequestDTO.setUploadedAt(LocalDateTime.now());
-        fileSaveRequestDTO.setCarwash(carwash); // Carwash 객체 설정
+        fileSaveRequestDTO.setCarwash(carwash);
 
         bdbe.bdbd.file.File newFile = fileSaveRequestDTO.toEntity();
         newFile = fileRepository.save(newFile);
 
-        file.delete(); // Temp file delete
+        file.delete(); // 로컬에 저장된 파일 삭제
 
-        return new FileResponse.FileResponseDTO(
+        return new FileResponse.SimpleFileResponseDTO(
                 newFile.getId(),
                 newFile.getName(),
                 newFile.getUrl(),
                 newFile.getPath(),
                 newFile.getUploadedAt(),
-                newFile.getCarwash() // Carwash 정보를 응답에 포함시킵니다.
+                new FileResponse.SimpleCarwashDTO(newFile.getCarwash().getId())
         );
     }
 
@@ -96,7 +94,7 @@ public class FileService {
     private URL createPresignedUrl(String fileName) {
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 60 * 60; // 1 hour validity.
+        expTimeMillis += 1000 * 60 * 60; // 1 hour
         expiration.setTime(expTimeMillis);
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
