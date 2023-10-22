@@ -1,16 +1,20 @@
 package bdbe.bdbd.reservation;
 
 
+import bdbe.bdbd._core.errors.utils.DateUtils;
 import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
+import bdbe.bdbd.keyword.reviewKeyword.ReviewKeywordJPARepository;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.optime.DayType;
 import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.reservation.ReservationResponse.ReservationInfoDTO;
+import bdbe.bdbd.review.Review;
+import bdbe.bdbd.review.ReviewJPARepository;
 import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +30,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -36,6 +41,8 @@ public class ReservationService {
     private final BayJPARepository bayJPARepository;
     private final LocationJPARepository locationJPARepository;
     private final OptimeJPARepository optimeJPARepository;
+    private final ReviewJPARepository reviewJPARepository;
+    private final ReviewKeywordJPARepository reviewKeywordJPARepository;
 
     @Transactional
     public void save(ReservationRequest.SaveDTO dto, Long carwashId, Long bayId, User sessionUser) {
@@ -49,6 +56,28 @@ public class ReservationService {
         reservationJPARepository.save(reservation);
     }
 
+    @Transactional
+    public void update(ReservationRequest.UpdateDTO dto, Long reservationId) {
+        Reservation reservation = reservationJPARepository.findById(reservationId)
+                .filter(r -> !r.isDeleted())
+                .orElseThrow(() -> new IllegalArgumentException("Reservation with id " + reservationId + " not found"));
+        Long carwashId = reservation.getBay().getCarwash().getId();
+        Carwash carwash = carwashJPARepository.findById(carwashId)
+                .orElseThrow(() -> new IllegalArgumentException("Carwash with id " + carwashId + " not found"));
+
+        reservation.updateReservation(dto.getStartTime(), dto.getEndTime(), carwash);
+
+    }
+
+    @Transactional
+    public void delete(Long reservationId) {
+        Reservation reservation = reservationJPARepository.findById(reservationId)
+                .filter(r -> !r.isDeleted())
+                .orElseThrow(() -> new IllegalArgumentException("Reservation with id " + reservationId + " not found"));
+        reservation.changeDeletedFlag(true);
+    }
+
+
     private Carwash findCarwashById(Long id) {
         return carwashJPARepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("carwash not found"));
@@ -57,8 +86,9 @@ public class ReservationService {
     private Optime findOptime(Carwash carwash, LocalDateTime startTime) {
         List<Optime> optimeList = optimeJPARepository.findByCarwash_Id(carwash.getId());
         DayOfWeek dayOfWeek = startTime.getDayOfWeek();
+        DayType dayType = DateUtils.getDayType(dayOfWeek);
         return optimeList.stream()
-                .filter(o -> (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) ? o.getDayType() == DayType.WEEKEND : o.getDayType() == DayType.WEEKDAY)
+                .filter(o -> o.getDayType() == dayType)
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("carwash optime doesn't exist"));
     }
@@ -69,12 +99,6 @@ public class ReservationService {
         LocalTime dtoStartTimePart = dto.getStartTime().toLocalTime();
         LocalTime dtoEndTimePart = dto.getEndTime().toLocalTime();
 
-        // 예약이 하루 넘어가지 않도록 함
-        LocalDate startDate = dto.getStartTime().toLocalDate();
-        LocalDate endDate = dto.getEndTime().toLocalDate();
-        if (!startDate.equals(endDate)) {
-            throw new IllegalArgumentException("Reservation cannot span multiple days");
-        }
         // 예약이 운영시간을 넘지 않도록 함
         if (!((opStartTime.isBefore(dtoStartTimePart) || opStartTime.equals(dtoStartTimePart)) &&
                 (opEndTime.isAfter(dtoEndTimePart) || opEndTime.equals(dtoEndTimePart)))) {
@@ -105,19 +129,23 @@ public class ReservationService {
     }
 
     //
-    public ReservationResponse.findAllResponseDTO findAllByCarwash(Long carwashId, User sessionUser) {
+    public ReservationResponse.findAllResponseDTO findAllByCarwash(Long carwashId) {
         //베이에서 해당 세차장 id와 관련된 베이 객체 모두 찾기
         List<Bay> bayList = bayJPARepository.findByCarwashId(carwashId);
         // id만 추출하기
         List<Long> bayIdList = bayJPARepository.findIdsByCarwashId(carwashId);
         //예약에서 베이 id 리스트로 모두 찾기
-        List<Reservation> reservationList = reservationJPARepository.findByBayIdIn(bayIdList);
+        List<Reservation> reservationList = reservationJPARepository.findByBayIdIn(bayIdList)
+                .stream()
+                .filter(r -> !r.isDeleted())
+                .collect(Collectors.toList());
         return new ReservationResponse.findAllResponseDTO(bayList, reservationList);
     }
 
     public ReservationResponse.findLatestOneResponseDTO fetchLatestReservation(User sessionUser) {
         // 가장 최근의 예약 찾기
         Reservation reservation = reservationJPARepository.findTopByUserIdOrderByIdDesc(sessionUser.getId())
+                .filter(r -> !r.isDeleted())
                 .orElseThrow(() -> new NoSuchElementException("no reservation found"));
         // 예약과 관련된 베이 찾기
         Bay bay = bayJPARepository.findById(reservation.getBay().getId())
@@ -133,7 +161,10 @@ public class ReservationService {
 
     public ReservationResponse.fetchCurrentStatusReservationDTO fetchCurrentStatusReservation(User sessionUser) {
         // 유저의 예약내역 모두 조회
-        List<Reservation> reservationList = reservationJPARepository.findByUserId(sessionUser.getId());
+        List<Reservation> reservationList = reservationJPARepository.findByUserId(sessionUser.getId())
+                .stream()
+                .filter(r -> !r.isDeleted())
+                .collect(Collectors.toList());
         // 현재, 다가오는, 완료된 예약 찾기
         List<ReservationInfoDTO> current = new ArrayList<>();
         List<ReservationInfoDTO> upcoming = new ArrayList<>();
@@ -165,7 +196,7 @@ public class ReservationService {
             } else if (reservationDate.isAfter(today)) {
                 upcoming.add(new ReservationInfoDTO(reservation, bay, carwash));
             } else {
-                throw new IllegalStateException("reservation id: " + reservation.getId() + " 예약 상태가 올바르지 않습니다");
+                throw new IllegalStateException("reservation id: " + reservation.getId() + " not found");
             }
         }
         return new ReservationResponse.fetchCurrentStatusReservationDTO(current, upcoming, completed);
@@ -174,7 +205,10 @@ public class ReservationService {
     public ReservationResponse.fetchRecentReservationDTO fetchRecentReservation(User sessionUser) {
         // 유저의 예약내역 모두 조회
         Pageable pageable = PageRequest.of(0, 5); // 최대 5개까지만 가져오기
-        List<Reservation> reservationList = reservationJPARepository.findByUserIdJoinFetch(sessionUser.getId(), pageable);
+        List<Reservation> reservationList = reservationJPARepository.findByUserIdJoinFetch(sessionUser.getId(), pageable)
+                .stream()
+                .filter(r -> !r.isDeleted())
+                .collect(Collectors.toList());
 
         return new ReservationResponse.fetchRecentReservationDTO(reservationList);
     }

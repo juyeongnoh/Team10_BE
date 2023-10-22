@@ -4,6 +4,7 @@ import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
+import bdbe.bdbd.keyword.KeywordType;
 import bdbe.bdbd.reservation.Reservation;
 import bdbe.bdbd.reservation.ReservationJPARepository;
 import bdbe.bdbd.review.ReviewResponse.ReviewByCarwashIdDTO;
@@ -17,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -79,24 +82,57 @@ public class ReviewService {
     }
 
     public ReviewResponseDTO getReviewsByCarwashId(Long carwashId) {
-        List<Review> reviewList = reviewJPARepository.findByCarwash_Id(carwashId);
+        ReviewResponse.ReviewOverviewDTO overviewDTO = new ReviewResponse.ReviewOverviewDTO();
+        List<Review> reviews = reviewJPARepository.findByCarwash_Id(carwashId);
+        setOverviewDTO(overviewDTO, carwashId, reviews);
 
-        List<ReviewByCarwashIdDTO> dto = reviewList.stream()
-                .map(r -> {
-                    List<ReviewKeyword> reviewKeywordList = reviewKeywordJPARepository.findByReview_Id(r.getId());
+        Map<Long, Integer> keywordCountMap = countKeywordFrequency(reviews);
 
+        setReviewKeywordCounts(overviewDTO, keywordCountMap);
+        List<ReviewByCarwashIdDTO> carwashDTOs = createCarwashDTOs(reviews);
 
-                    return new ReviewByCarwashIdDTO(r, r.getUser(), reviewKeywordList);
+        return new ReviewResponseDTO(overviewDTO, carwashDTOs);
+    }
+
+    private void setOverviewDTO(ReviewResponse.ReviewOverviewDTO overviewDTO, Long carwashId, List<Review> reviews) {
+        Carwash carwash = carwashJPARepository.findById(carwashId)
+                .orElseThrow(() -> new IllegalArgumentException("carwash not found"));
+        overviewDTO.setRate(carwash.getRate());
+        overviewDTO.setTotalCnt(reviews.size());
+    }
+
+    private Map<Long, Integer> countKeywordFrequency(List<Review> reviews) {
+        Map<Long, Integer> keywordCountMap = new HashMap<>();
+        for (Review review : reviews) {
+            List<ReviewKeyword> reviewKeywords = reviewKeywordJPARepository.findByReview_Id(review.getId());
+            for (ReviewKeyword reviewKeyword : reviewKeywords) {
+                keywordCountMap.put(reviewKeyword.getKeyword().getId(),
+                        keywordCountMap.getOrDefault(reviewKeyword.getKeyword().getId(), 0) + 1);
+            }
+        }
+        return keywordCountMap;
+    }
+
+    private void setReviewKeywordCounts(ReviewResponse.ReviewOverviewDTO overviewDTO, Map<Long, Integer> keywordCountMap) {
+        List<ReviewResponse.ReviewKeywordCnt> keywordCounts = keywordCountMap.entrySet().stream()
+                .map(entry -> new ReviewResponse.ReviewKeywordCnt(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+        overviewDTO.setReviewKeyword(keywordCounts);
+    }
+
+    private List<ReviewByCarwashIdDTO> createCarwashDTOs(List<Review> reviews) {
+        return reviews.stream()
+                .map(review -> {
+                    List<ReviewKeyword> reviewKeywords = reviewKeywordJPARepository.findByReview_Id(review.getId());
+                    return new ReviewByCarwashIdDTO(review, review.getUser(), reviewKeywords);
                 })
                 .collect(Collectors.toList());
-
-        return new ReviewResponseDTO(dto);
-
     }
 
 
+
     public ReviewKeywordResponseDTO getReviewKeyword() {
-        List<Keyword> keywordList = keywordJPARepository.findByType(2);
+        List<Keyword> keywordList = keywordJPARepository.findByType(KeywordType.REVIEW);
 
         return new ReviewKeywordResponseDTO(keywordList);
     }

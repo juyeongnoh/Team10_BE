@@ -89,6 +89,7 @@ public class CarwashRequest {
             }
             return fileList;
         }
+
         public String getFileExtension(String filename) {
             int dotIndex = filename.lastIndexOf('.');
             if (dotIndex == -1) {
@@ -146,6 +147,7 @@ public class CarwashRequest {
             this.price = price;
         }
     }
+
     @Getter
     @Setter
     @ToString
@@ -157,9 +159,48 @@ public class CarwashRequest {
     @Getter
     @Setter
     public static class SearchRequestDTO {
-        private List<String> keywords;
+        private List<Long> keywordIds;
         private double latitude;
         private double longitude;
     }
 
+    @Getter
+    @Setter
+    @ToString
+    public static class updateCarwashDetailsDTO {
+
+        private String name;
+        private int price;
+        private String tel;
+        private updateLocationDTO locationDTO;
+        private updateOperatingTimeDTO optime;
+        private List<Long> keywordId;
+        private String description;
+
+//        private List<String> images;
+
+    }
+    @Getter
+    @Setter
+    public static class updateOperatingTimeDTO {
+        private CarwashRequest.updateOperatingTimeDTO.updateTimeSlot weekday;
+        private CarwashRequest.updateOperatingTimeDTO.updateTimeSlot weekend;
+
+        @Getter
+        @Setter
+        public static class updateTimeSlot {
+            private LocalTime start;
+            private LocalTime end;
+
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class updateLocationDTO {
+        private String placeName;
+        private String address;
+        private double latitude;
+        private double longitude;
+    }
 }
