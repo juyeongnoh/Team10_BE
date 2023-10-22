@@ -38,4 +38,11 @@ public class Location { //지역
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
+    public void updateAddress(String address, String place, double latitude, double longitude) {
+        this.place = place;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }

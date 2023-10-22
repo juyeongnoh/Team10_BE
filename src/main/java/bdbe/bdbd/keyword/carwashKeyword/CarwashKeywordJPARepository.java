@@ -2,6 +2,7 @@ package bdbe.bdbd.keyword.carwashKeyword;
 
 import bdbe.bdbd.keyword.Keyword;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -12,4 +13,8 @@ public interface CarwashKeywordJPARepository extends JpaRepository<CarwashKeywor
 
     @Query("SELECT ck.keyword.id FROM CarwashKeyword ck WHERE ck.carwash.id = :carwashId")
     List<Long> findKeywordIdsByCarwashId(@Param("carwashId") Long carwashId);
+
+    @Query("DELETE FROM CarwashKeyword ck WHERE ck.carwash.id = :carwashId AND ck.keyword.id IN :keywordIds")
+    @Modifying
+    void deleteByCarwashIdAndKeywordIds(@Param("carwashId") Long carwashId, @Param("keywordIds") List<Long> keywordIds);
 }
