@@ -188,20 +188,17 @@ public class CarwashRestControllerTest {
     @DisplayName("키워드로 세차장 검색")
     public void findCarwashesByKeywords_test() throws Exception {
         // given
-        CarwashRequest.SearchRequestDTO searchRequest = new CarwashRequest.SearchRequestDTO();
         Keyword keyword = keywordJPARepository.findByType(KeywordType.CARWASH).get(0);
-        searchRequest.setKeywordIds(Arrays.asList(keyword.getId()));
-
-        searchRequest.setLatitude(1.23);
-        searchRequest.setLongitude(2.34);
-
-        String requestBody = om.writeValueAsString(searchRequest);
+        String keywordId = String.valueOf(keyword.getId());
+        String testLatitude = "1.23";
+        String testLongitude = "2.34";
 
         // when
         ResultActions resultActions = mvc.perform(
-                post("/carwashes/search")
-                        .content(requestBody)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                get("/carwashes/search")
+                        .param("keywordIds", keywordId)
+                        .param("latitude", testLatitude)
+                        .param("longitude", testLongitude)
         );
 
         // eye
@@ -209,7 +206,7 @@ public class CarwashRestControllerTest {
         System.out.println("응답 Body : " + responseBody);
 
         // verify
-        resultActions.andExpect(jsonPath("$").isArray());
+        resultActions.andExpect(jsonPath("$.response").isArray());
     }
 
     @Test
