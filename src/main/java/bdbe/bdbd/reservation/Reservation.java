@@ -1,6 +1,7 @@
 package bdbe.bdbd.reservation;
 
 import bdbe.bdbd.bay.Bay;
+import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.user.User;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 
 @Getter
@@ -33,6 +35,9 @@ public class Reservation {
 
     @Column(name="end_time", nullable = false)
     private LocalDateTime endTime;
+
+    @Column(name="is_deleted", nullable = false)
+    private boolean isDeleted; // boolean 기본값은 false
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
@@ -60,4 +65,22 @@ public class Reservation {
         this.bay = bay;
         this.user = user;
     }
+
+    public void updateReservation(LocalDateTime startTime, LocalDateTime endTime, Carwash carwash) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+
+        int perPrice = carwash.getPrice();
+        int minutesDifference = (int) ChronoUnit.MINUTES.between(startTime, endTime); //시간 차 계산
+        int blocksOf30Minutes = minutesDifference / 30; //30분 단위로 계산
+        int price = perPrice * blocksOf30Minutes;
+        this.price = price;
+
+    }
+
+    public void changeDeletedFlag(boolean flag) {
+        this.isDeleted = flag;
+    }
+
+
 }
