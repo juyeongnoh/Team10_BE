@@ -39,11 +39,10 @@ public class Location { //지역
         this.longitude = longitude;
     }
 
-    public void setAddress(String address){
+    public void updateAddress(String address, String place, double latitude, double longitude) {
+        this.place = place;
         this.address = address;
-    }
-
-    public void setPlace(String place){
-        this.place= place;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 }
