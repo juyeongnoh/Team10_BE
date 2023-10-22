@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //@ActiveProfiles("test") //test profile 사용
-//@Transactional
+@Transactional
 @AutoConfigureMockMvc //MockMvc 사용
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 //통합테스트(SF-F-DS(Handler, ExHandler)-C-S-R-PC-DB) 다 뜬다.
@@ -157,7 +157,8 @@ public class CarwashRestControllerTest {
         System.out.println("응답 Body : " + responseBody);
 
         // verify
-        resultActions.andExpect(jsonPath("$").isArray());
+        resultActions.andExpect(jsonPath("$.response").isArray());
+
     }
 
     @WithUserDetails(value = "user@nate.com")
@@ -261,40 +262,41 @@ public class CarwashRestControllerTest {
         System.out.println("carwashId:" + carwashId);
 
         CarwashRequest.updateCarwashDetailsDTO updateCarwashDetailsDTO = new CarwashRequest.updateCarwashDetailsDTO();
-        updateCarwashDetailsDTO.setId(2L);
-        updateCarwashDetailsDTO.setName("하이세차장");
-        updateCarwashDetailsDTO.setPrice(2000);
-        updateCarwashDetailsDTO.setTel("010-3333-2222");
+        updateCarwashDetailsDTO.setName("풍영 세차장");
+        updateCarwashDetailsDTO.setPrice(3000);
+        updateCarwashDetailsDTO.setTel("010-2222-3333");
         updateCarwashDetailsDTO.setDescription("안녕하세요");
 
         CarwashRequest.updateLocationDTO updateLocationDTO = new CarwashRequest.updateLocationDTO();
-        updateLocationDTO.setAddress("새로운 주소");
-        updateLocationDTO.setPlaceName("새로운 이름");
+        updateLocationDTO.setAddress("풍영 주소");
+        updateLocationDTO.setPlaceName("풍영 이름");
+        updateLocationDTO.setLatitude(1.121);
+        updateLocationDTO.setLongitude(2.232);
         updateCarwashDetailsDTO.setLocationDTO(updateLocationDTO);
 
         CarwashRequest.updateOperatingTimeDTO optimeDTO = new CarwashRequest.updateOperatingTimeDTO();
 
         CarwashRequest.updateOperatingTimeDTO.updateTimeSlot weekday = new CarwashRequest.updateOperatingTimeDTO.updateTimeSlot();
-        weekday.setStart(LocalTime.of(10, 0).toString());
-        weekday.setEnd(LocalTime.of(18, 0).toString());
+        weekday.setStart(LocalTime.of(9, 0));
+        weekday.setEnd(LocalTime.of(20, 0));
         optimeDTO.setWeekday(weekday);
 
         CarwashRequest.updateOperatingTimeDTO.updateTimeSlot weekend = new CarwashRequest.updateOperatingTimeDTO.updateTimeSlot();
-        weekend.setStart(LocalTime.of(9, 0).toString());
-        weekend.setEnd(LocalTime.of(15, 0).toString());
+        weekend.setStart(LocalTime.of(9, 0));
+        weekend.setEnd(LocalTime.of(20, 0));
         optimeDTO.setWeekend(weekend);
         updateCarwashDetailsDTO.setOptime(optimeDTO);
 
+        Long keywordId = keywordJPARepository.findByType(KeywordType.CARWASH).get(0).getId();
+        updateCarwashDetailsDTO.setKeywordId(Arrays.asList(33L));
 
-        updateCarwashDetailsDTO.setKeywordId(Arrays.asList(1L));
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
+        String requestBody = om.writeValueAsString(updateCarwashDetailsDTO);
+        System.out.println("요청 데이터 : " + requestBody);
 
         ResultActions resultActions = mvc.perform(
                 put(String.format("/owner/carwashes/%d/details", carwashId))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(updateCarwashDetailsDTO))
+                        .content(om.writeValueAsString(updateCarwashDetailsDTO))
 
         );
 
@@ -304,14 +306,7 @@ public class CarwashRestControllerTest {
         System.out.println("응답 Body:" + responseBody);
 
         resultActions.andExpect(jsonPath("$.success").value("true"));
-
-
-
     }
-
-
-
-
 }
 
 
