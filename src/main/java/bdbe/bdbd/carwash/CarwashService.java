@@ -3,6 +3,7 @@ package bdbe.bdbd.carwash;
 
 import bdbe.bdbd._core.errors.utils.Haversine;
 import bdbe.bdbd.bay.BayJPARepository;
+import bdbe.bdbd.carwash.CarwashResponse.updateCarwashDetailsResponseDTO;
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.keyword.carwashKeyword.CarwashKeyword;
@@ -14,16 +15,20 @@ import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.review.ReviewJPARepository;
 import bdbe.bdbd.user.User;
-import bdbe.bdbd.user.UserJPARepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 //@Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -126,9 +131,7 @@ public class CarwashService {
     public List<CarwashRequest.CarwashDistanceDTO> findCarwashesByKeywords(CarwashRequest.SearchRequestDTO searchRequest) {
         List<Carwash> carwashesWithin10Km = carwashJPARepository.findCarwashesWithin10Kilometers(searchRequest.getLatitude(), searchRequest.getLongitude());
 
-        List<Keyword> selectedKeywords = keywordJPARepository.findByType(1).stream()
-                .filter(keyword -> searchRequest.getKeywords().contains(keyword.getName()))
-                .collect(Collectors.toList());
+        List<Keyword> selectedKeywords = keywordJPARepository.findAllById(searchRequest.getKeywordIds());
 
         List<CarwashKeyword> carwashKeywords = carwashKeywordJPARepository.findByKeywordIn(selectedKeywords);
 
@@ -173,4 +176,109 @@ public class CarwashService {
 
         return new CarwashResponse.findByIdDTO(carwash, reviewCnt, bayCnt, location, keywordIds, weekOptime, endOptime);
     }
+
+    public CarwashResponse.carwashDetailsDTO findCarwashByDetails(Long carwashId) {
+
+        Carwash carwash = carwashJPARepository.findById(carwashId)
+                .orElseThrow(() -> new IllegalArgumentException("not found carwash"));
+        Location location = locationJPARepository.findById(carwash.getLocation().getId())
+                .orElseThrow(() -> new NoSuchElementException("location not found"));
+        List<Long> keywordIds = carwashKeywordJPARepository.findKeywordIdsByCarwashId(carwashId);
+
+        List<Optime> optimeList = optimeJPARepository.findByCarwash_Id(carwashId);
+        Map<DayType, Optime> optimeByDayType = new EnumMap<>(DayType.class);
+        optimeList.forEach(ol -> optimeByDayType.put(ol.getDayType(), ol));
+
+        Optime weekOptime = optimeByDayType.get(DayType.WEEKDAY);
+        Optime endOptime = optimeByDayType.get(DayType.WEEKEND);
+
+        return new CarwashResponse.carwashDetailsDTO(carwash, location, keywordIds, weekOptime, endOptime);
+
+
+    }
+
+    private static final Logger logger = LoggerFactory.getLogger(CarwashService.class);
+
+    @Transactional
+    public CarwashResponse.updateCarwashDetailsResponseDTO updateCarwashDetails(Long carwashId, CarwashRequest.updateCarwashDetailsDTO updatedto) {
+
+        try {
+            updateCarwashDetailsResponseDTO response = new updateCarwashDetailsResponseDTO();
+            Carwash carwash = carwashJPARepository.findById(carwashId)
+                    .orElseThrow(() -> new IllegalArgumentException("not found carwash"));
+
+            carwash.setName(updatedto.getName());
+            carwash.setTel(updatedto.getTel());
+            carwash.setDes(updatedto.getDescription());
+            carwash.setPrice(updatedto.getPrice());
+            response.updateCarwashPart(carwash);
+
+            CarwashRequest.updateLocationDTO updateLocationDTO = updatedto.getLocationDTO();
+            Location location = locationJPARepository.findById(carwash.getLocation().getId())
+                    .orElseThrow(() -> new NoSuchElementException("location not found"));
+
+
+            location.updateAddress(updateLocationDTO.getAddress(), updateLocationDTO.getPlaceName()
+                    , updateLocationDTO.getLatitude(), updateLocationDTO.getLongitude());
+            response.updateLocationPart(location);
+
+            CarwashRequest.updateOperatingTimeDTO updateOperatingTimeDTO = updatedto.getOptime();
+
+            List<Optime> optimeList = optimeJPARepository.findByCarwash_Id(carwashId);
+            Map<DayType, Optime> optimeByDayType = new EnumMap<>(DayType.class);
+            optimeList.forEach(ol -> optimeByDayType.put(ol.getDayType(), ol));
+
+            Optime weekOptime = optimeByDayType.get(DayType.WEEKDAY);
+            Optime endOptime = optimeByDayType.get(DayType.WEEKEND);
+
+            weekOptime.setStartTime(updateOperatingTimeDTO.getWeekday().getStart());
+            weekOptime.setEndTime(updateOperatingTimeDTO.getWeekday().getEnd());
+            endOptime.setStartTime(updateOperatingTimeDTO.getWeekend().getStart());
+            endOptime.setEndTime(updateOperatingTimeDTO.getWeekend().getEnd());
+
+            response.updateOptimePart(weekOptime, endOptime);
+
+            // 입력받은 키워드
+            List<Long> newKeywordIds = updatedto.getKeywordId();
+            // 기존 키워드 조회
+            List<Long> existingKeywordIds = carwashKeywordJPARepository.findKeywordIdsByCarwashId(carwashId);
+            // 삭제할 키워드 삭제
+            List<Long> keywordsToDelete = existingKeywordIds.stream()
+                    .filter(id -> !newKeywordIds.contains(id))
+                    .collect(Collectors.toList());
+            carwashKeywordJPARepository.deleteByCarwashIdAndKeywordIds(carwashId, keywordsToDelete);
+            // 새로 추가할 키워드 추가
+            List<Long> keywordsToAdd = newKeywordIds.stream()
+                    .filter(id -> !existingKeywordIds.contains(id))
+                    .collect(Collectors.toList());
+            System.out.println(keywordsToAdd);
+            for (Long aLong : keywordsToAdd) {
+                System.out.println("aLong = " + aLong);
+            }
+            List<Keyword> keywordList = keywordJPARepository.findAllById(keywordsToAdd);
+            if (keywordList.size() != keywordsToAdd.size()) {
+                throw new IllegalArgumentException("Some keywords could not be found");
+            }
+            // carwash - keyword 연관지어 저장
+            List<CarwashKeyword> newCarwashKeywords = new ArrayList<>();
+            for (Keyword keyword : keywordList) {
+                CarwashKeyword carwashKeyword = CarwashKeyword.builder()
+                        .carwash(carwash)
+                        .keyword(keyword)
+                        .build();
+                newCarwashKeywords.add(carwashKeyword);
+            }
+            carwashKeywordJPARepository.saveAll(newCarwashKeywords);
+
+            List<Long> updateKeywordIds = carwashKeywordJPARepository.findKeywordIdsByCarwashId(carwashId);
+            response.updateKeywordPart(updateKeywordIds);
+
+            return response;
+
+        } catch (Exception e) {
+            logger.error("Error in updateCarwashDetails", e);
+            throw e;
+        }
+    }
+
 }

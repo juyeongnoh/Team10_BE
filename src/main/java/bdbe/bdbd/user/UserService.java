@@ -46,10 +46,10 @@ public class UserService {
 
     public UserResponse.LoginResponse login(UserRequest.LoginDTO requestDTO) {
         User userPS = userJPARepository.findByEmail(requestDTO.getEmail()).orElseThrow(
-                () -> new BadRequestError("email not found : "+requestDTO.getEmail())
+                () -> new BadRequestError("email not found : " + requestDTO.getEmail())
         );
 
-        if(!passwordEncoder.matches(requestDTO.getPassword(), userPS.getPassword())) {
+        if (!passwordEncoder.matches(requestDTO.getPassword(), userPS.getPassword())) {
             throw new BadRequestError("wrong password");
         }
 
@@ -66,5 +66,4 @@ public class UserService {
             throw new BadRequestError("duplicate email exist : " + email);
         }
     }
-
 }
