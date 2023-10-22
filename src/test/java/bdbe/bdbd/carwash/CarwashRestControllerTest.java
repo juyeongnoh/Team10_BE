@@ -157,7 +157,8 @@ public class CarwashRestControllerTest {
         System.out.println("응답 Body : " + responseBody);
 
         // verify
-        resultActions.andExpect(jsonPath("$").isArray());
+        resultActions.andExpect(jsonPath("$.response").isArray());
+
     }
 
     @WithUserDetails(value = "user@nate.com")
