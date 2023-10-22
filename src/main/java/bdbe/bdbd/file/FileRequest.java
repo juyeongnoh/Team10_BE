@@ -38,4 +38,20 @@ public class FileRequest {
                     .build();
         }
     }
+
+    @Getter
+    @Setter
+    public static class FileUpdateDTO {
+        private String url;
+        private String path;
+        private LocalDateTime uploadedAt;
+
+
+
+        public FileUpdateDTO(String url, String path, LocalDateTime uploadedAt) {
+            this.url = url;
+            this.path = path;
+            this.uploadedAt = uploadedAt;
+        }
+    }
 }
