@@ -1,5 +1,8 @@
 package bdbe.bdbd.file;
 
+import bdbe.bdbd._core.errors.exception.NotFoundError;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,10 +31,18 @@ public class FileRestController {
         try {
             FileResponse.SimpleFileResponseDTO response = fileService.uploadFile(file, carwashId);
             return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (AmazonServiceException e) {
+            String errorMsg = String.format("Could not store file %s by AmazonServiceException: %s",
+                    file.getOriginalFilename(), e.getErrorMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMsg);
+        } catch (SdkClientException e) {
+            String errorMsg = String.format("Could not store file %s by SdkClientException: %s",
+                    file.getOriginalFilename(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMsg);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not store file " + file.getOriginalFilename() + ". Please try again!");
+            String errorMsg = String.format("Could not store file %s. Please try again! Error: %s",
+                    file.getOriginalFilename(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMsg);
         }
     }
 }

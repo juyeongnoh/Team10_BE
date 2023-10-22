@@ -1,10 +1,11 @@
 package bdbe.bdbd.file;
 
+import bdbe.bdbd._core.errors.exception.NotFoundError;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
-import com.amazonaws.HttpMethod;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Transactional
 @Service
@@ -41,19 +40,30 @@ public class FileService {
         this.carwashRepository = carwashRepository;
     }
 
-    public FileResponse.SimpleFileResponseDTO uploadFile(MultipartFile multipartFile, Long carwashId) throws IOException {
+    public FileResponse.SimpleFileResponseDTO uploadFile(MultipartFile multipartFile, Long carwashId) throws Exception {
         Carwash carwash = carwashRepository.findById(carwashId)
-                .orElseThrow(() -> new RuntimeException("Carwash not found"));
+                .orElseThrow(() -> new NotFoundError("Carwash not found"));
 
         File file = convertMultiPartToFile(multipartFile);
-        String fileName = multipartFile.getOriginalFilename();
-        URL presignedUrl = createPresignedUrl(fileName);
+        String fileName = generateFileName(multipartFile);
 
-        uploadFileToS3Bucket(fileName, file);
+        try {
+            uploadFileToS3Bucket(fileName, file);
+        } catch (AmazonServiceException e) {
+            logger.error("AmazonServiceException: Error Message:    {}", e.getErrorMessage());
+            logger.error("HTTP Status Code: {}", e.getStatusCode());
+            logger.error("AWS Error Code:   {}", e.getErrorCode());
+            logger.error("Error Type:       {}", e.getErrorType());
+            logger.error("Request ID:       {}", e.getRequestId());
+            throw e;
+        } catch (SdkClientException e) {
+            logger.error("SdkClientException: {}", e.getMessage());
+            throw e;
+        }
 
         FileRequest.FileSaveRequestDTO fileSaveRequestDTO = new FileRequest.FileSaveRequestDTO();
         fileSaveRequestDTO.setName(fileName);
-        fileSaveRequestDTO.setUrl(presignedUrl.toString());
+        fileSaveRequestDTO.setUrl(amazonS3.getUrl(bucketName, fileName).toExternalForm());
         fileSaveRequestDTO.setPath(file.getPath());
         fileSaveRequestDTO.setUploadedAt(LocalDateTime.now());
         fileSaveRequestDTO.setCarwash(carwash);
@@ -61,7 +71,7 @@ public class FileService {
         bdbe.bdbd.file.File newFile = fileSaveRequestDTO.toEntity();
         newFile = fileRepository.save(newFile);
 
-        file.delete(); // 로컬에 저장된 파일 삭제
+        file.delete();
 
         return new FileResponse.SimpleFileResponseDTO(
                 newFile.getId(),
@@ -73,39 +83,20 @@ public class FileService {
         );
     }
 
-
-    private void uploadFileToS3Bucket(String fileName, File file) {
-        amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file));
-        logger.info("File uploaded to S3 bucket: {}", fileName);
+    private String generateFileName(MultipartFile multiPart) {
+        return multiPart.getOriginalFilename().replace(" ", "_");
     }
 
     private File convertMultiPartToFile(MultipartFile multipart) throws IOException {
         File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + multipart.getOriginalFilename());
         try (FileOutputStream fos = new FileOutputStream(convFile)) {
             fos.write(multipart.getBytes());
-        } catch (IOException e) {
-            logger.error("Could not convert multipart file to file. Error: {}", e.getMessage());
-            throw e;
         }
         return convFile;
     }
 
-
-    private URL createPresignedUrl(String fileName) {
-        Date expiration = new Date();
-        long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 60 * 60; // 1 hour
-        expiration.setTime(expTimeMillis);
-
-        GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                new GeneratePresignedUrlRequest(bucketName, fileName)
-                        .withMethod(HttpMethod.GET)
-                        .withExpiration(expiration);
-
-        URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
-
-        logger.info("Generated pre-signed URL: {}", url);
-
-        return url;
+    private void uploadFileToS3Bucket(String fileName, File file) {
+        amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file));
+        logger.info("File uploaded to S3 bucket: {}", fileName);
     }
 }
