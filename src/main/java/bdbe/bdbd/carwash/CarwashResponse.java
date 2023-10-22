@@ -4,6 +4,7 @@ import bdbe.bdbd.location.Location;
 import bdbe.bdbd.optime.Optime;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -120,7 +121,8 @@ public class CarwashResponse {
     public static class locationDTO {
         private String placeName;
         private String address;
-
+        private double latitude;
+        private double longitude;
     }
 
     @Getter
@@ -192,4 +194,80 @@ public class CarwashResponse {
         private String address;
 
     }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class updateCarwashDetailsResponseDTO {
+        private Long id;
+        private String name;
+        private int price;
+        private String tel;
+        private CarwashResponse.updateLocationDTO locationDTO;
+        private CarwashResponse.updateOperatingTimeDTO optime;
+        private List<Long> keywordId;
+        private String description;
+
+        //        private List<String> images;
+        public void updateCarwashPart(Carwash carwash) {
+            this.id = carwash.getId();
+            this.name = carwash.getName();
+            this.price = carwash.getPrice();
+            this.tel = carwash.getTel();
+        }
+
+        public void updateOptimePart(Optime weekdayOptime, Optime weekendOptime) {
+            CarwashResponse.updateOperatingTimeDTO dto = new CarwashResponse.updateOperatingTimeDTO();
+
+            CarwashResponse.updateOperatingTimeDTO.updateTimeSlot weekSlot = new CarwashResponse.updateOperatingTimeDTO.updateTimeSlot();
+            weekSlot.setStart(weekdayOptime.getStartTime());
+            weekSlot.setEnd(weekdayOptime.getEndTime());
+            dto.setWeekday(weekSlot);
+
+            CarwashResponse.updateOperatingTimeDTO.updateTimeSlot endSlot = new CarwashResponse.updateOperatingTimeDTO.updateTimeSlot();
+            endSlot.setStart(weekendOptime.getStartTime());
+            endSlot.setEnd(weekendOptime.getEndTime());
+            dto.setWeekend(endSlot);
+            this.optime = dto;
+
+        }
+
+        public void updateKeywordPart(List<Long> keywordId) {
+            this.keywordId = keywordId;
+        }
+
+        public void updateLocationPart(Location location) {
+            CarwashResponse.updateLocationDTO dto = new CarwashResponse.updateLocationDTO();
+            dto.setPlaceName(location.getPlace());
+            dto.setAddress(location.getAddress());
+            dto.setLatitude(location.getLatitude());
+            dto.setLongitude(location.getLongitude());
+            this.locationDTO = dto;
+        }
+    }
+    @Getter
+    @Setter
+    public static class updateOperatingTimeDTO {
+        private CarwashResponse.updateOperatingTimeDTO.updateTimeSlot weekday;
+        private CarwashResponse.updateOperatingTimeDTO.updateTimeSlot weekend;
+
+        @Getter
+        @Setter
+        public static class updateTimeSlot {
+            private LocalTime start;
+            private LocalTime end;
+
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class updateLocationDTO {
+        private String placeName;
+        private String address;
+        private double latitude;
+        private double longitude;
+
+    }
+
 }
