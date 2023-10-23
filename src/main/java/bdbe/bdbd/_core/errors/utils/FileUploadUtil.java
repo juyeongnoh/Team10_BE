@@ -91,14 +91,14 @@ public class FileUploadUtil {
             throw e;
         }
 
-        FileRequest.FileDTO fileDTO = new FileRequest.FileDTO();
-        fileDTO.setName(fileName);
-        fileDTO.setUrl(amazonS3.getUrl(bucketName, fileName).toExternalForm());
-        fileDTO.setPath(file.getPath());
-        fileDTO.setUploadedAt(LocalDateTime.now());
-        fileDTO.setCarwash(carwash);
 
-        bdbe.bdbd.file.File newFile = fileDTO.toEntity();
+        bdbe.bdbd.file.File newFile = bdbe.bdbd.file.File.builder()
+                .name(fileName)
+                .url(amazonS3.getUrl(bucketName, fileName).toExternalForm())
+                .path(file.getPath())
+                .uploadedAt(LocalDateTime.now())
+                .carwash(carwash)
+                .build();
         newFile = fileRepository.save(newFile);
 
         file.delete();  // 로컬 파일 삭제
@@ -123,7 +123,6 @@ public class FileUploadUtil {
                 .orElseThrow(() -> new NotFoundError("Carwash not found"));
 
         List<FileResponse.SimpleFileResponseDTO> fileResponseList = new ArrayList<>();
-
         for (MultipartFile multipartFile : multipartFiles) {
             File file = convertMultiPartToFile(multipartFile);
             String fileName = generateFileName(multipartFile);

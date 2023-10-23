@@ -40,6 +40,7 @@ public class FileRestController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No files provided");
         }
         List<FileResponse.SimpleFileResponseDTO> response = fileService.uploadFiles(files, carwashId);
+
         return ResponseEntity.ok(response);
     }
 
