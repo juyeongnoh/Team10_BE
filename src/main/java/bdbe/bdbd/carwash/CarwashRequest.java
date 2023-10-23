@@ -8,6 +8,7 @@ import bdbe.bdbd.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -30,7 +31,9 @@ public class CarwashRequest {
         private String price;
 
         private OperatingTimeDTO optime;
-        private List<FileRequest.FileDTO> images;
+//        private List<FileRequest.FileDTO> images;
+//        private List<MultipartFile> images;
+
         private List<Long> keywordId;
         private String description;
         private String tel;

@@ -3,15 +3,18 @@ package bdbe.bdbd.carwash;
 import bdbe.bdbd._core.errors.security.CustomUserDetails;
 import bdbe.bdbd._core.errors.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class CarwashRestController {
@@ -27,11 +30,23 @@ public class CarwashRestController {
     }
 
     //세차장 등록
-    @PostMapping("/owner/carwashes/register")
-    public ResponseEntity<?> save(@RequestBody @Valid CarwashRequest.SaveDTO saveDTOs, Errors errors,  @AuthenticationPrincipal CustomUserDetails userDetails) {
-        carwashService.save(saveDTOs, userDetails.getUser());
+//    @PostMapping("/owner/carwashes/register")
+//    public ResponseEntity<?> save(@ModelAttribute @Valid CarwashRequest.SaveDTO saveDTOs, Errors errors,  @AuthenticationPrincipal CustomUserDetails userDetails) {
+//        carwashService.save(saveDTOs, userDetails.getUser());
+//        return ResponseEntity.ok(ApiUtils.success(null));
+//    }
+    @PostMapping(value = "/owner/carwashes/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> save(@RequestPart("carwash") CarwashRequest.SaveDTO saveDTOs,
+                                  @RequestPart("images") MultipartFile[] images,
+                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
+        System.out.println("images = " + images);
+        for (MultipartFile image : images) {
+            System.out.println(image.getOriginalFilename());
+        }
+        carwashService.save(saveDTOs, images, userDetails.getUser());
         return ResponseEntity.ok(ApiUtils.success(null));
     }
+
 
     @GetMapping("/carwashes/search")
     public ResponseEntity<?> findCarwashesByKeywords(@RequestParam List<Long> keywordIds,
