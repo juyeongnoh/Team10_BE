@@ -1,9 +1,11 @@
 package bdbe.bdbd.carwash;
 
 
+import bdbe.bdbd._core.errors.utils.FileUploadUtil;
 import bdbe.bdbd._core.errors.utils.Haversine;
 import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.CarwashResponse.updateCarwashDetailsResponseDTO;
+import bdbe.bdbd.file.FileResponse;
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.keyword.carwashKeyword.CarwashKeyword;
@@ -23,12 +25,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 //@Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -41,6 +41,8 @@ public class CarwashService {
     private final CarwashKeywordJPARepository carwashKeywordJPARepository;
     private final ReviewJPARepository reviewJPARepository;
     private final BayJPARepository bayJPARepository;
+    private final FileUploadUtil fileUploadUtil;
+
 
     public List<CarwashResponse.FindAllDTO> findAll(int page) {
         // Pageable 검증
@@ -69,7 +71,7 @@ public class CarwashService {
     }
 
     @Transactional
-    public void save(CarwashRequest.SaveDTO saveDTO, User sessionUser) {
+    public void save(CarwashRequest.SaveDTO saveDTO, MultipartFile[] images, User sessionUser) {
         // 별점은 리뷰에서 계산해서 넣어주기
         // 지역
         Location location = saveDTO.toLocationEntity();
@@ -91,6 +93,14 @@ public class CarwashService {
             carwashKeywordList.add(carwashKeyword);
         }
         carwashKeywordJPARepository.saveAll(carwashKeywordList);
+
+        // 이미지 업로드
+        try {
+            List<FileResponse.SimpleFileResponseDTO> uploadedFiles = fileUploadUtil.uploadFiles(images, carwash.getId());
+            // Uploaded file metadata can now be accessed through uploadedFiles list.
+        } catch (Exception e) {
+            logger.info("file upload error : "+ e.getMessage());
+        }
     } //변경감지, 더티체킹, flush, 트랜잭션 종료
 
 
