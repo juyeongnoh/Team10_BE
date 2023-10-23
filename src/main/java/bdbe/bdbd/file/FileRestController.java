@@ -25,26 +25,12 @@ public class FileRestController {
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file,
-                                        @RequestParam("carwashId") Long carwashId) {
+                                        @RequestParam("carwashId") Long carwashId) throws Exception {
         if (file.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file");
         }
-
-        try {
-            FileResponse.SimpleFileResponseDTO response = fileService.uploadFile(file, carwashId);
-            return ResponseEntity.ok(response);
-        } catch (AmazonServiceException e) {
-            String errorMsg = String.format("Could not store file %s by AmazonServiceException: %s",
-                    file.getOriginalFilename(), e.getErrorMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMsg);
-        } catch (SdkClientException e) {
-            String errorMsg = String.format("Could not store file %s by SdkClientException: %s",
-                    file.getOriginalFilename(), e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMsg);
-        } catch (Exception e) {
-            String errorMsg = String.format("Could not store file %s. Please try again! Error: %s",
-                    file.getOriginalFilename(), e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMsg);
-        }
+        FileResponse.SimpleFileResponseDTO response = fileService.uploadFile(file, carwashId);
+        return ResponseEntity.ok(response);
     }
+
 }
