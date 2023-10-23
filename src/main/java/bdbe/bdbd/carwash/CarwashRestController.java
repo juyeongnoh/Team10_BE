@@ -29,24 +29,13 @@ public class CarwashRestController {
         return ResponseEntity.ok(apiResult);
     }
 
-    //세차장 등록
-//    @PostMapping("/owner/carwashes/register")
-//    public ResponseEntity<?> save(@ModelAttribute @Valid CarwashRequest.SaveDTO saveDTOs, Errors errors,  @AuthenticationPrincipal CustomUserDetails userDetails) {
-//        carwashService.save(saveDTOs, userDetails.getUser());
-//        return ResponseEntity.ok(ApiUtils.success(null));
-//    }
-    @PostMapping(value = "/owner/carwashes/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/owner/carwashes/register")
     public ResponseEntity<?> save(@RequestPart("carwash") CarwashRequest.SaveDTO saveDTOs,
                                   @RequestPart("images") MultipartFile[] images,
                                   @AuthenticationPrincipal CustomUserDetails userDetails) {
-        System.out.println("images = " + images);
-        for (MultipartFile image : images) {
-            System.out.println(image.getOriginalFilename());
-        }
         carwashService.save(saveDTOs, images, userDetails.getUser());
         return ResponseEntity.ok(ApiUtils.success(null));
     }
-
 
     @GetMapping("/carwashes/search")
     public ResponseEntity<?> findCarwashesByKeywords(@RequestParam List<Long> keywordIds,
