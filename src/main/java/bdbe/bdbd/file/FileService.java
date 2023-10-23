@@ -1,117 +1,22 @@
 package bdbe.bdbd.file;
 
-import bdbe.bdbd._core.errors.exception.NotFoundError;
-import bdbe.bdbd.carwash.Carwash;
-import bdbe.bdbd.carwash.CarwashJPARepository;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import bdbe.bdbd._core.errors.utils.FileUploadUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.time.LocalDateTime;
 
 @Transactional
 @Service
 public class FileService {
 
-    private final AmazonS3 amazonS3;
-    private final FileJPARepository fileRepository;
-    private final CarwashJPARepository carwashRepository;
+    private final FileUploadUtil fileUploadUtil;
 
-    private static final Logger logger = LoggerFactory.getLogger(FileService.class);
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucketName;
-
-    public FileService(AmazonS3 amazonS3, FileJPARepository fileRepository, CarwashJPARepository carwashRepository) {
-        this.amazonS3 = amazonS3;
-        this.fileRepository = fileRepository;
-        this.carwashRepository = carwashRepository;
+    public FileService(FileUploadUtil fileUploadUtil) {
+        this.fileUploadUtil = fileUploadUtil;
     }
 
     public FileResponse.SimpleFileResponseDTO uploadFile(MultipartFile multipartFile, Long carwashId) throws Exception {
-        Carwash carwash = carwashRepository.findById(carwashId)
-                .orElseThrow(() -> new NotFoundError("Carwash not found"));
-
-        File file = convertMultiPartToFile(multipartFile);
-        String fileName = generateFileName(multipartFile);
-
-        try {
-            uploadFileToS3Bucket(fileName, file);
-        } catch (AmazonServiceException e) {
-            logger.error("AmazonServiceException: Error Message:    {}", e.getErrorMessage());
-            logger.error("HTTP Status Code: {}", e.getStatusCode());
-            logger.error("AWS Error Code:   {}", e.getErrorCode());
-            logger.error("Error Type:       {}", e.getErrorType());
-            logger.error("Request ID:       {}", e.getRequestId());
-            throw e;
-        } catch (SdkClientException e) {
-            logger.error("SdkClientException: {}", e.getMessage());
-            throw e;
-        }
-        // File 엔티티 생성
-        FileRequest.FileSaveRequestDTO fileSaveRequestDTO = new FileRequest.FileSaveRequestDTO();
-        fileSaveRequestDTO.setName(fileName);
-        fileSaveRequestDTO.setUrl(amazonS3.getUrl(bucketName, fileName).toExternalForm());
-        fileSaveRequestDTO.setPath(file.getPath());
-        fileSaveRequestDTO.setUploadedAt(LocalDateTime.now());
-        fileSaveRequestDTO.setCarwash(carwash);
-
-        bdbe.bdbd.file.File newFile = fileSaveRequestDTO.toEntity();
-        newFile = fileRepository.save(newFile);
-
-        file.delete(); // 로컬 파일 삭제
-
-        return new FileResponse.SimpleFileResponseDTO(
-                newFile,
-                newFile.getCarwash().getId()
-        );
+        return fileUploadUtil.uploadFile(multipartFile, carwashId);
     }
 
-    /**
-     * 주어진 MultipartFile 객체의 원본 파일명을 가져와 공백을 밑줄('_')로 바꾼 후 반환
-     *
-     * @param multiPart MultipartFile 객체, 파일 업로드에 사용되는 Spring의 파일 래퍼 객체
-     * @return 공백이 밑줄('_')로 변경된 파일명을 반환
-     */
-    private String generateFileName(MultipartFile multiPart) {
-        return multiPart.getOriginalFilename().replace(" ", "_");
-    }
-
-    /**
-     * MultipartFile 객체를 java.io.File 객체로 변환하는 메서드
-     * 변환된 파일은 시스템의 임시 디렉토리에 저장된다.
-     *
-     * @param multipart MultipartFile 객체, 웹 요청으로부터 받은 업로드 파일
-     * @return File 객체, 변환된 파일
-     * @throws IOException 파일 변환 중에 IO 오류가 발생하면 예외가 발생된다.
-     */
-    private File convertMultiPartToFile(MultipartFile multipart) throws IOException {
-        File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + multipart.getOriginalFilename());
-        try (FileOutputStream fos = new FileOutputStream(convFile)) {
-            fos.write(multipart.getBytes());
-        }
-        return convFile;
-    }
-
-    /**
-     * 주어진 파일을 Amazon S3 버킷에 업로드
-     * Amazon S3의 'putObject' 메서드를 사용하여 파일을 업로드하고, 로그를 기록하여 업로드가 성공적으로 완료되었음을 확인
-     *
-     * @param fileName 업로드 될 파일의 이름, S3 버킷 내에서 파일의 키
-     * @param file     업로드 될 파일 객체, 로컬 파일 시스템에 임시로 저장된 후 S3 버킷에 업로드된다.
-     */
-    private void uploadFileToS3Bucket(String fileName, File file) {
-        amazonS3.putObject(new PutObjectRequest(bucketName, fileName, file));
-        logger.info("File uploaded to S3 bucket: {}", fileName);
-    }
 }
