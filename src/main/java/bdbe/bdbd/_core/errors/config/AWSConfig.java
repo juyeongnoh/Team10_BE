@@ -1,4 +1,4 @@
-package bdbe.bdbd._core.errors.utils;
+package bdbe.bdbd._core.errors.config;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
