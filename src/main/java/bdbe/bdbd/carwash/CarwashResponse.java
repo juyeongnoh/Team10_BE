@@ -136,11 +136,10 @@ public class CarwashResponse {
         private detailsOperatingTimeDTO optime; //
         private List<Long> keywordId;
         private String description;
-//        private List<String> image;
+        private List<File> carwashImages;
 
 
-        public carwashDetailsDTO(Carwash carwash, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime) {
-//            this.image = image;
+        public carwashDetailsDTO(Carwash carwash, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime, List<File> carwashImages) {
             this.id = carwash.getId();
             this.name = carwash.getName();
             this.price = carwash.getPrice();
@@ -149,6 +148,7 @@ public class CarwashResponse {
             this.optime = toOptimeListDTO(weekOptime, endOptime);
             this.keywordId = keywordId;
             this.description = carwash.getDes();
+            this.carwashImages = carwashImages;
         }
 
         public detailsOperatingTimeDTO toOptimeListDTO(Optime weekOptime, Optime endOptime) {
