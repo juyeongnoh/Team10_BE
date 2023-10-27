@@ -207,7 +207,9 @@ public class CarwashService {
         Optime weekOptime = optimeByDayType.get(DayType.WEEKDAY);
         Optime endOptime = optimeByDayType.get(DayType.WEEKEND);
 
-        return new CarwashResponse.carwashDetailsDTO(carwash, location, keywordIds, weekOptime, endOptime);
+        List<File> carwashImages = fileJPARepository.findByCarwash_Id(carwashId);
+
+        return new CarwashResponse.carwashDetailsDTO(carwash, location, keywordIds, weekOptime, endOptime, carwashImages);
 
 
     }
