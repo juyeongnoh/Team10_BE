@@ -137,10 +137,8 @@ public class ReservationResponse {
     public static class fetchRecentReservationDTO {
         private List<RecentReservation> recent;
 
-        public fetchRecentReservationDTO(List<Reservation> reservationList) {
-            this.recent = reservationList.stream()
-                    .map(RecentReservation::new)
-                    .collect(Collectors.toList());
+        public fetchRecentReservationDTO(List<RecentReservation> recentReservations) {
+            this.recent = recentReservations;
         }
     }
 
@@ -149,13 +147,13 @@ public class ReservationResponse {
     @ToString
     public static class RecentReservation {
         private Long carwashId;
-//        private String image;
+        private List<File> carwashImages;
         private LocalDate date;
         private String carwashName;
 
-        public RecentReservation(Reservation reservation) {
+        public RecentReservation(Reservation reservation, List<File> carwashImages) {
             this.carwashId = reservation.getBay().getCarwash().getId();
-//            this.image = image;
+            this.carwashImages = carwashImages;
             this.date = reservation.getStartTime().toLocalDate();
             this.carwashName = reservation.getBay().getCarwash().getName();
         }
@@ -186,5 +184,6 @@ public class ReservationResponse {
 
         }
     }
+
 
 }
