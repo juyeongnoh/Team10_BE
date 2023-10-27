@@ -5,6 +5,8 @@ import bdbe.bdbd._core.errors.utils.FileUploadUtil;
 import bdbe.bdbd._core.errors.utils.Haversine;
 import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.CarwashResponse.updateCarwashDetailsResponseDTO;
+import bdbe.bdbd.file.File;
+import bdbe.bdbd.file.FileJPARepository;
 import bdbe.bdbd.file.FileResponse;
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
@@ -43,7 +45,7 @@ public class CarwashService {
     private final ReviewJPARepository reviewJPARepository;
     private final BayJPARepository bayJPARepository;
     private final FileUploadUtil fileUploadUtil;
-
+    private final FileJPARepository fileJPARepository;
 
     public List<CarwashResponse.FindAllDTO> findAll(int page) {
         // Pageable 검증
@@ -185,7 +187,9 @@ public class CarwashService {
         Optime weekOptime = optimeByDayType.get(DayType.WEEKDAY);
         Optime endOptime = optimeByDayType.get(DayType.WEEKEND);
 
-        return new CarwashResponse.findByIdDTO(carwash, reviewCnt, bayCnt, location, keywordIds, weekOptime, endOptime);
+        List<File> imageFiles = fileJPARepository.findByCarwash_Id(carwashId);
+
+        return new CarwashResponse.findByIdDTO(carwash, reviewCnt, bayCnt, location, keywordIds, weekOptime, endOptime, imageFiles);
     }
 
     public CarwashResponse.carwashDetailsDTO findCarwashByDetails(Long carwashId) {

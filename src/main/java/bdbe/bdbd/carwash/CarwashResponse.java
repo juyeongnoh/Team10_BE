@@ -1,5 +1,6 @@
 package bdbe.bdbd.carwash;
 
+import bdbe.bdbd.file.File;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.optime.Optime;
 import lombok.Getter;
@@ -61,11 +62,9 @@ public class CarwashResponse {
         private List<Long> keywordId;
         private String description;
         private String tel;
-//        private List<String> image;
+        private List<File> imageFiles;
 
-
-        public findByIdDTO(Carwash carwash, int reviewCnt, int bayCnt, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime) {
-//            this.image = image;
+        public findByIdDTO(Carwash carwash, int reviewCnt, int bayCnt, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime, List<File> imageFiles) {
             this.id = carwash.getId();
             this.name = carwash.getName();
             this.rate = carwash.getRate();
@@ -76,6 +75,7 @@ public class CarwashResponse {
             this.keywordId = keywordId;
             this.description = carwash.getDes();
             this.tel = carwash.getTel();
+            this.imageFiles = imageFiles;
         }
 
         public OperatingTimeDTOResponse toOptimeListDTO(Optime weekOptime, Optime endOptime) {
