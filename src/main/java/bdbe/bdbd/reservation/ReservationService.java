@@ -46,6 +46,7 @@ public class ReservationService {
     private final ReviewJPARepository reviewJPARepository;
     private final ReviewKeywordJPARepository reviewKeywordJPARepository;
     private final FileJPARepository fileJPARepository;
+
     @Transactional
     public void save(ReservationRequest.SaveDTO dto, Long carwashId, Long bayId, User sessionUser) {
         Carwash carwash = findCarwashById(carwashId);
@@ -213,7 +214,18 @@ public class ReservationService {
                 .filter(r -> !r.isDeleted())
                 .collect(Collectors.toList());
 
-        return new ReservationResponse.fetchRecentReservationDTO(reservationList);
-    }
+        List<ReservationResponse.RecentReservation> recentReservations = new ArrayList<>();
 
+        for (Reservation reservation : reservationList) {
+            Bay bay = bayJPARepository.findById(reservation.getBay().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Bay not found"));
+            Carwash carwash = carwashJPARepository.findById(bay.getCarwash().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Carwash not found"));
+            List<File> carwashImages = fileJPARepository.findByCarwash_Id(carwash.getId());
+
+            recentReservations.add(new ReservationResponse.RecentReservation(reservation, carwashImages));
+        }
+
+        return new ReservationResponse.fetchRecentReservationDTO(recentReservations);
+    }
 }
