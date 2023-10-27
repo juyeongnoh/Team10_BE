@@ -6,6 +6,8 @@ import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
+import bdbe.bdbd.file.File;
+import bdbe.bdbd.file.FileJPARepository;
 import bdbe.bdbd.keyword.reviewKeyword.ReviewKeywordJPARepository;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
@@ -43,7 +45,7 @@ public class ReservationService {
     private final OptimeJPARepository optimeJPARepository;
     private final ReviewJPARepository reviewJPARepository;
     private final ReviewKeywordJPARepository reviewKeywordJPARepository;
-
+    private final FileJPARepository fileJPARepository;
     @Transactional
     public void save(ReservationRequest.SaveDTO dto, Long carwashId, Long bayId, User sessionUser) {
         Carwash carwash = findCarwashById(carwashId);
@@ -178,6 +180,7 @@ public class ReservationService {
                     .orElseThrow(() -> new EntityNotFoundException("Bay not found"));
             Carwash carwash = carwashJPARepository.findById(bay.getCarwash().getId())
                     .orElseThrow(() -> new EntityNotFoundException("Carwash not found"));
+            List<File> carwashImages = fileJPARepository.findByCarwash_Id(carwash.getId());
 
             LocalDateTime startDateTime = reservation.getStartTime();
             LocalDate reservationDate = startDateTime.toLocalDate();
@@ -185,16 +188,16 @@ public class ReservationService {
 
             if (reservationDate.equals(today)) {
                 if (now.isAfter(startDateTime) && now.isBefore(endDateTime)) {
-                    current.add(new ReservationInfoDTO(reservation, bay, carwash));
+                    current.add(new ReservationInfoDTO(reservation, bay, carwash, carwashImages));
                 } else if (now.isBefore(startDateTime)) {
-                    upcoming.add(new ReservationInfoDTO(reservation, bay, carwash));
+                    upcoming.add(new ReservationInfoDTO(reservation, bay, carwash, carwashImages));
                 } else if (now.isAfter(endDateTime)) {
-                    completed.add(new ReservationInfoDTO(reservation, bay, carwash));
+                    completed.add(new ReservationInfoDTO(reservation, bay, carwash, carwashImages));
                 }
             } else if (reservationDate.isBefore(today)) {
-                completed.add(new ReservationInfoDTO(reservation, bay, carwash));
+                completed.add(new ReservationInfoDTO(reservation, bay, carwash, carwashImages));
             } else if (reservationDate.isAfter(today)) {
-                upcoming.add(new ReservationInfoDTO(reservation, bay, carwash));
+                upcoming.add(new ReservationInfoDTO(reservation, bay, carwash, carwashImages));
             } else {
                 throw new IllegalStateException("reservation id: " + reservation.getId() + " not found");
             }
