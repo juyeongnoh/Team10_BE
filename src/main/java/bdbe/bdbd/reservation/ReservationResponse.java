@@ -2,6 +2,7 @@ package bdbe.bdbd.reservation;
 
 import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.carwash.Carwash;
+import bdbe.bdbd.file.File;
 import bdbe.bdbd.location.Location;
 import lombok.Getter;
 import lombok.Setter;
@@ -171,8 +172,8 @@ public class ReservationResponse {
         private String carwashName;
         private int bayNum;
         private int price;
-//        private String image;
-        public ReservationInfoDTO(Reservation reservation, Bay bay, Carwash carwash) {
+        private List<File> carwashImages;
+        public ReservationInfoDTO(Reservation reservation, Bay bay, Carwash carwash, List<File> carwashImages) {
             this.id = reservation.getId();
             TimeDTO timeDTO = new TimeDTO();
             timeDTO.start = reservation.getStartTime();
@@ -181,6 +182,8 @@ public class ReservationResponse {
             this.carwashName = carwash.getName();
             this.bayNum = bay.getBayNum();
             this.price = reservation.getPrice();
+            this.carwashImages = carwashImages;
+
         }
     }
 
