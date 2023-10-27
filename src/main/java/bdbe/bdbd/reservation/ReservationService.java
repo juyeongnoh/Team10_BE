@@ -159,7 +159,8 @@ public class ReservationService {
         // 세차장이 위치한 위치 찾기
         Location location = locationJPARepository.findById(carwash.getLocation().getId())
                 .orElseThrow(() -> new NoSuchElementException("no location found"));
-        return new ReservationResponse.findLatestOneResponseDTO(reservation, bay, carwash, location);
+        List<File> carwashImages = fileJPARepository.findByCarwash_Id(carwash.getId());
+        return new ReservationResponse.findLatestOneResponseDTO(reservation, bay, carwash, location, carwashImages);
     }
 
     public ReservationResponse.fetchCurrentStatusReservationDTO fetchCurrentStatusReservation(User sessionUser) {
