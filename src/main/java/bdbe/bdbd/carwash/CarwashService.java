@@ -18,6 +18,7 @@ import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.review.ReviewJPARepository;
 import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -210,8 +211,7 @@ public class CarwashService {
     private static final Logger logger = LoggerFactory.getLogger(CarwashService.class);
 
     @Transactional
-    public CarwashResponse.updateCarwashDetailsResponseDTO updateCarwashDetails(Long carwashId, CarwashRequest.updateCarwashDetailsDTO updatedto) {
-
+    public CarwashResponse.updateCarwashDetailsResponseDTO updateCarwashDetails(Long carwashId, CarwashRequest.updateCarwashDetailsDTO updatedto, MultipartFile[] images) {
         try {
             updateCarwashDetailsResponseDTO response = new updateCarwashDetailsResponseDTO();
             Carwash carwash = carwashJPARepository.findById(carwashId)
@@ -283,11 +283,19 @@ public class CarwashService {
             List<Long> updateKeywordIds = carwashKeywordJPARepository.findKeywordIdsByCarwashId(carwashId);
             response.updateKeywordPart(updateKeywordIds);
 
+            if (images != null && images.length > 0) {
+                try {
+                    List<FileResponse.SimpleFileResponseDTO> uploadedFiles = fileUploadUtil.uploadFiles(images, carwash.getId());
+                } catch (Exception e) {
+                    logger.error("Error uploading files: ", e);
+                    throw new FileUploadException("Could not upload files", e);
+                }
+            }
             return response;
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error("Error in updateCarwashDetails", e);
-            throw e;
+            throw new RuntimeException("Error updating carwash details", e);
         }
     }
 
