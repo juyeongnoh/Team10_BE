@@ -64,7 +64,7 @@ public class ReservationResponse {
         private ReservationDTO reservation;
         private CarwashDTO carwash;
 
-        public findLatestOneResponseDTO(Reservation reservation, Bay bay, Carwash carwash, Location location) {
+        public findLatestOneResponseDTO(Reservation reservation, Bay bay, Carwash carwash, Location location, List<File> carwashImages) {
             ReservationDTO reservationDTO = new ReservationDTO();
 
             TimeDTO timeDTO = new TimeDTO();
@@ -81,7 +81,7 @@ public class ReservationResponse {
             locationDTO.latitude = location.getLatitude();
             locationDTO.longitude = location.getLongitude();
             carwashDTO.location = locationDTO;
-//            carwashDTO.imagePath = image.getPath();
+            carwashDTO.carwashImages = carwashImages;
             this.carwash = carwashDTO;
         }
     }
@@ -99,7 +99,7 @@ public class ReservationResponse {
     public static class CarwashDTO {
         private String name;
         private LocationDTO location;
-//        private String imagePath;
+        private List<File> carwashImages;
     }
     @Getter
     @Setter
