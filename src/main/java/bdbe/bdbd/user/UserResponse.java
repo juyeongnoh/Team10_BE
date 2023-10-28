@@ -1,9 +1,9 @@
-package bdbe.bdbd.member;
+package bdbe.bdbd.user;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class MemberResponse {
+public class UserResponse {
 
     @Getter @Setter
     public static class FindById{
@@ -11,10 +11,10 @@ public class MemberResponse {
         private String username;
         private String email;
 
-        public FindById(Member member) {
-            this.id = member.getId();
-            this.username = member.getUsername();
-            this.email = member.getEmail();
+        public FindById(User user) {
+            this.id = user.getId();
+            this.username = user.getUsername();
+            this.email = user.getEmail();
         }
     }
 

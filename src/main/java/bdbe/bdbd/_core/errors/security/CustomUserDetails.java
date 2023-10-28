@@ -1,7 +1,7 @@
 package bdbe.bdbd._core.errors.security;
 
 
-import bdbe.bdbd.member.Member;
+import bdbe.bdbd.user.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,11 +15,11 @@ import java.util.Collections;
 @Getter
 public class CustomUserDetails implements UserDetails {
 
-    private final Member member;
+    private final User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String roleName = member.getRole().name();
+        String roleName = user.getRole().name();
         if (!roleName.startsWith("ROLE_")) {
             roleName = "ROLE_" + roleName;
         }
@@ -28,12 +28,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return member.getPassword();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return member.getEmail();
+        return user.getEmail();
     }
 
     @Override

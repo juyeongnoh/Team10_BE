@@ -4,11 +4,14 @@ import bdbe.bdbd._core.errors.security.CustomUserDetails;
 import bdbe.bdbd._core.errors.utils.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -30,7 +33,7 @@ public class CarwashRestController {
     public ResponseEntity<?> save(@RequestPart("carwash") CarwashRequest.SaveDTO saveDTOs,
                                   @RequestPart("images") MultipartFile[] images,
                                   @AuthenticationPrincipal CustomUserDetails userDetails) {
-        carwashService.save(saveDTOs, images, userDetails.getMember());
+        carwashService.save(saveDTOs, images, userDetails.getUser());
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
@@ -65,7 +68,7 @@ public class CarwashRestController {
         if (carwash != null) {
             return ResponseEntity.ok(ApiUtils.success(carwash));
         } else {
-            return ResponseEntity.ok(ApiUtils.success(null));
+            return ResponseEntity.notFound().build();
         }
     }
 

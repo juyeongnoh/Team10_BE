@@ -9,8 +9,8 @@ import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.reservation.ReservationRequest.SaveDTO;
 import bdbe.bdbd.reservation.ReservationRequest.UpdateDTO;
-import bdbe.bdbd.member.Member;
-import bdbe.bdbd.member.MemberJPARepository;
+import bdbe.bdbd.user.User;
+import bdbe.bdbd.user.UserJPARepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +48,7 @@ public class ReservationRestControllerTest {
     ReservationJPARepository reservationJPARepository;
 
     @Autowired
-    MemberJPARepository memberJPARepository;
+    UserJPARepository userJPARepository;
 
     @Autowired
     CarwashJPARepository carwashJPARepository;
@@ -68,7 +68,7 @@ public class ReservationRestControllerTest {
     @Autowired
     private ObjectMapper om;
 
-    private Member member;
+    private User user;
 
     @BeforeEach()
     public void setup() {
@@ -159,8 +159,8 @@ public class ReservationRestControllerTest {
         String formattedDateTime = now.format(formatter);
 
         LocalDate date = LocalDate.now();
-        saveDTO.setStartTime(LocalDateTime.of(date, LocalTime.of(13, 30))); // 오전 6시
-        saveDTO.setEndTime(LocalDateTime.of(date, LocalTime.of(14, 00))); // 30분 뒤
+        saveDTO.setStartTime(LocalDateTime.of(date, LocalTime.of(12, 30))); // 오전 6시
+        saveDTO.setEndTime(LocalDateTime.of(date, LocalTime.of(13, 00))); // 30분 뒤
 
 
         String s = saveDTO.toString();
@@ -229,7 +229,7 @@ public class ReservationRestControllerTest {
                 .findFirst().get();
         System.out.println(reservation.getId());
         System.out.println(reservation.getBay().getId());
-        System.out.println(reservation.getMember().getId());
+        System.out.println(reservation.getUser().getId());
 
 
         //when
@@ -259,14 +259,14 @@ public class ReservationRestControllerTest {
         Bay bay = bayJPARepository.findByCarwashId(carwash.getId()).get(0);
         System.out.println("bayId : " + bay.getId());
 
-        Member member = memberJPARepository.findByEmail("user@nate.com").orElseThrow(()->new IllegalArgumentException("user not found"));
+        User user = userJPARepository.findByEmail("user@nate.com").orElseThrow(()->new IllegalArgumentException("user not found"));
         // 예약 1
         Reservation reservation = Reservation.builder()
                 .price(5000)
                 .startTime(LocalDateTime.now())
                 .endTime(LocalDateTime.now().plusMinutes(30)) //30분 뒤로 설정
                 .bay(bay)
-                .member(member)
+                .user(user)
                 .build();
         reservationJPARepository.save(reservation);
         // 예약 2
@@ -276,7 +276,7 @@ public class ReservationRestControllerTest {
                 .startTime(LocalDateTime.of(date, LocalTime.of(20, 0))) // 오전 6시
                 .endTime(LocalDateTime.of(date, LocalTime.of(20, 30))) // 30분 뒤
                 .bay(bay)
-                .member(member)
+                .user(user)
                 .build();
         reservationJPARepository.save(reservation);
 
@@ -298,7 +298,7 @@ public class ReservationRestControllerTest {
     @DisplayName("결제 후 예약 내역 조회")
     public void fetchLatestReservation_test() throws Exception {
         //given
-        Member member = memberJPARepository.findByEmail("user@nate.com")
+        User user = userJPARepository.findByEmail("user@nate.com")
                 .orElseThrow(()-> new IllegalArgumentException("user not found"));
         Bay savedBay = bayJPARepository.findFirstBy();
 
@@ -308,7 +308,7 @@ public class ReservationRestControllerTest {
                 .startTime(LocalDateTime.now())
                 .endTime(LocalDateTime.now().plusMinutes(30)) //30분 뒤로 설정
                 .bay(savedBay)
-                .member(member)
+                .user(user)
                 .build();
         reservationJPARepository.save(reservation);
 
@@ -330,7 +330,7 @@ public class ReservationRestControllerTest {
     public void fetchCurrentStatusReservation_test() throws Exception {
         //given
 
-        Member member = memberJPARepository.findByEmail("user@nate.com")
+        User user = userJPARepository.findByEmail("user@nate.com")
                 .orElseThrow(()-> new IllegalArgumentException("user not found"));
         Bay savedBay = bayJPARepository.findFirstBy();
 
@@ -384,7 +384,7 @@ public class ReservationRestControllerTest {
     @DisplayName("최근 예약 내역 조회")
     public void fetchRecentReservation_test() throws Exception {
         //given
-        Member member = memberJPARepository.findByEmail("user@nate.com")
+        User user = userJPARepository.findByEmail("user@nate.com")
                 .orElseThrow(()-> new IllegalArgumentException("user not found"));
 
         Carwash carwash = carwashJPARepository.findFirstBy();

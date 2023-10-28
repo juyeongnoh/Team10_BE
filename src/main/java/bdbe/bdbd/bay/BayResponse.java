@@ -1,8 +1,11 @@
 package bdbe.bdbd.bay;
 
 import bdbe.bdbd.carwash.Carwash;
+import bdbe.bdbd.reservation.Reservation;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 public class BayResponse {
     @Getter
@@ -25,7 +28,7 @@ public class BayResponse {
             this.rate = carwash.getRate();
             this.tel = carwash.getTel();
             this.rId = carwash.getLocation().getId();
-            this.userId = carwash.getMember().getId();
+            this.userId = carwash.getUser().getId();
         }
     }
     @Getter

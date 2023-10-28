@@ -1,12 +1,14 @@
 package bdbe.bdbd.carwash;
 
+import bdbe.bdbd.file.FileRequest;
 import bdbe.bdbd.optime.DayType;
 import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.location.Location;
-import bdbe.bdbd.member.Member;
+import bdbe.bdbd.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -38,7 +40,7 @@ public class CarwashRequest {
 
 
 
-        public Carwash toCarwashEntity(Location location, Member member) {
+        public Carwash toCarwashEntity(Location location, User user) {
             return Carwash.builder()
                     .name(name)
                     .rate(0)
@@ -46,7 +48,7 @@ public class CarwashRequest {
                     .des(description)
                     .price(Integer.parseInt(price))  // 문자열 price를 int로 변환
                     .location(location)
-                    .member(member)
+                    .user(user)
                     .build();
         }
 
