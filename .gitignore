@@ -2,7 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,windows,macos
 
 # application.yml
-**/application.yml
+#**/application.yml
 **/application-local.yml
 **/application-prod.yml
 
