@@ -207,8 +207,7 @@ public class CarwashResponse {
         private CarwashResponse.updateOperatingTimeDTO optime;
         private List<Long> keywordId;
         private String description;
-
-        //        private List<String> images;
+        //        private List<String> images; -> 서비스에서 직접 처리
         public void updateCarwashPart(Carwash carwash) {
             this.id = carwash.getId();
             this.name = carwash.getName();
