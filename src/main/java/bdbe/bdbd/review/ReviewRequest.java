@@ -2,7 +2,7 @@ package bdbe.bdbd.review;
 
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.reservation.Reservation;
-import bdbe.bdbd.user.User;
+import bdbe.bdbd.member.Member;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -21,9 +21,9 @@ public class ReviewRequest {
         private String comment;
 
 
-        public Review toReviewEntity(User user, Carwash carwash, Reservation reservation) {
+        public Review toReviewEntity(Member member, Carwash carwash, Reservation reservation) {
             return Review.builder()
-                    .user(user)
+                    .member(member)
                     .carwash(carwash)
                     .reservation(reservation)
                     .comment(comment)
