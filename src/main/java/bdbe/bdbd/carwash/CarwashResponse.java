@@ -9,6 +9,7 @@ import lombok.ToString;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CarwashResponse {
     @Getter
@@ -43,8 +44,6 @@ public class CarwashResponse {
         public KeywordResponseDTO(String keywordName) {
             this.keywordName = keywordName;
         }
-
-        // getters, setters
     }
 
 
@@ -62,9 +61,9 @@ public class CarwashResponse {
         private List<Long> keywordId;
         private String description;
         private String tel;
-        private List<File> imageFiles;
+        private List<FileDTO> imageFiles;
 
-        public findByIdDTO(Carwash carwash, int reviewCnt, int bayCnt, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime, List<File> imageFiles) {
+        public findByIdDTO(Carwash carwash, int reviewCnt, int bayCnt, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime, List<File> files) {
             this.id = carwash.getId();
             this.name = carwash.getName();
             this.rate = carwash.getRate();
@@ -75,7 +74,7 @@ public class CarwashResponse {
             this.keywordId = keywordId;
             this.description = carwash.getDes();
             this.tel = carwash.getTel();
-            this.imageFiles = imageFiles;
+            this.imageFiles = files.stream().map(FileDTO::new).collect(Collectors.toList());
         }
 
         public OperatingTimeDTOResponse toOptimeListDTO(Optime weekOptime, Optime endOptime) {
@@ -127,6 +126,19 @@ public class CarwashResponse {
 
     @Getter
     @Setter
+    public static class FileDTO{
+        private Long id;
+        private String name;
+        private String url;
+        public FileDTO(File file) {
+            this.id = file.getId();
+            this.name = file.getName();
+            this.url = file.getUrl();
+        }
+    }
+
+    @Getter
+    @Setter
     public static class carwashDetailsDTO {
         private Long id;
         private String name;
@@ -136,10 +148,10 @@ public class CarwashResponse {
         private detailsOperatingTimeDTO optime; //
         private List<Long> keywordId;
         private String description;
-        private List<File> carwashImages;
+        private List<FileDTO> imageFiles;
 
 
-        public carwashDetailsDTO(Carwash carwash, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime, List<File> carwashImages) {
+        public carwashDetailsDTO(Carwash carwash, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime, List<File> files) {
             this.id = carwash.getId();
             this.name = carwash.getName();
             this.price = carwash.getPrice();
@@ -148,7 +160,7 @@ public class CarwashResponse {
             this.optime = toOptimeListDTO(weekOptime, endOptime);
             this.keywordId = keywordId;
             this.description = carwash.getDes();
-            this.carwashImages = carwashImages;
+            this.imageFiles = files.stream().map(FileDTO::new).collect(Collectors.toList());
         }
 
         public detailsOperatingTimeDTO toOptimeListDTO(Optime weekOptime, Optime endOptime) {
