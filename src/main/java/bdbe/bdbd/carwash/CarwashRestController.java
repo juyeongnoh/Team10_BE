@@ -84,11 +84,13 @@ public class CarwashRestController {
         return ResponseEntity.ok(ApiUtils.success(carwashDetailsDTO));
     }
 
-    @PutMapping("/owner/carwashes/{carwash_id}/details") //세차장 정보 수정_세차장 정보 수정 적용
-    public ResponseEntity<?> updateCarwashDetails(@PathVariable("carwash_id") Long carwashId, @RequestBody CarwashRequest.updateCarwashDetailsDTO updatedto ) {
-        CarwashResponse.updateCarwashDetailsResponseDTO updateCarwashDetailsDTO = carwashService.updateCarwashDetails(carwashId, updatedto);
+    @PutMapping("/owner/carwashes/{carwash_id}/details")
+    public ResponseEntity<?> updateCarwashDetails(
+            @PathVariable("carwash_id") Long carwashId,
+            @RequestPart("updatedto") CarwashRequest.updateCarwashDetailsDTO updatedto,
+            @RequestPart(value = "images", required = false) MultipartFile[] images) {
+        CarwashResponse.updateCarwashDetailsResponseDTO updateCarwashDetailsDTO = carwashService.updateCarwashDetails(carwashId, updatedto, images);
         return ResponseEntity.ok(ApiUtils.success(updateCarwashDetailsDTO));
-
     }
 
 }
