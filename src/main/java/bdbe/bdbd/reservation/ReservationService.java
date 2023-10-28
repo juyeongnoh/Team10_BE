@@ -6,6 +6,8 @@ import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
+import bdbe.bdbd.file.File;
+import bdbe.bdbd.file.FileJPARepository;
 import bdbe.bdbd.keyword.reviewKeyword.ReviewKeywordJPARepository;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.location.LocationJPARepository;
@@ -43,6 +45,7 @@ public class ReservationService {
     private final OptimeJPARepository optimeJPARepository;
     private final ReviewJPARepository reviewJPARepository;
     private final ReviewKeywordJPARepository reviewKeywordJPARepository;
+    private final FileJPARepository fileJPARepository;
 
     @Transactional
     public void save(ReservationRequest.SaveDTO dto, Long carwashId, Long bayId, User sessionUser) {
@@ -156,7 +159,8 @@ public class ReservationService {
         // 세차장이 위치한 위치 찾기
         Location location = locationJPARepository.findById(carwash.getLocation().getId())
                 .orElseThrow(() -> new NoSuchElementException("no location found"));
-        return new ReservationResponse.findLatestOneResponseDTO(reservation, bay, carwash, location);
+        List<File> carwashImages = fileJPARepository.findByCarwash_Id(carwash.getId());
+        return new ReservationResponse.findLatestOneResponseDTO(reservation, bay, carwash, location, carwashImages);
     }
 
     public ReservationResponse.fetchCurrentStatusReservationDTO fetchCurrentStatusReservation(User sessionUser) {
@@ -178,6 +182,7 @@ public class ReservationService {
                     .orElseThrow(() -> new EntityNotFoundException("Bay not found"));
             Carwash carwash = carwashJPARepository.findById(bay.getCarwash().getId())
                     .orElseThrow(() -> new EntityNotFoundException("Carwash not found"));
+            List<File> carwashImages = fileJPARepository.findByCarwash_Id(carwash.getId());
 
             LocalDateTime startDateTime = reservation.getStartTime();
             LocalDate reservationDate = startDateTime.toLocalDate();
@@ -185,16 +190,16 @@ public class ReservationService {
 
             if (reservationDate.equals(today)) {
                 if (now.isAfter(startDateTime) && now.isBefore(endDateTime)) {
-                    current.add(new ReservationInfoDTO(reservation, bay, carwash));
+                    current.add(new ReservationInfoDTO(reservation, bay, carwash, carwashImages));
                 } else if (now.isBefore(startDateTime)) {
-                    upcoming.add(new ReservationInfoDTO(reservation, bay, carwash));
+                    upcoming.add(new ReservationInfoDTO(reservation, bay, carwash, carwashImages));
                 } else if (now.isAfter(endDateTime)) {
-                    completed.add(new ReservationInfoDTO(reservation, bay, carwash));
+                    completed.add(new ReservationInfoDTO(reservation, bay, carwash, carwashImages));
                 }
             } else if (reservationDate.isBefore(today)) {
-                completed.add(new ReservationInfoDTO(reservation, bay, carwash));
+                completed.add(new ReservationInfoDTO(reservation, bay, carwash, carwashImages));
             } else if (reservationDate.isAfter(today)) {
-                upcoming.add(new ReservationInfoDTO(reservation, bay, carwash));
+                upcoming.add(new ReservationInfoDTO(reservation, bay, carwash, carwashImages));
             } else {
                 throw new IllegalStateException("reservation id: " + reservation.getId() + " not found");
             }
@@ -210,7 +215,18 @@ public class ReservationService {
                 .filter(r -> !r.isDeleted())
                 .collect(Collectors.toList());
 
-        return new ReservationResponse.fetchRecentReservationDTO(reservationList);
-    }
+        List<ReservationResponse.RecentReservation> recentReservations = new ArrayList<>();
 
+        for (Reservation reservation : reservationList) {
+            Bay bay = bayJPARepository.findById(reservation.getBay().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Bay not found"));
+            Carwash carwash = carwashJPARepository.findById(bay.getCarwash().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Carwash not found"));
+            List<File> carwashImages = fileJPARepository.findByCarwash_Id(carwash.getId());
+
+            recentReservations.add(new ReservationResponse.RecentReservation(reservation, carwashImages));
+        }
+
+        return new ReservationResponse.fetchRecentReservationDTO(recentReservations);
+    }
 }
