@@ -1,4 +1,4 @@
-package bdbe.bdbd.member;
+package bdbe.bdbd.user;
 
 import lombok.*;
 
@@ -7,8 +7,8 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name="member")
-public class Member {
+@Table(name="user")
+public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +17,7 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 30, nullable = false)
-    private MemberRole role;
+    private UserRole role;
 
     @Column(length = 100, nullable = false, unique = true)
     private String email; // 인증시 필요한 필드
@@ -33,7 +33,7 @@ public class Member {
 
 
     @Builder
-    public Member(Long id, String email, String password, String username, MemberRole role, String tel) {
+    public User(Long id, String email, String password, String username, UserRole role, String tel) {
         this.id = id;
         this.email = email;
         this.password = password;

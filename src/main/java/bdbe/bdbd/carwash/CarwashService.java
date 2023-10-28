@@ -18,7 +18,7 @@ import bdbe.bdbd.optime.DayType;
 import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.review.ReviewJPARepository;
-import bdbe.bdbd.member.Member;
+import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.slf4j.Logger;
@@ -74,13 +74,13 @@ public class CarwashService {
     }
 
     @Transactional
-    public void save(CarwashRequest.SaveDTO saveDTO, MultipartFile[] images, Member sessionMember) {
+    public void save(CarwashRequest.SaveDTO saveDTO, MultipartFile[] images, User sessionUser) {
         // 별점은 리뷰에서 계산해서 넣어주기
         // 지역
         Location location = saveDTO.toLocationEntity();
         locationJPARepository.save(location);
         // 세차장
-        Carwash carwash = saveDTO.toCarwashEntity(location, sessionMember);
+        Carwash carwash = saveDTO.toCarwashEntity(location, sessionUser);
         carwashJPARepository.save(carwash);
         // 운영시간
         List<Optime> optimes = saveDTO.toOptimeEntities(carwash);

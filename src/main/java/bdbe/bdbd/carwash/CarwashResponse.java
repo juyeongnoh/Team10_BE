@@ -32,7 +32,7 @@ public class CarwashResponse {
             this.des = carwash.getDes();
             this.price = carwash.getPrice();
             this.lId = carwash.getLocation().getId();
-            this.userId = carwash.getMember().getId();
+            this.userId = carwash.getUser().getId();
         }
     }
 
