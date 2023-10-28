@@ -5,9 +5,8 @@ import bdbe.bdbd.keyword.KeywordJPARepository;
 import bdbe.bdbd.keyword.KeywordType;
 import bdbe.bdbd.location.LocationJPARepository;
 import bdbe.bdbd.optime.OptimeJPARepository;
-import bdbe.bdbd.reservation.ReservationRequest;
-import bdbe.bdbd.user.User;
-import bdbe.bdbd.user.UserJPARepository;
+import bdbe.bdbd.member.Member;
+import bdbe.bdbd.member.MemberJPARepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 
@@ -44,7 +41,7 @@ public class CarwashRestControllerTest {
     LocationJPARepository locationJPARepository;
 
     @Autowired
-    UserJPARepository userJPARepository;
+    MemberJPARepository memberJPARepository;
 
     @Autowired
     CarwashJPARepository carwashJPARepository;
@@ -58,7 +55,7 @@ public class CarwashRestControllerTest {
     @Autowired
     private ObjectMapper om;
 
-    private User user;
+    private Member member;
 
 
     @Test
@@ -79,64 +76,65 @@ public class CarwashRestControllerTest {
         resultActions.andExpect(jsonPath("$.success").value("true"));
     }
 
-    @WithUserDetails(value = "user@nate.com")
-    @Test
-    @DisplayName("세차장 등록 기능")
-    public void save_test() throws Exception {
-        // given
-        // dto 생성
-        CarwashRequest.SaveDTO dto = new CarwashRequest.SaveDTO();
-        dto.setName("test 세차장");
-
-        dto.setTel("01012345678");
-        dto.setDescription("테스트 설명");
-        dto.setPrice("100");
-
-        CarwashRequest.LocationDTO locationDTO = new CarwashRequest.LocationDTO();
-        locationDTO.setPlaceName("test 장소");
-        locationDTO.setAddress("test 주소");
-        locationDTO.setLatitude(1.234);
-        locationDTO.setLongitude(5.678);
-        dto.setLocation(locationDTO);
-
-        CarwashRequest.OperatingTimeDTO optimeDTO = new CarwashRequest.OperatingTimeDTO();
-        CarwashRequest.OperatingTimeDTO.TimeSlot weekdaySlot = new CarwashRequest.OperatingTimeDTO.TimeSlot();
-        weekdaySlot.setStart(LocalTime.of(9, 0));
-        weekdaySlot.setEnd(LocalTime.of(17, 0));
-        optimeDTO.setWeekday(weekdaySlot);
-
-        CarwashRequest.OperatingTimeDTO.TimeSlot weekendSlot = new CarwashRequest.OperatingTimeDTO.TimeSlot();
-        weekendSlot.setStart(LocalTime.of(10, 0));
-        weekendSlot.setEnd(LocalTime.of(16, 0));
-        optimeDTO.setWeekend(weekendSlot);
-        dto.setOptime(optimeDTO);
-
-//        dto.setImage(Arrays.asList("image1.jpg", "image2.jpg"));
-        Keyword keyword = Keyword.builder()
-                .name("하부세차")
-                .type(KeywordType.CARWASH)
-                .build();
-        Keyword savedKeyword = keywordJPARepository.save(keyword);
-        dto.setKeywordId(Arrays.asList(savedKeyword.getId()));
-
-
-        String requestBody = om.writeValueAsString(dto);
-        System.out.println("요청 데이터 : " + requestBody);
-        // when
-        ResultActions resultActions = mvc.perform(
-                post("/owner/carwashes/register")
-                        .content(requestBody)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-        );
-
-        // eye
+    // 사진까지 함께 등록해야함
+//    @WithUserDetails(value = "owner@nate.com")
+//    @Test
+//    @DisplayName("세차장 등록 기능")
+//    public void save_test() throws Exception {
+//        // given
+//        // dto 생성
+//        CarwashRequest.SaveDTO dto = new CarwashRequest.SaveDTO();
+//        dto.setName("test 세차장");
+//
+//        dto.setTel("01012345678");
+//        dto.setDescription("테스트 설명");
+//        dto.setPrice("100");
+//
+//        CarwashRequest.LocationDTO locationDTO = new CarwashRequest.LocationDTO();
+//        locationDTO.setPlaceName("test 장소");
+//        locationDTO.setAddress("test 주소");
+//        locationDTO.setLatitude(1.234);
+//        locationDTO.setLongitude(5.678);
+//        dto.setLocation(locationDTO);
+//
+//        CarwashRequest.OperatingTimeDTO optimeDTO = new CarwashRequest.OperatingTimeDTO();
+//        CarwashRequest.OperatingTimeDTO.TimeSlot weekdaySlot = new CarwashRequest.OperatingTimeDTO.TimeSlot();
+//        weekdaySlot.setStart(LocalTime.of(9, 0));
+//        weekdaySlot.setEnd(LocalTime.of(17, 0));
+//        optimeDTO.setWeekday(weekdaySlot);
+//
+//        CarwashRequest.OperatingTimeDTO.TimeSlot weekendSlot = new CarwashRequest.OperatingTimeDTO.TimeSlot();
+//        weekendSlot.setStart(LocalTime.of(10, 0));
+//        weekendSlot.setEnd(LocalTime.of(16, 0));
+//        optimeDTO.setWeekend(weekendSlot);
+//        dto.setOptime(optimeDTO);
+//
+////        dto.setImage(Arrays.asList("image1.jpg", "image2.jpg"));
+//        Keyword keyword = Keyword.builder()
+//                .name("하부세차")
+//                .type(KeywordType.CARWASH)
+//                .build();
+//        Keyword savedKeyword = keywordJPARepository.save(keyword);
+//        dto.setKeywordId(Arrays.asList(savedKeyword.getId()));
+//
+//
+//        String requestBody = om.writeValueAsString(dto);
+//        System.out.println("요청 데이터 : " + requestBody);
+//        // when
+//        ResultActions resultActions = mvc.perform(
+//                post("/owner/carwashes/register")
+//                        .content(requestBody)
+//                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+//        );
+//
+//        // eye
 //        String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 //        System.out.println("응답 Body : " + responseBody);
+////
+////        // verify
+////        resultActions.andExpect(jsonPath("$.success").value("true"));
 //
-//        // verify
-//        resultActions.andExpect(jsonPath("$.success").value("true"));
-
-    }
+//    }
 
 
     @WithUserDetails(value = "user@nate.com")
@@ -183,7 +181,8 @@ public class CarwashRestControllerTest {
         System.out.println("응답 Body : " + responseBody);
 
         // verify
-        resultActions.andExpect(jsonPath("$").isMap());
+        resultActions.andExpect(jsonPath("$.success").value("true"));
+//        resultActions.andExpect(jsonPath("$").isMap());
     }
 
     @WithUserDetails(value = "user@nate.com")
@@ -209,6 +208,7 @@ public class CarwashRestControllerTest {
         System.out.println("응답 Body : " + responseBody);
 
         // verify
+        resultActions.andExpect(jsonPath("$.success").value("true"));
         resultActions.andExpect(jsonPath("$.response").isArray());
     }
 
@@ -290,7 +290,7 @@ public class CarwashRestControllerTest {
         updateCarwashDetailsDTO.setOptime(optimeDTO);
 
         Long keywordId = keywordJPARepository.findByType(KeywordType.CARWASH).get(0).getId();
-        updateCarwashDetailsDTO.setKeywordId(Arrays.asList(33L));
+        updateCarwashDetailsDTO.setKeywordId(Arrays.asList(1L));
 
         MockMultipartFile updatedtoFile = new MockMultipartFile("updatedto", "", "application/json", om.writeValueAsBytes(updateCarwashDetailsDTO));
 

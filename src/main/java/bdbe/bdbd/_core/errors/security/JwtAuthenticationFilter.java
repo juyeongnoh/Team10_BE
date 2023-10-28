@@ -1,8 +1,8 @@
 package bdbe.bdbd._core.errors.security;
 
 
-import bdbe.bdbd.user.User;
-import bdbe.bdbd.user.UserRole;
+import bdbe.bdbd.member.Member;
+import bdbe.bdbd.member.MemberRole;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -41,10 +41,10 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             String role = decodedJWT.getClaim("role").asString();
             log.info("role: {}", role);
 
-            UserRole roleEnum = UserRole.valueOf(role);
-            User user = User.builder().id(id).role(roleEnum).build();
+            MemberRole roleEnum = MemberRole.valueOf(role);
+            Member member = Member.builder().id(id).role(roleEnum).build();
 
-            CustomUserDetails myUserDetails = new CustomUserDetails(user);
+            CustomUserDetails myUserDetails = new CustomUserDetails(member);
             Authentication authentication =
                     new UsernamePasswordAuthenticationToken(
                             myUserDetails,

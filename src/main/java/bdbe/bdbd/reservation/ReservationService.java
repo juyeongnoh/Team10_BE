@@ -13,9 +13,8 @@ import bdbe.bdbd.optime.DayType;
 import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.reservation.ReservationResponse.ReservationInfoDTO;
-import bdbe.bdbd.review.Review;
 import bdbe.bdbd.review.ReviewJPARepository;
-import bdbe.bdbd.user.User;
+import bdbe.bdbd.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -45,14 +44,14 @@ public class ReservationService {
     private final ReviewKeywordJPARepository reviewKeywordJPARepository;
 
     @Transactional
-    public void save(ReservationRequest.SaveDTO dto, Long carwashId, Long bayId, User sessionUser) {
+    public void save(ReservationRequest.SaveDTO dto, Long carwashId, Long bayId, Member sessionMember) {
         Carwash carwash = findCarwashById(carwashId);
         Optime optime = findOptime(carwash, dto.getStartTime());
 
         validateReservationTime(dto, optime, bayId);
         Bay bay = findBayById(bayId);
 
-        Reservation reservation = dto.toReservationEntity(carwash, bay, sessionUser);
+        Reservation reservation = dto.toReservationEntity(carwash, bay, sessionMember);
         reservationJPARepository.save(reservation);
     }
 
@@ -142,9 +141,9 @@ public class ReservationService {
         return new ReservationResponse.findAllResponseDTO(bayList, reservationList);
     }
 
-    public ReservationResponse.findLatestOneResponseDTO fetchLatestReservation(User sessionUser) {
+    public ReservationResponse.findLatestOneResponseDTO fetchLatestReservation(Member sessionMember) {
         // 가장 최근의 예약 찾기
-        Reservation reservation = reservationJPARepository.findTopByUserIdOrderByIdDesc(sessionUser.getId())
+        Reservation reservation = reservationJPARepository.findTopByMemberIdOrderByIdDesc(sessionMember.getId())
                 .filter(r -> !r.isDeleted())
                 .orElseThrow(() -> new NoSuchElementException("no reservation found"));
         // 예약과 관련된 베이 찾기
@@ -159,9 +158,9 @@ public class ReservationService {
         return new ReservationResponse.findLatestOneResponseDTO(reservation, bay, carwash, location);
     }
 
-    public ReservationResponse.fetchCurrentStatusReservationDTO fetchCurrentStatusReservation(User sessionUser) {
+    public ReservationResponse.fetchCurrentStatusReservationDTO fetchCurrentStatusReservation(Member sessionMember) {
         // 유저의 예약내역 모두 조회
-        List<Reservation> reservationList = reservationJPARepository.findByUserId(sessionUser.getId())
+        List<Reservation> reservationList = reservationJPARepository.findByMemberId(sessionMember.getId())
                 .stream()
                 .filter(r -> !r.isDeleted())
                 .collect(Collectors.toList());
@@ -202,10 +201,10 @@ public class ReservationService {
         return new ReservationResponse.fetchCurrentStatusReservationDTO(current, upcoming, completed);
     }
 
-    public ReservationResponse.fetchRecentReservationDTO fetchRecentReservation(User sessionUser) {
+    public ReservationResponse.fetchRecentReservationDTO fetchRecentReservation(Member sessionMember) {
         // 유저의 예약내역 모두 조회
         Pageable pageable = PageRequest.of(0, 5); // 최대 5개까지만 가져오기
-        List<Reservation> reservationList = reservationJPARepository.findByUserIdJoinFetch(sessionUser.getId(), pageable)
+        List<Reservation> reservationList = reservationJPARepository.findByMemberIdJoinFetch(sessionMember.getId(), pageable)
                 .stream()
                 .filter(r -> !r.isDeleted())
                 .collect(Collectors.toList());
