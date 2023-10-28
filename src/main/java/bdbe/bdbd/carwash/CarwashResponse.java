@@ -2,12 +2,14 @@ package bdbe.bdbd.carwash;
 
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.optime.Optime;
+import bdbe.bdbd.file.File;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CarwashResponse {
     @Getter
@@ -42,8 +44,6 @@ public class CarwashResponse {
         public KeywordResponseDTO(String keywordName) {
             this.keywordName = keywordName;
         }
-
-        // getters, setters
     }
 
 
@@ -61,11 +61,9 @@ public class CarwashResponse {
         private List<Long> keywordId;
         private String description;
         private String tel;
-//        private List<String> image;
+        private List<FileDTO> imageFiles;
 
-
-        public findByIdDTO(Carwash carwash, int reviewCnt, int bayCnt, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime) {
-//            this.image = image;
+        public findByIdDTO(Carwash carwash, int reviewCnt, int bayCnt, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime, List<File> files) {
             this.id = carwash.getId();
             this.name = carwash.getName();
             this.rate = carwash.getRate();
@@ -76,6 +74,7 @@ public class CarwashResponse {
             this.keywordId = keywordId;
             this.description = carwash.getDes();
             this.tel = carwash.getTel();
+            this.imageFiles = files.stream().map(FileDTO::new).collect(Collectors.toList());
         }
 
         public OperatingTimeDTOResponse toOptimeListDTO(Optime weekOptime, Optime endOptime) {
@@ -127,6 +126,19 @@ public class CarwashResponse {
 
     @Getter
     @Setter
+    public static class FileDTO{
+        private Long id;
+        private String name;
+        private String url;
+        public FileDTO(File file) {
+            this.id = file.getId();
+            this.name = file.getName();
+            this.url = file.getUrl();
+        }
+    }
+
+    @Getter
+    @Setter
     public static class carwashDetailsDTO {
         private Long id;
         private String name;
@@ -136,11 +148,10 @@ public class CarwashResponse {
         private detailsOperatingTimeDTO optime; //
         private List<Long> keywordId;
         private String description;
-//        private List<String> image;
+        private List<FileDTO> imageFiles;
 
 
-        public carwashDetailsDTO(Carwash carwash, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime) {
-//            this.image = image;
+        public carwashDetailsDTO(Carwash carwash, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime, List<File> files) {
             this.id = carwash.getId();
             this.name = carwash.getName();
             this.price = carwash.getPrice();
@@ -149,6 +160,7 @@ public class CarwashResponse {
             this.optime = toOptimeListDTO(weekOptime, endOptime);
             this.keywordId = keywordId;
             this.description = carwash.getDes();
+            this.imageFiles = files.stream().map(FileDTO::new).collect(Collectors.toList());
         }
 
         public detailsOperatingTimeDTO toOptimeListDTO(Optime weekOptime, Optime endOptime) {
@@ -207,8 +219,7 @@ public class CarwashResponse {
         private CarwashResponse.updateOperatingTimeDTO optime;
         private List<Long> keywordId;
         private String description;
-
-        //        private List<String> images;
+        //        private List<String> images; -> 서비스에서 직접 처리
         public void updateCarwashPart(Carwash carwash) {
             this.id = carwash.getId();
             this.name = carwash.getName();
