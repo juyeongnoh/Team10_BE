@@ -2,7 +2,6 @@ package bdbe.bdbd.reservation;
 
 import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.carwash.Carwash;
-import bdbe.bdbd.file.File;
 import bdbe.bdbd.location.Location;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,7 +63,7 @@ public class ReservationResponse {
         private ReservationDTO reservation;
         private CarwashDTO carwash;
 
-        public findLatestOneResponseDTO(Reservation reservation, Bay bay, Carwash carwash, Location location, List<File> carwashImages) {
+        public findLatestOneResponseDTO(Reservation reservation, Bay bay, Carwash carwash, Location location) {
             ReservationDTO reservationDTO = new ReservationDTO();
 
             TimeDTO timeDTO = new TimeDTO();
@@ -81,7 +80,7 @@ public class ReservationResponse {
             locationDTO.latitude = location.getLatitude();
             locationDTO.longitude = location.getLongitude();
             carwashDTO.location = locationDTO;
-            carwashDTO.carwashImages = carwashImages;
+//            carwashDTO.imagePath = image.getPath();
             this.carwash = carwashDTO;
         }
     }
@@ -99,7 +98,7 @@ public class ReservationResponse {
     public static class CarwashDTO {
         private String name;
         private LocationDTO location;
-        private List<File> carwashImages;
+//        private String imagePath;
     }
     @Getter
     @Setter
@@ -137,8 +136,10 @@ public class ReservationResponse {
     public static class fetchRecentReservationDTO {
         private List<RecentReservation> recent;
 
-        public fetchRecentReservationDTO(List<RecentReservation> recentReservations) {
-            this.recent = recentReservations;
+        public fetchRecentReservationDTO(List<Reservation> reservationList) {
+            this.recent = reservationList.stream()
+                    .map(RecentReservation::new)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -147,13 +148,13 @@ public class ReservationResponse {
     @ToString
     public static class RecentReservation {
         private Long carwashId;
-        private List<File> carwashImages;
+//        private String image;
         private LocalDate date;
         private String carwashName;
 
-        public RecentReservation(Reservation reservation, List<File> carwashImages) {
+        public RecentReservation(Reservation reservation) {
             this.carwashId = reservation.getBay().getCarwash().getId();
-            this.carwashImages = carwashImages;
+//            this.image = image;
             this.date = reservation.getStartTime().toLocalDate();
             this.carwashName = reservation.getBay().getCarwash().getName();
         }
@@ -170,8 +171,8 @@ public class ReservationResponse {
         private String carwashName;
         private int bayNum;
         private int price;
-        private List<File> carwashImages;
-        public ReservationInfoDTO(Reservation reservation, Bay bay, Carwash carwash, List<File> carwashImages) {
+//        private String image;
+        public ReservationInfoDTO(Reservation reservation, Bay bay, Carwash carwash) {
             this.id = reservation.getId();
             TimeDTO timeDTO = new TimeDTO();
             timeDTO.start = reservation.getStartTime();
@@ -180,10 +181,7 @@ public class ReservationResponse {
             this.carwashName = carwash.getName();
             this.bayNum = bay.getBayNum();
             this.price = reservation.getPrice();
-            this.carwashImages = carwashImages;
-
         }
     }
-
 
 }
