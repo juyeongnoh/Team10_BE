@@ -1,7 +1,7 @@
 package bdbe.bdbd._core.errors.security;
 
 
-import bdbe.bdbd.user.User;
+import bdbe.bdbd.member.Member;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
@@ -19,12 +19,12 @@ public class JWTProvider {
     public static final String HEADER = "Authorization";
     public static final String SECRET = "MySecretKey";
 
-    public static String create(User user) {
+    public static String create(Member member) {
         String jwt = JWT.create()
-                .withSubject(user.getEmail())
+                .withSubject(member.getEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXP))
-                .withClaim("id", user.getId())
-                .withClaim("role", user.getRole().name())
+                .withClaim("id", member.getId())
+                .withClaim("role", member.getRole().name())
                 .sign(Algorithm.HMAC512(SECRET));
         return TOKEN_PREFIX + jwt;
     }

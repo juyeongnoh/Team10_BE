@@ -1,8 +1,7 @@
-package bdbe.bdbd.user;
+package bdbe.bdbd.member;
 
 import bdbe.bdbd._core.errors.security.JWTProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-public class UserRestControllerTest {
+public class MemberRestControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -30,20 +29,20 @@ public class UserRestControllerTest {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    UserJPARepository userJPARepository;
+    MemberJPARepository memberJPARepository;
 
     @BeforeEach
     public void setup() {
-        UserRequest.JoinDTO mockUserDTO = new UserRequest.JoinDTO();
+        MemberRequest.JoinDTO mockUserDTO = new MemberRequest.JoinDTO();
         mockUserDTO.setUsername("mockuser");
         mockUserDTO.setEmail("mock@naver.com");
         mockUserDTO.setPassword("asdf1234!");
-        mockUserDTO.setRole(UserRole.ROLE_USER);
+        mockUserDTO.setRole(MemberRole.ROLE_USER);
         mockUserDTO.setTel("010-1234-5678");
 
-        User mockUser = mockUserDTO.toEntity(passwordEncoder.encode(mockUserDTO.getPassword()));
+        Member mockMember = mockUserDTO.toEntity(passwordEncoder.encode(mockUserDTO.getPassword()));
 
-        userJPARepository.save(mockUser);
+        memberJPARepository.save(mockMember);
     }
 
 
@@ -54,7 +53,7 @@ public class UserRestControllerTest {
     @Test
     public void checkTest() throws Exception {
         //given
-        UserRequest.EmailCheckDTO requestDTO = new UserRequest.EmailCheckDTO();
+        MemberRequest.EmailCheckDTO requestDTO = new MemberRequest.EmailCheckDTO();
         requestDTO.setEmail("bdbd@naver.com");
         String requestBody = om.writeValueAsString(requestDTO);
         //when
@@ -70,11 +69,11 @@ public class UserRestControllerTest {
 
     @Test
     public void joinTest() throws Exception {
-        UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
+        MemberRequest.JoinDTO requestDTO = new MemberRequest.JoinDTO();
         requestDTO.setUsername("imnewuser");
         requestDTO.setEmail("newuser@naver.com");
         requestDTO.setPassword("asdf1234!");
-        requestDTO.setRole(UserRole.ROLE_USER);
+        requestDTO.setRole(MemberRole.ROLE_USER);
 //        requestDTO.setCredit(0);
         requestDTO.setTel("010-1234-5678");
 
@@ -92,7 +91,7 @@ public class UserRestControllerTest {
 
     @Test
     public void loginTest() throws Exception {
-        UserRequest.LoginDTO requestDTO = new UserRequest.LoginDTO();
+        MemberRequest.LoginDTO requestDTO = new MemberRequest.LoginDTO();
         requestDTO.setEmail("mock@naver.com");
         requestDTO.setPassword("asdf1234!");
 
@@ -116,11 +115,11 @@ public class UserRestControllerTest {
     public void sameEmailTest() throws Exception {
 
         String email = "mock@naver.com";
-        UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
+        MemberRequest.JoinDTO requestDTO = new MemberRequest.JoinDTO();
         requestDTO.setUsername("imnewuser");
         requestDTO.setEmail(email);
         requestDTO.setPassword("asdf1234!");
-        requestDTO.setRole(UserRole.ROLE_USER);
+        requestDTO.setRole(MemberRole.ROLE_USER);
 //        requestDTO.setCredit(0);
         requestDTO.setTel("010-1234-5678");
 
@@ -142,11 +141,11 @@ public class UserRestControllerTest {
     public void joinEmailExceptionTest() throws Exception {
 
         String email = "mocknaver.com";
-        UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
+        MemberRequest.JoinDTO requestDTO = new MemberRequest.JoinDTO();
         requestDTO.setUsername("imnewuser");
         requestDTO.setEmail(email);
         requestDTO.setPassword("asdf1234!");
-        requestDTO.setRole(UserRole.ROLE_USER);
+        requestDTO.setRole(MemberRole.ROLE_USER);
 //        requestDTO.setCredit(0);
         requestDTO.setTel("010-1234-5678");
 
@@ -168,11 +167,11 @@ public class UserRestControllerTest {
     public void joinPasswordExceptionTest() throws Exception {
 
         String email = "mock@naver.com";
-        UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
+        MemberRequest.JoinDTO requestDTO = new MemberRequest.JoinDTO();
         requestDTO.setUsername("imnewuser");
         requestDTO.setEmail(email);
         requestDTO.setPassword("asdf1234");
-        requestDTO.setRole(UserRole.ROLE_USER);
+        requestDTO.setRole(MemberRole.ROLE_USER);
 //        requestDTO.setCredit(0);
         requestDTO.setTel("010-1234-5678");
 
@@ -193,7 +192,7 @@ public class UserRestControllerTest {
     @Test
     public void loginWrongEmailTest() throws Exception {
         String email = "aaaa@naver.com";
-        UserRequest.LoginDTO requestDTO = new UserRequest.LoginDTO();
+        MemberRequest.LoginDTO requestDTO = new MemberRequest.LoginDTO();
         requestDTO.setEmail(email);
         requestDTO.setPassword("asdf1234!");
 
@@ -214,7 +213,7 @@ public class UserRestControllerTest {
     @Test
     public void loginWrongPasswordTest() throws Exception {
         String email = "mock@naver.com";
-        UserRequest.LoginDTO requestDTO = new UserRequest.LoginDTO();
+        MemberRequest.LoginDTO requestDTO = new MemberRequest.LoginDTO();
         requestDTO.setEmail(email);
         requestDTO.setPassword("aaaaaaaa!");
 
@@ -235,7 +234,7 @@ public class UserRestControllerTest {
     @Test
     public void loginNotMatchPasswordTest() throws Exception {
         String email = "mock@naver.com";
-        UserRequest.LoginDTO requestDTO = new UserRequest.LoginDTO();
+        MemberRequest.LoginDTO requestDTO = new MemberRequest.LoginDTO();
         requestDTO.setEmail(email);
         requestDTO.setPassword("aaaa1234!");
 
