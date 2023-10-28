@@ -3,6 +3,7 @@ package bdbe.bdbd.user;
 import bdbe.bdbd._core.errors.utils.DateUtils;
 import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.carwash.Carwash;
+import bdbe.bdbd.file.File;
 import bdbe.bdbd.optime.DayType;
 import bdbe.bdbd.optime.Optime;
 import bdbe.bdbd.reservation.Reservation;
@@ -98,6 +99,20 @@ public class OwnerResponse {
 
     @Getter
     @Setter
+    public static class FileDTO{
+        private Long id;
+        private String name;
+        private String url;
+        public FileDTO(File file) {
+            this.id = file.getId();
+            this.name = file.getName();
+            this.url = file.getUrl();
+        }
+    }
+
+
+    @Getter
+    @Setter
     @ToString
     public static class ReservationOverviewResponseDTO {
         private List<CarwashManageDTO> carwash = new ArrayList<>();
@@ -112,12 +127,12 @@ public class OwnerResponse {
     @ToString
     public static class CarwashManageDTO { // 매장 관리 (owner별, 세차장별 )
         private Long id;
-//        private String image;
         private String name;
         private OperationTimeDTO optime;
         private List<BayReservationDTO> bays = new ArrayList<>();
+        private List<FileDTO> imageFiles;
 
-        public CarwashManageDTO(Carwash carwash, List<Bay> bayList, List<Optime> optimeList, List<Reservation> reservationList) {
+        public CarwashManageDTO(Carwash carwash, List<Bay> bayList, List<Optime> optimeList, List<Reservation> reservationList, List<File> files) {
             this.id = carwash.getId();
             this.name = carwash.getName();
             this.optime = new OperationTimeDTO(optimeList);
@@ -125,6 +140,7 @@ public class OwnerResponse {
                 BayReservationDTO bayReservationDTO = new BayReservationDTO(bay, reservationList);
                 this.bays.add(bayReservationDTO);
             }
+            this.imageFiles = files.stream().map(FileDTO::new).collect(Collectors.toList());
         }
     }
 
@@ -214,15 +230,18 @@ public class OwnerResponse {
     @Getter
     @Setter
     public static class CarwashInfoDTO {
-//        private String imageUrl;
         private String name;
         private Long monthlySales;
         private Long monthlyReservations;
+        private List<FileDTO> imageFiles;
 
-        public CarwashInfoDTO(Carwash carwash, Long monthlySales, Long monthlyReservations) {
+
+        public CarwashInfoDTO(Carwash carwash, Long monthlySales, Long monthlyReservations,List<File> files) {
             this.name = carwash.getName();
             this.monthlySales = monthlySales;
             this.monthlyReservations = monthlyReservations;
+            this.imageFiles = files.stream().map(FileDTO::new).collect(Collectors.toList());
+
         }
     }
 }
