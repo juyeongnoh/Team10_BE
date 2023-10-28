@@ -5,8 +5,6 @@ import bdbe.bdbd._core.errors.utils.FileUploadUtil;
 import bdbe.bdbd._core.errors.utils.Haversine;
 import bdbe.bdbd.bay.BayJPARepository;
 import bdbe.bdbd.carwash.CarwashResponse.updateCarwashDetailsResponseDTO;
-import bdbe.bdbd.file.File;
-import bdbe.bdbd.file.FileJPARepository;
 import bdbe.bdbd.file.FileResponse;
 import bdbe.bdbd.keyword.Keyword;
 import bdbe.bdbd.keyword.KeywordJPARepository;
@@ -20,7 +18,6 @@ import bdbe.bdbd.optime.OptimeJPARepository;
 import bdbe.bdbd.review.ReviewJPARepository;
 import bdbe.bdbd.user.User;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -45,7 +42,7 @@ public class CarwashService {
     private final ReviewJPARepository reviewJPARepository;
     private final BayJPARepository bayJPARepository;
     private final FileUploadUtil fileUploadUtil;
-    private final FileJPARepository fileJPARepository;
+
 
     public List<CarwashResponse.FindAllDTO> findAll(int page) {
         // Pageable 검증
@@ -187,9 +184,7 @@ public class CarwashService {
         Optime weekOptime = optimeByDayType.get(DayType.WEEKDAY);
         Optime endOptime = optimeByDayType.get(DayType.WEEKEND);
 
-        List<File> imageFiles = fileJPARepository.findByCarwash_Id(carwashId);
-
-        return new CarwashResponse.findByIdDTO(carwash, reviewCnt, bayCnt, location, keywordIds, weekOptime, endOptime, imageFiles);
+        return new CarwashResponse.findByIdDTO(carwash, reviewCnt, bayCnt, location, keywordIds, weekOptime, endOptime);
     }
 
     public CarwashResponse.carwashDetailsDTO findCarwashByDetails(Long carwashId) {
@@ -207,9 +202,7 @@ public class CarwashService {
         Optime weekOptime = optimeByDayType.get(DayType.WEEKDAY);
         Optime endOptime = optimeByDayType.get(DayType.WEEKEND);
 
-        List<File> carwashImages = fileJPARepository.findByCarwash_Id(carwashId);
-
-        return new CarwashResponse.carwashDetailsDTO(carwash, location, keywordIds, weekOptime, endOptime, carwashImages);
+        return new CarwashResponse.carwashDetailsDTO(carwash, location, keywordIds, weekOptime, endOptime);
 
 
     }
@@ -217,7 +210,8 @@ public class CarwashService {
     private static final Logger logger = LoggerFactory.getLogger(CarwashService.class);
 
     @Transactional
-    public CarwashResponse.updateCarwashDetailsResponseDTO updateCarwashDetails(Long carwashId, CarwashRequest.updateCarwashDetailsDTO updatedto, MultipartFile[] images) {
+    public CarwashResponse.updateCarwashDetailsResponseDTO updateCarwashDetails(Long carwashId, CarwashRequest.updateCarwashDetailsDTO updatedto) {
+
         try {
             updateCarwashDetailsResponseDTO response = new updateCarwashDetailsResponseDTO();
             Carwash carwash = carwashJPARepository.findById(carwashId)
@@ -289,19 +283,11 @@ public class CarwashService {
             List<Long> updateKeywordIds = carwashKeywordJPARepository.findKeywordIdsByCarwashId(carwashId);
             response.updateKeywordPart(updateKeywordIds);
 
-            if (images != null && images.length > 0) {
-                try {
-                    List<FileResponse.SimpleFileResponseDTO> uploadedFiles = fileUploadUtil.uploadFiles(images, carwash.getId());
-                } catch (Exception e) {
-                    logger.error("Error uploading files: ", e);
-                    throw new FileUploadException("Could not upload files", e);
-                }
-            }
             return response;
-        }
-        catch (Exception e) {
+
+        } catch (Exception e) {
             logger.error("Error in updateCarwashDetails", e);
-            throw new RuntimeException("Error updating carwash details", e);
+            throw e;
         }
     }
 
