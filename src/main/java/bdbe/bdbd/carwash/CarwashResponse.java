@@ -1,6 +1,5 @@
 package bdbe.bdbd.carwash;
 
-import bdbe.bdbd.file.File;
 import bdbe.bdbd.location.Location;
 import bdbe.bdbd.optime.Optime;
 import lombok.Getter;
@@ -62,9 +61,11 @@ public class CarwashResponse {
         private List<Long> keywordId;
         private String description;
         private String tel;
-        private List<File> imageFiles;
+//        private List<String> image;
 
-        public findByIdDTO(Carwash carwash, int reviewCnt, int bayCnt, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime, List<File> imageFiles) {
+
+        public findByIdDTO(Carwash carwash, int reviewCnt, int bayCnt, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime) {
+//            this.image = image;
             this.id = carwash.getId();
             this.name = carwash.getName();
             this.rate = carwash.getRate();
@@ -75,7 +76,6 @@ public class CarwashResponse {
             this.keywordId = keywordId;
             this.description = carwash.getDes();
             this.tel = carwash.getTel();
-            this.imageFiles = imageFiles;
         }
 
         public OperatingTimeDTOResponse toOptimeListDTO(Optime weekOptime, Optime endOptime) {
@@ -136,10 +136,11 @@ public class CarwashResponse {
         private detailsOperatingTimeDTO optime; //
         private List<Long> keywordId;
         private String description;
-        private List<File> carwashImages;
+//        private List<String> image;
 
 
-        public carwashDetailsDTO(Carwash carwash, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime, List<File> carwashImages) {
+        public carwashDetailsDTO(Carwash carwash, Location location, List<Long> keywordId, Optime weekOptime, Optime endOptime) {
+//            this.image = image;
             this.id = carwash.getId();
             this.name = carwash.getName();
             this.price = carwash.getPrice();
@@ -148,7 +149,6 @@ public class CarwashResponse {
             this.optime = toOptimeListDTO(weekOptime, endOptime);
             this.keywordId = keywordId;
             this.description = carwash.getDes();
-            this.carwashImages = carwashImages;
         }
 
         public detailsOperatingTimeDTO toOptimeListDTO(Optime weekOptime, Optime endOptime) {
