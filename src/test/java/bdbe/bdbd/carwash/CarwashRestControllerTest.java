@@ -291,11 +291,12 @@ public class CarwashRestControllerTest {
 
         Long keywordId = keywordJPARepository.findByType(KeywordType.CARWASH).get(0).getId();
         updateCarwashDetailsDTO.setKeywordId(Arrays.asList(33L));
-        MockMultipartFile updatedtoFile = new MockMultipartFile("updatedto", "", "application/json", om.writeValueAsBytes(updateCarwashDetailsDTO));
 
+        MockMultipartFile updatedtoFile = new MockMultipartFile("updatedto", "", "application/json", om.writeValueAsBytes(updateCarwashDetailsDTO));
 
         String requestBody = om.writeValueAsString(updateCarwashDetailsDTO);
         System.out.println("요청 데이터 : " + requestBody);
+
 
         ResultActions resultActions = mvc.perform(
                 MockMvcRequestBuilders.multipart(String.format("/owner/carwashes/%d/details", carwashId))
@@ -306,6 +307,7 @@ public class CarwashRestControllerTest {
                             return request;
                         })
         );
+
         resultActions.andExpect(status().isOk());
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
