@@ -99,6 +99,20 @@ public class OwnerResponse {
 
     @Getter
     @Setter
+    public static class FileDTO{
+        private Long id;
+        private String name;
+        private String url;
+        public FileDTO(File file) {
+            this.id = file.getId();
+            this.name = file.getName();
+            this.url = file.getUrl();
+        }
+    }
+
+
+    @Getter
+    @Setter
     @ToString
     public static class ReservationOverviewResponseDTO {
         private List<CarwashManageDTO> carwash = new ArrayList<>();
@@ -116,9 +130,9 @@ public class OwnerResponse {
         private String name;
         private OperationTimeDTO optime;
         private List<BayReservationDTO> bays = new ArrayList<>();
-        private List<File> carwashImages;
+        private List<FileDTO> imageFiles;
 
-        public CarwashManageDTO(Carwash carwash, List<Bay> bayList, List<Optime> optimeList, List<Reservation> reservationList, List<File> carwashImages) {
+        public CarwashManageDTO(Carwash carwash, List<Bay> bayList, List<Optime> optimeList, List<Reservation> reservationList, List<File> files) {
             this.id = carwash.getId();
             this.name = carwash.getName();
             this.optime = new OperationTimeDTO(optimeList);
@@ -126,7 +140,7 @@ public class OwnerResponse {
                 BayReservationDTO bayReservationDTO = new BayReservationDTO(bay, reservationList);
                 this.bays.add(bayReservationDTO);
             }
-            this.carwashImages = carwashImages;
+            this.imageFiles = files.stream().map(FileDTO::new).collect(Collectors.toList());
         }
     }
 
@@ -219,14 +233,14 @@ public class OwnerResponse {
         private String name;
         private Long monthlySales;
         private Long monthlyReservations;
-        private List<File> carwashImages;
+        private List<FileDTO> imageFiles;
 
 
-        public CarwashInfoDTO(Carwash carwash, Long monthlySales, Long monthlyReservations,List<File> carwashImages) {
+        public CarwashInfoDTO(Carwash carwash, Long monthlySales, Long monthlyReservations,List<File> files) {
             this.name = carwash.getName();
             this.monthlySales = monthlySales;
             this.monthlyReservations = monthlyReservations;
-            this.carwashImages = carwashImages;
+            this.imageFiles = files.stream().map(FileDTO::new).collect(Collectors.toList());
 
         }
     }
