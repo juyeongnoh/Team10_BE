@@ -1,6 +1,6 @@
 # Team10_BE
 10조
-![뽀득뽀득](https://user-images.githubusercontent.com/104883910/273441051-28dc9814-84e5-4828-abcb-c5e67d3deee4.png)
+![뽀득뽀득](https://member-images.githubusercontent.com/104883910/273441051-28dc9814-84e5-4828-abcb-c5e67d3deee4.png)
 
 ## 뽀득뽀득
 
@@ -11,10 +11,10 @@
 사용자의 위치 기반으로 주변 셀프세차장을 검색해 시간 단위로 예약하는 기능을 제공합니다.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/104883910/273441056-05c43463-5bd5-4656-95fb-f6b135d64659.png" align="center" width="24%">
-  <img src="https://user-images.githubusercontent.com/104883910/273441057-8feb9154-acc2-499d-9b1a-833f59a0cebc.png" align="center" width="24%">
-  <img src="https://user-images.githubusercontent.com/104883910/273441058-d923cc94-5b53-4ab2-9f52-67ebb8a6454c.png" align="center" width="24%">
-  <img src="https://user-images.githubusercontent.com/104883910/273443450-10a46190-e2b8-427d-803d-ba2001291a68.png" align="center" width="24%">
+  <img src="https://member-images.githubusercontent.com/104883910/273441056-05c43463-5bd5-4656-95fb-f6b135d64659.png" align="center" width="24%">
+  <img src="https://member-images.githubusercontent.com/104883910/273441057-8feb9154-acc2-499d-9b1a-833f59a0cebc.png" align="center" width="24%">
+  <img src="https://member-images.githubusercontent.com/104883910/273441058-d923cc94-5b53-4ab2-9f52-67ebb8a6454c.png" align="center" width="24%">
+  <img src="https://member-images.githubusercontent.com/104883910/273443450-10a46190-e2b8-427d-803d-ba2001291a68.png" align="center" width="24%">
 </p>
 또한 가맹 여부에 관련없이 서비스에 세차장을 입점 시킬 수 있고, 편하게 관리할 수 있는 기능을 사장님에게 제공합니다.
 
@@ -96,12 +96,12 @@ $ java -jar bdbd-0.0.1-SNAPSHOT.jar
 |                                                           FE                                                           |                                                         FE                                                          |                                                         FE                                                         |
 | :--------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: |
 |                                     [노주영(조장)](https://github.com/juyeongnoh)                                      |                                 [김좌훈(FE 테크리더)](https://github.com/catnofat)                                  |                                   [고민주(리마인더)](https://github.com/minjuko)                                   |
-| ![juyeongnoh](https://user-images.githubusercontent.com/104883910/273441208-04b916c7-3d13-437e-b269-6837e6977453.jpeg) | ![catnofat](https://user-images.githubusercontent.com/104883910/273441205-78f72cd1-1c75-495c-9d9a-9fd68ee7f755.png) | ![minjuko](https://user-images.githubusercontent.com/104883910/273441202-5cd106a5-b15c-4b1e-a609-59c1ce2d05ae.png) |
+| ![juyeongnoh](https://member-images.githubusercontent.com/104883910/273441208-04b916c7-3d13-437e-b269-6837e6977453.jpeg) | ![catnofat](https://member-images.githubusercontent.com/104883910/273441205-78f72cd1-1c75-495c-9d9a-9fd68ee7f755.png) | ![minjuko](https://member-images.githubusercontent.com/104883910/273441202-5cd106a5-b15c-4b1e-a609-59c1ce2d05ae.png) |
 
 |                                                           BE                                                            |                                                         BE                                                         |                                                        BE                                                         |
 | :---------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------: |
 |                                 [김명지(BE 테크리더)](https://github.com/Starlight258)                                  |                                   [김철호(기획리더)](https://github.com/Cheoroo)                                   |                                   [이유진(타임키퍼)](https://github.com/2Using)                                   |
-| ![Starlight258](https://user-images.githubusercontent.com/104883910/273441204-57ff5077-61b7-46fb-9252-4d07d751c2f7.png) | ![Cheoroo](https://user-images.githubusercontent.com/104883910/273441206-53e3289b-4d54-416c-a4bb-8378b6bdeee5.png) | ![2Using](https://user-images.githubusercontent.com/104883910/273441211-80d28f43-ef45-40cc-893a-f3787823f725.png) |
+| ![Starlight258](https://member-images.githubusercontent.com/104883910/273441204-57ff5077-61b7-46fb-9252-4d07d751c2f7.png) | ![Cheoroo](https://member-images.githubusercontent.com/104883910/273441206-53e3289b-4d54-416c-a4bb-8378b6bdeee5.png) | ![2Using](https://member-images.githubusercontent.com/104883910/273441211-80d28f43-ef45-40cc-893a-f3787823f725.png) |
 
 
 

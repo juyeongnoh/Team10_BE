@@ -14,15 +14,15 @@ public interface CarwashJPARepository extends JpaRepository<Carwash, Long> {
 
     Optional<Carwash> findById(Long carwashId);
     // user의 id로 세차장 id 리스트 찾기
-    @Query("SELECT c.id FROM Carwash c WHERE c.user.id = :userId")
-    List<Long> findCarwashIdsByUserId(@Param("userId") Long userId);
+    @Query("SELECT c.id FROM Carwash c WHERE c.member.id = :memberId")
+    List<Long> findCarwashIdsByMemberId(@Param("memberId") Long memberId);
 
-    @Query("SELECT c FROM Carwash c WHERE c.user.id = :userId")
-    List<Carwash> findCarwashesByUserId(@Param("userId") Long userId);
+    @Query("SELECT c FROM Carwash c WHERE c.member.id = :memberId")
+    List<Carwash> findCarwashesByMemberId(@Param("memberId") Long memberId);
 
-    Optional<Carwash> findByIdAndUser_Id(Long carwashId, Long userId);
+    Optional<Carwash> findByIdAndMember_Id(Long carwashId, Long memberId);
 
-    List<Carwash> findAllByIdInAndUser_Id(List<Long> carwashIds, Long userId);
+    List<Carwash> findAllByIdInAndMember_Id(List<Long> carwashIds, Long memberId);
 
-    List<Carwash> findByUser_Id(Long userId);
+    List<Carwash> findByMember_Id(Long memberId);
 }

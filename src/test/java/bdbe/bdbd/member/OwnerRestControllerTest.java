@@ -1,12 +1,8 @@
-package bdbe.bdbd.user;
+package bdbe.bdbd.member;
 
 import bdbe.bdbd._core.errors.security.JWTProvider;
-import bdbe.bdbd.bay.Bay;
-import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.carwash.CarwashJPARepository;
-import bdbe.bdbd.reservation.Reservation;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,9 +18,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -43,7 +36,7 @@ public class OwnerRestControllerTest {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    UserJPARepository userJPARepository;
+    MemberJPARepository memberJPARepository;
 
     @Autowired
     CarwashJPARepository carwashJPARepository;
@@ -54,27 +47,27 @@ public class OwnerRestControllerTest {
 
     @BeforeEach
     public void setup() {
-        UserRequest.JoinDTO mockOwnerDTO = new UserRequest.JoinDTO();
+        MemberRequest.JoinDTO mockOwnerDTO = new MemberRequest.JoinDTO();
         mockOwnerDTO.setUsername("aaamockowner");
         mockOwnerDTO.setEmail("aaamockowner@naver.com");
         mockOwnerDTO.setPassword("asdf1234!");
-        mockOwnerDTO.setRole(UserRole.ROLE_OWNER);
+        mockOwnerDTO.setRole(MemberRole.ROLE_OWNER);
         mockOwnerDTO.setTel("010-1234-5678");
 
-        User mockOwner = mockOwnerDTO.toEntity(passwordEncoder.encode(mockOwnerDTO.getPassword()));
+        Member mockOwner = mockOwnerDTO.toEntity(passwordEncoder.encode(mockOwnerDTO.getPassword()));
 
-        userJPARepository.save(mockOwner);
+        memberJPARepository.save(mockOwner);
 
-        UserRequest.JoinDTO mockUserDTO = new UserRequest.JoinDTO();
+        MemberRequest.JoinDTO mockUserDTO = new MemberRequest.JoinDTO();
         mockUserDTO.setUsername("aaauserRoleUser");
         mockUserDTO.setEmail("aaauserRoleUser@naver.com");
         mockUserDTO.setPassword("aaaa1111!");
-        mockUserDTO.setRole(UserRole.ROLE_USER);
+        mockUserDTO.setRole(MemberRole.ROLE_USER);
         mockUserDTO.setTel("010-1234-5678");
 
-        User mockUserWithUserRole = mockUserDTO.toEntity(passwordEncoder.encode(mockUserDTO.getPassword()));
+        Member mockUserWithMemberRole = mockUserDTO.toEntity(passwordEncoder.encode(mockUserDTO.getPassword()));
 
-        userJPARepository.save(mockUserWithUserRole);
+        memberJPARepository.save(mockUserWithMemberRole);
     }
 
 
@@ -82,7 +75,7 @@ public class OwnerRestControllerTest {
     @Test
     public void checkTest() throws Exception {
         //given
-        UserRequest.EmailCheckDTO requestDTO = new UserRequest.EmailCheckDTO();
+        MemberRequest.EmailCheckDTO requestDTO = new MemberRequest.EmailCheckDTO();
         requestDTO.setEmail("bdbd@naver.com");
         String requestBody = om.writeValueAsString(requestDTO);
         //when
@@ -98,11 +91,11 @@ public class OwnerRestControllerTest {
 
     @Test
     public void joinTest() throws Exception {
-        UserRequest.JoinDTO requestDTO = new UserRequest.JoinDTO();
+        MemberRequest.JoinDTO requestDTO = new MemberRequest.JoinDTO();
         requestDTO.setUsername("aaamockowner");
         requestDTO.setEmail("aaamockowner@nate.com");
         requestDTO.setPassword("asdf1234!");
-        requestDTO.setRole(UserRole.ROLE_OWNER);
+        requestDTO.setRole(MemberRole.ROLE_OWNER);
         requestDTO.setTel("010-1234-5678");
 
 
@@ -119,7 +112,7 @@ public class OwnerRestControllerTest {
 
     @Test
     public void loginTest() throws Exception {
-        UserRequest.LoginDTO requestDTO = new UserRequest.LoginDTO();
+        MemberRequest.LoginDTO requestDTO = new MemberRequest.LoginDTO();
         requestDTO.setEmail("aaamockowner@naver.com");
         requestDTO.setPassword("asdf1234!");
 
@@ -141,7 +134,7 @@ public class OwnerRestControllerTest {
 
     @Test
     public void loginAsUserOnOwnerPageTest() throws Exception {
-        UserRequest.LoginDTO requestDTO = new UserRequest.LoginDTO();
+        MemberRequest.LoginDTO requestDTO = new MemberRequest.LoginDTO();
         requestDTO.setEmail("aaauserRoleUser@naver.com");
         requestDTO.setPassword("aaaa1111!");
 
@@ -166,7 +159,7 @@ public class OwnerRestControllerTest {
         //when
         ResultActions resultActions = mvc.perform(
                 get("/owner/sales")
-                        .param("carwash-id",   "3")
+                        .param("carwash-id",   "2")
                         .param("selected-date", "2023-10-01")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
@@ -186,7 +179,7 @@ public class OwnerRestControllerTest {
         //when
         ResultActions resultActions = mvc.perform(
                 get("/owner/revenue")
-                        .param("carwash-id",  "3")
+                        .param("carwash-id",  "2")
                         .param("selected-date", "2023-10-01")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );

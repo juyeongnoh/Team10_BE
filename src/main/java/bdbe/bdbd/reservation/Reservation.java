@@ -2,7 +2,7 @@ package bdbe.bdbd.reservation;
 
 import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.carwash.Carwash;
-import bdbe.bdbd.user.User;
+import bdbe.bdbd.member.Member;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -52,18 +52,18 @@ public class Reservation {
     private Bay bay;
 
     @ManyToOne(fetch = FetchType.LAZY) //외래키
-    @JoinColumn(name="u_id",  nullable = false)
-    private User user;
+    @JoinColumn(name="m_id",  nullable = false)
+    private Member member;
 
 
     @Builder
-    public Reservation(Long id, int price, LocalDateTime startTime, LocalDateTime endTime, Bay bay, User user) {
+    public Reservation(Long id, int price, LocalDateTime startTime, LocalDateTime endTime, Bay bay, Member member) {
         this.id = id;
         this.price = price;
         this.startTime = startTime;
         this.endTime = endTime;
         this.bay = bay;
-        this.user = user;
+        this.member = member;
     }
 
     public void updateReservation(LocalDateTime startTime, LocalDateTime endTime, Carwash carwash) {

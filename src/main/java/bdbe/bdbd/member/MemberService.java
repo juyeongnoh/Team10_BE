@@ -1,4 +1,4 @@
-package bdbe.bdbd.user;
+package bdbe.bdbd.member;
 
 
 
@@ -10,24 +10,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.Valid;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
-public class UserService {
+public class MemberService {
     private final PasswordEncoder passwordEncoder;
-    private final UserJPARepository userJPARepository;
+    private final MemberJPARepository memberJPARepository;
 
     @Transactional
-    public void join(UserRequest.JoinDTO requestDTO) {
+    public void join(MemberRequest.JoinDTO requestDTO) {
         sameCheckEmail(requestDTO.getEmail());
 
         String encodedPassword = passwordEncoder.encode(requestDTO.getPassword());
 
         try {
-            userJPARepository.save(requestDTO.toEntity(encodedPassword));
+            memberJPARepository.save(requestDTO.toEntity(encodedPassword));
         } catch (Exception e) {
             throw new InternalServerError("unknown server error");
         }
@@ -44,24 +43,24 @@ public class UserService {
 //        return JWTProvider.create(userPS);
 //    }
 
-    public UserResponse.LoginResponse login(UserRequest.LoginDTO requestDTO) {
-        User userPS = userJPARepository.findByEmail(requestDTO.getEmail()).orElseThrow(
+    public MemberResponse.LoginResponse login(MemberRequest.LoginDTO requestDTO) {
+        Member memberPS = memberJPARepository.findByEmail(requestDTO.getEmail()).orElseThrow(
                 () -> new BadRequestError("email not found : " + requestDTO.getEmail())
         );
 
-        if (!passwordEncoder.matches(requestDTO.getPassword(), userPS.getPassword())) {
+        if (!passwordEncoder.matches(requestDTO.getPassword(), memberPS.getPassword())) {
             throw new BadRequestError("wrong password");
         }
 
-        String jwt = JWTProvider.create(userPS);
+        String jwt = JWTProvider.create(memberPS);
         String redirectUrl = "/user/home";
 
-        return new UserResponse.LoginResponse(jwt, redirectUrl);
+        return new MemberResponse.LoginResponse(jwt, redirectUrl);
     }
 
 
     public void sameCheckEmail(String email) {
-        Optional<User> userOP = userJPARepository.findByEmail(email);
+        Optional<Member> userOP = memberJPARepository.findByEmail(email);
         if (userOP.isPresent()) {
             throw new BadRequestError("duplicate email exist : " + email);
         }
