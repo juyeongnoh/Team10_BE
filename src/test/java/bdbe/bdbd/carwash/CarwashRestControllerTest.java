@@ -14,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
@@ -289,17 +291,21 @@ public class CarwashRestControllerTest {
 
         Long keywordId = keywordJPARepository.findByType(KeywordType.CARWASH).get(0).getId();
         updateCarwashDetailsDTO.setKeywordId(Arrays.asList(33L));
+        MockMultipartFile updatedtoFile = new MockMultipartFile("updatedto", "", "application/json", om.writeValueAsBytes(updateCarwashDetailsDTO));
+
 
         String requestBody = om.writeValueAsString(updateCarwashDetailsDTO);
         System.out.println("요청 데이터 : " + requestBody);
 
         ResultActions resultActions = mvc.perform(
-                put(String.format("/owner/carwashes/%d/details", carwashId))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(om.writeValueAsString(updateCarwashDetailsDTO))
-
+                MockMvcRequestBuilders.multipart(String.format("/owner/carwashes/%d/details", carwashId))
+                        .file(updatedtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                        .with(request -> {
+                            request.setMethod("PUT");
+                            return request;
+                        })
         );
-
         resultActions.andExpect(status().isOk());
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
