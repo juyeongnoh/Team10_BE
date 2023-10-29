@@ -12,13 +12,14 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api")
 public class ReviewRestController {
 
     private final ReviewService reviewService;
 
     @PostMapping("/reviews") //리뷰 등록
     public ResponseEntity<?> createReview (@RequestBody @Valid ReviewRequest.SaveDTO saveDTO, Errors errors, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        reviewService.createReview(saveDTO, userDetails.getUser());
+        reviewService.createReview(saveDTO, userDetails.getMember());
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 

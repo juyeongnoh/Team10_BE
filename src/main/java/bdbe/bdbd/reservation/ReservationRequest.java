@@ -2,7 +2,7 @@ package bdbe.bdbd.reservation;
 
 import bdbe.bdbd.bay.Bay;
 import bdbe.bdbd.carwash.Carwash;
-import bdbe.bdbd.user.User;
+import bdbe.bdbd.member.Member;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -22,7 +22,7 @@ public class ReservationRequest {
         private LocalDateTime startTime;
         private LocalDateTime endTime;
 
-        public Reservation toReservationEntity(Carwash carwash, Bay bay, User user) {
+        public Reservation toReservationEntity(Carwash carwash, Bay bay, Member member) {
             int perPrice = carwash.getPrice();
             LocalDateTime startTime = this.startTime;
             LocalDateTime endTime = this.endTime;
@@ -36,7 +36,7 @@ public class ReservationRequest {
                     .endTime(endTime)
                     .price(price)
                     .bay(bay)
-                    .user(user)
+                    .member(member)
                     .build();
         }
     }
