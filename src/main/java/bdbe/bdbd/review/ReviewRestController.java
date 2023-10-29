@@ -12,7 +12,6 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
 public class ReviewRestController {
 
     private final ReviewService reviewService;

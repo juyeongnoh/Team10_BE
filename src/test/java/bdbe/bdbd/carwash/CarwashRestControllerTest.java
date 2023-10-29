@@ -65,7 +65,7 @@ public class CarwashRestControllerTest {
 
         // when
         ResultActions resultActions = mvc.perform(
-                get("/api/carwashes")
+                get("/carwashes")
         );
 
         // eye
@@ -147,7 +147,7 @@ public class CarwashRestControllerTest {
 
         // when
         ResultActions resultActions = mvc.perform(
-                get("/api/carwashes/nearby")
+                get("/carwashes/nearby")
                         .param("latitude", String.valueOf(testLatitude))
                         .param("longitude", String.valueOf(testLongitude))
         );
@@ -171,7 +171,7 @@ public class CarwashRestControllerTest {
 
         // when
         ResultActions resultActions = mvc.perform(
-                get("/api/carwashes/recommended")
+                get("/carwashes/recommended")
                         .param("latitude", String.valueOf(testLatitude))
                         .param("longitude", String.valueOf(testLongitude))
         );
@@ -197,7 +197,7 @@ public class CarwashRestControllerTest {
 
         // when
         ResultActions resultActions = mvc.perform(
-                get("/api/carwashes/search")
+                get("/carwashes/search")
                         .param("keywordIds", keywordId)
                         .param("latitude", testLatitude)
                         .param("longitude", testLongitude)
@@ -220,7 +220,7 @@ public class CarwashRestControllerTest {
         System.out.println("carwashId:" + carwashId);
 
         ResultActions resultActions = mvc.perform(
-                get(String.format("/api/carwashes/%d/info", carwashId))
+                get(String.format("/carwashes/%d/info", carwashId))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
 
@@ -241,7 +241,7 @@ public class CarwashRestControllerTest {
         System.out.println("carwashId: " + carwashId);
 
         ResultActions resultActions = mvc.perform(
-                get(String.format("/api/owner/carwashes/%d/details", carwashId))
+                get(String.format("/owner/carwashes/%d/details", carwashId))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
 
 
@@ -299,7 +299,7 @@ public class CarwashRestControllerTest {
 
 
         ResultActions resultActions = mvc.perform(
-                MockMvcRequestBuilders.multipart(String.format("/api/owner/carwashes/%d/details", carwashId))
+                MockMvcRequestBuilders.multipart(String.format("/owner/carwashes/%d/details", carwashId))
                         .file(updatedtoFile)
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                         .with(request -> {

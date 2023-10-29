@@ -109,7 +109,7 @@ public class ReviewRestControllerTest {
 
         // when
         ResultActions resultActions = mvc.perform(
-                post("/api/reviews")
+                post("/reviews")
                         .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
@@ -217,7 +217,7 @@ public class ReviewRestControllerTest {
 
         // when
         ResultActions resultActions = mvc.perform(
-                MockMvcRequestBuilders.get(String.format("/api/carwashes/%d/reviews", carwashId))
+                MockMvcRequestBuilders.get(String.format("/carwashes/%d/reviews", carwashId))
         );
 
         // eye
@@ -247,7 +247,7 @@ public class ReviewRestControllerTest {
 
         // when
         ResultActions resultActions = mvc.perform(
-                MockMvcRequestBuilders.get("/api/reviews")
+                MockMvcRequestBuilders.get("/reviews")
         );
 
         // eye

@@ -170,7 +170,7 @@ public class ReservationRestControllerTest {
 //         when
 //        /carwashes/{carwash_id}/bays/{bay_id}/reservations
         ResultActions resultActions = mvc.perform(
-                post(String.format("/api/carwashes/%d/bays/%d/reservations", carwashId, bayId))
+                post(String.format("/carwashes/%d/bays/%d/reservations", carwashId, bayId))
                         .content(om.writeValueAsString(saveDTO))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
@@ -204,7 +204,7 @@ public class ReservationRestControllerTest {
         //when
         Long reservationId = reservation.getId();
         ResultActions resultActions = mvc.perform(
-                put(String.format("/api/reservations/%d", reservationId))
+                put(String.format("/reservations/%d", reservationId))
                         .content(om.writeValueAsString(updateDTO))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
@@ -236,7 +236,7 @@ public class ReservationRestControllerTest {
         Long reservationId = reservation.getId();
         System.out.println("reservation id: " +reservationId);
         ResultActions resultActions = mvc.perform(
-                delete(String.format("/api/reservations/%d", reservationId))
+                delete(String.format("/reservations/%d", reservationId))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
 //        then
@@ -282,7 +282,7 @@ public class ReservationRestControllerTest {
 
         //when
         ResultActions resultActions = mvc.perform(
-                get(String.format("/api/carwashes/%d/bays", carwash.getId()))
+                get(String.format("/carwashes/%d/bays", carwash.getId()))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
         //then
@@ -314,7 +314,7 @@ public class ReservationRestControllerTest {
 
         //when
         ResultActions resultActions = mvc.perform(
-                get("/api/reservations")
+                get("/reservations")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
         //then
@@ -369,7 +369,7 @@ public class ReservationRestControllerTest {
 
         //when
         ResultActions resultActions = mvc.perform(
-                get("/api/reservations/current-status")
+                get("/reservations/current-status")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
         //then
@@ -439,7 +439,7 @@ public class ReservationRestControllerTest {
 
         //when
         ResultActions resultActions = mvc.perform(
-                get("/api/reservations/recent")
+                get("/reservations/recent")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
         //then
