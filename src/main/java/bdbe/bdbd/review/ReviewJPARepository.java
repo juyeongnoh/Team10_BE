@@ -12,7 +12,7 @@ public interface ReviewJPARepository extends JpaRepository<Review, Long> {
 
     long countByCarwash_Id(Long carwashId);
 
-    @Query("SELECT r FROM Review r JOIN FETCH r.user WHERE r.carwash.id = :carwashId")
+    @Query("SELECT r FROM Review r JOIN FETCH r.member WHERE r.carwash.id = :carwashId")
     List<Review> findByCarwash_Id(Long carwashId);
 
     List<Review> findByReservation_Id(Long reservationId);

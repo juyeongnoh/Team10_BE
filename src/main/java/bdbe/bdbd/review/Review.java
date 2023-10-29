@@ -3,7 +3,7 @@ package bdbe.bdbd.review;
 
 import bdbe.bdbd.carwash.Carwash;
 import bdbe.bdbd.reservation.Reservation;
-import bdbe.bdbd.user.User;
+import bdbe.bdbd.member.Member;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -26,8 +26,8 @@ public class Review {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY) //외래키
-    @JoinColumn(name="u_id",  nullable = false)
-    private User user;
+    @JoinColumn(name="m_id",  nullable = false)
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY) //외래키
     @JoinColumn(name="c_id",  nullable = false)
@@ -53,9 +53,9 @@ public class Review {
 
 
     @Builder
-    public Review(Long id, User user, Carwash carwash, Reservation reservation, String comment, double rate) {
+    public Review(Long id, Member member, Carwash carwash, Reservation reservation, String comment, double rate) {
         this.id = id;
-        this.user = user;
+        this.member = member;
         this.carwash = carwash;
         this.reservation = reservation;
         this.comment = comment;

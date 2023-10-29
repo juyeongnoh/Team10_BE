@@ -1,4 +1,4 @@
-package bdbe.bdbd.user;
+package bdbe.bdbd.member;
 
 import bdbe.bdbd._core.errors.utils.DateUtils;
 import bdbe.bdbd.bay.Bay;
@@ -11,11 +11,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class OwnerResponse {
@@ -77,7 +75,7 @@ public class OwnerResponse {
         public ReservationDTO(Reservation reservation) {
             this.reservationId = reservation.getId();
             this.bayNo = reservation.getBay().getBayNum();
-            this.nickname = reservation.getUser().getUsername();
+            this.nickname = reservation.getMember().getUsername();
             this.totalPrice = reservation.getPrice();
             this.startTime = DateUtils.formatDateTime(reservation.getStartTime());
             this.endTime = DateUtils.formatDateTime(reservation.getEndTime());
