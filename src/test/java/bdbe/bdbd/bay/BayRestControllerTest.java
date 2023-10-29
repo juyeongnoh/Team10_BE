@@ -56,7 +56,7 @@ public class BayRestControllerTest {
         String requestBody = om.writeValueAsString(saveDTO);
 
         ResultActions resultActions = mvc.perform(
-                post("/api/owner/carwashes/{carwash_id}/bays", carwashId)
+                post("/owner/carwashes/{carwash_id}/bays", carwashId)
                         .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );
@@ -92,7 +92,7 @@ public class BayRestControllerTest {
         System.out.println("bayId = " + bayId);
 
         ResultActions resultActions = mvc.perform(
-                put(String.format("/api/owner/bays/%d/status", bayId)) // String.format을 사용하여 URL 포맷팅
+                put(String.format("/owner/bays/%d/status", bayId)) // String.format을 사용하여 URL 포맷팅
                         .param("status", "1")  // 쿼리 파라미터 추가
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
         );

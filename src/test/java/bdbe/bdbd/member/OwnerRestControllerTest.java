@@ -80,7 +80,7 @@ public class OwnerRestControllerTest {
         String requestBody = om.writeValueAsString(requestDTO);
         //when
         ResultActions resultActions = mvc.perform(
-                post("/api/owner/check")
+                post("/owner/check")
                         .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON)
         );
@@ -102,7 +102,7 @@ public class OwnerRestControllerTest {
         String requestBody = om.writeValueAsString(requestDTO);
 
         mvc.perform(
-                        post("/api/owner/join")
+                        post("/owner/join")
                                 .content(requestBody)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -119,7 +119,7 @@ public class OwnerRestControllerTest {
         String requestBody = om.writeValueAsString(requestDTO);
 
         mvc.perform(
-                    post("/api/owner/login")
+                    post("/owner/login")
                             .content(requestBody)
                             .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -141,7 +141,7 @@ public class OwnerRestControllerTest {
         String requestBody = om.writeValueAsString(requestDTO);
 
         mvc.perform(
-                        post("/api/owner/login")  // owner 페이지에서의 로그인 URL을 사용
+                        post("/owner/login")  // owner 페이지에서의 로그인 URL을 사용
                                 .content(requestBody)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -158,7 +158,7 @@ public class OwnerRestControllerTest {
 
         //when
         ResultActions resultActions = mvc.perform(
-                get("/api/owner/sales")
+                get("/owner/sales")
                         .param("carwash-id",   "2")
                         .param("selected-date", "2023-10-01")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -178,7 +178,7 @@ public class OwnerRestControllerTest {
 
         //when
         ResultActions resultActions = mvc.perform(
-                get("/api/owner/revenue")
+                get("/owner/revenue")
                         .param("carwash-id",  "2")
                         .param("selected-date", "2023-10-01")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -198,7 +198,7 @@ public class OwnerRestControllerTest {
 
         //when
         ResultActions resultActions = mvc.perform(
-                get("/api/owner/carwashes"));
+                get("/owner/carwashes"));
         //then
         // eye
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -215,7 +215,7 @@ public class OwnerRestControllerTest {
         System.out.println("carwash id :" + carwashId);
         //when
         ResultActions resultActions = mvc.perform(
-                get(String.format("/api/owner/carwashes/%d", carwashId)));
+                get(String.format("/owner/carwashes/%d", carwashId)));
         //then
         // eye
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -231,7 +231,7 @@ public class OwnerRestControllerTest {
 
         //when
         ResultActions resultActions = mvc.perform(
-                get("/api/owner/home"));
+                get("/owner/home"));
         //then
         // eye
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
