@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/owner")
+@RequestMapping("/api/owner")
 public class OwnerRestController {
     private final OwnerService ownerService;
     // (기능3) 이메일 중복체크
