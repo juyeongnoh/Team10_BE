@@ -5,6 +5,7 @@
 #**/application.yml
 **/application-local.yml
 #**/application-prod.yml
+**/aws-secret.yaml
 
 # 빌드, 로컬 설정 파일
 .idea/
